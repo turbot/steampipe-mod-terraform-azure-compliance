@@ -14,4 +14,4 @@ select
 from
   terraform_resource
 where
-  type = 'azurerm_app_service';
+  type = 'azurerm_function_app';
