@@ -1,6 +1,5 @@
 with hsm_key_vaults as (
   select
-    '${azurerm_key_vault_managed_hardware_security_module.' || name || '.id}' as id,
     *
   from
     terraform_resource
@@ -12,12 +11,12 @@ with hsm_key_vaults as (
   from
     terraform_resource
   where
-    type = 'azurerm_monitor_diagnostic_setting'
+    type = 'azurerm_monitor_diagnostic_setting' and (arguments ->> 'target_resource_id') like '%azurerm_key_vault_managed_hardware_security_module.%'
 ), hsm_key_vaults_logging as (
   select
     kv.name as kv_name
   from
-    hsm_key_vaults as kv left join  diagnostic_setting as ds on kv.id = (ds.arguments ->> 'target_resource_id')
+    hsm_key_vaults as kv left join  diagnostic_setting as ds on kv.name = (split_part((ds.arguments ->> 'target_resource_id'), '.', 2))
   where
     (ds.arguments ->> 'storage_account_id') is not null
     and (ds.arguments -> 'log' ->> 'category')::text = 'AuditEvent'

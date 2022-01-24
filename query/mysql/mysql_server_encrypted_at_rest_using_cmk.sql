@@ -1,6 +1,5 @@
 with mysql_server as (
   select
-    '${azurerm_mysql_server.' || name || '.id}' as pg_id,
     *
   from
     terraform_resource
@@ -29,4 +28,4 @@ select
   a.path
 from
   mysql_server as a
-  left join server_keys as s on a.pg_id = ( s.arguments ->> 'server_id');
+  left join server_keys as s on a.name = (split_part((s.arguments ->> 'server_id'), '.', 2));

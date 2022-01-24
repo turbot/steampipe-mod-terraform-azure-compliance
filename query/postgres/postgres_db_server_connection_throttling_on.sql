@@ -1,6 +1,5 @@
 with postgresql_server as (
   select
-    '${azurerm_postgresql_server.' || name || '.name}' as pg_name,
     *
   from
     terraform_resource
@@ -30,4 +29,5 @@ select
   a.path
 from
   postgresql_server as a
-  left join connection_throttling_configuration as s on a.pg_name = ( s.arguments ->> 'server_name');
+  left join connection_throttling_configuration as s on a.name = ( split_part((s.arguments ->> 'server_name'), '.', 2));
+

@@ -1,6 +1,5 @@
 with kusto_clusters as (
   select
-    '${azurerm_kusto_cluster.' || name || '.id}' as id,
     *
   from
     terraform_resource
@@ -8,7 +7,7 @@ with kusto_clusters as (
     type = 'azurerm_kusto_cluster'
 ), kusto_cluster_customer_managed_key as (
   select
-    (arguments ->> 'cluster_id') as cluster_id
+    split_part((arguments ->> 'cluster_id'), '.', 2) as cluster_name
   from
     terraform_resource
   where
@@ -21,14 +20,14 @@ select
   -- Required Columns
   type || ' ' || a.name as resource,
   case
-    when s.cluster_id is null then 'alarm'
+    when s.cluster_name is null then 'alarm'
     else 'ok'
   end as status,
   a.name || case
-    when s.cluster_id is null then  ' logging disabled'
+    when s.cluster_name is null then  ' logging disabled'
     else ' logging enabled'
   end || '.' reason,
   a.path
 from
   kusto_clusters as a
-  left join kusto_cluster_customer_managed_key as s on a.id = s.cluster_id;
+  left join kusto_cluster_customer_managed_key as s on a.name = s.cluster_name;

@@ -1,6 +1,5 @@
 with sql_server as (
   select
-    '${azurerm_mssql_server.' || name || '.id}' as pg_id,
     *
   from
     terraform_resource
@@ -29,4 +28,4 @@ select
   a.path
 from
   sql_server as a
-  left join server_audit_policy as s on a.pg_id = ( s.arguments ->> 'server_id');
+  left join server_audit_policy as s on a.name = ( split_part((s.arguments ->> 'server_id'), '.', 2));

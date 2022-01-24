@@ -1,6 +1,5 @@
 with all_subnet as (
   select
-    '${azurerm_subnet.' || name || '.id}' as subnet_id,
     *
   from
     terraform_resource
@@ -28,4 +27,4 @@ select
   a.path
 from
   all_subnet as a
-  left join network_security_group_association as s on a.subnet_id = (s.arguments ->> 'subnet_id');
+  left join network_security_group_association as s on a.name = ( split_part((s.arguments ->> 'subnet_id'), '.', 2));

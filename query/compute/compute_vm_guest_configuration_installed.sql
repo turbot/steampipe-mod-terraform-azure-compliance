@@ -1,6 +1,5 @@
 with all_vm as (
   select
-  '${azurerm_virtual_machine.' || name || '.id}' as id,
   *
   from
     terraform_resource
@@ -16,10 +15,9 @@ with all_vm as (
 ),
 vm_guest_configuration as (
   select
-    a.id,
-    b.arguments ->> 'virtual_machine_id' as vm_id
+    split_part((b.arguments ->> 'virtual_machine_id'), '.', 2) as vm_name
   from
-    all_vm as a left join vm_extensions as b on  (b.arguments ->> 'virtual_machine_id') = a.id
+    all_vm as a left join vm_extensions as b on (split_part((b.arguments ->> 'virtual_machine_id'), '.', 2)) = a.name
   where
     (b.arguments ->> 'publisher') = 'Microsoft.GuestConfiguration'
 )
@@ -27,13 +25,13 @@ select
   -- Required Columns
   type || ' ' || name as resource,
   case
-    when d.id is null then 'alarm'
+    when d.vm_name is null then 'alarm'
     else 'ok'
   end as status,
   name || case
-    when d.id is null then ' have guest configuration extension not installed'
+    when d.vm_name is null then ' have guest configuration extension not installed'
     else ' have guest configuration extension installed'
   end || '.' reason,
   path
 from
-  all_vm as c left join vm_guest_configuration as d on c.id = d.vm_id;
+  all_vm as c left join vm_guest_configuration as d on c.name = d.vm_name;
