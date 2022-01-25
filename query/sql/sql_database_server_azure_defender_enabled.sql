@@ -1,12 +1,12 @@
 select
   type || ' ' || name as resource,
   case
-    when (arguments ->> 'resource_type') = 'SqlServers' and (arguments ->> 'tier') = 'Standard' then 'ok'
-    else 'info'
+    when (arguments ->> 'tier') = 'Standard' and (arguments ->> 'resource_type') = 'SqlServers' then 'ok'
+    else 'skip'
   end status,
   name || case
-    when (arguments ->> 'resource_type') = 'SqlServers' and (arguments ->> 'tier') = 'Standard' then ' Azure Defender on for SqlServers'
-    else ' Azure Defender off for SqlServers'
+     when (arguments ->> 'tier') = 'Standard' and (arguments ->> 'resource_type') = 'SqlServers' then ' Azure defender enabled for SqlServer(s)'
+    else ' Azure defender enabled for ' || (arguments ->> 'resource_type') || ''
   end || '.' reason,
   path
 from
