@@ -59,13 +59,13 @@ steampipe check all --tag hipaa_hitrust_v92=true
 Run a benchmark:
 
 ```shell
-steampipe check terraform_azure_compliance.benchmark.??
+steampipe check terraform_azure_compliance.benchmark.storage
 ```
 
 Run a specific control:
 
 ```shell
-steampipe check terraform_azure_compliance.control.??
+steampipe check terraform_azure_compliance.control.storage_account_infrastructure_encryption_enabled
 ```
 
 Use introspection to view the available controls:
