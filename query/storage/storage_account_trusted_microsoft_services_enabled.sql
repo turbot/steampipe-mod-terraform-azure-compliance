@@ -1,0 +1,34 @@
+with storage_account_network_rules as (
+    select 
+      name,
+      type,
+      path,
+      split_part((arguments ->> 'storage_account_name'), '.',2) as storage_account_name
+    from 
+      terraform_resource
+    where
+      type = 'azurerm_storage_account_network_rules' and (arguments ->> 'bypass') like '%AzureServices%'
+), storage_account_name as (
+    select
+      name,
+      type,
+      path
+    from 
+      terraform_resource
+    where
+      type = 'azurerm_storage_account'
+)
+select
+  san.type || ' ' || san.name as resource,
+  case
+    when sanr.name is null then 'alarm'
+    else 'ok'
+  end status,
+  san.name || case
+    when sanr.name is null then ' trusted Microsoft services not enabled'
+    else ' trusted Microsoft services enabled'
+  end || '.' reason,
+  san.path
+from
+  storage_account_name as san
+  left join storage_account_network_rules as sanr on sanr.storage_account_name = san.name;
