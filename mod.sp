@@ -1,16 +1,16 @@
 mod "terraform_sherlock" {
   # Hub metadata
   title         = "Terraform Azure Compliance"
-  description   = "Interrogate your Terraform resources with the help of the world's greatest detectives: Steampipe + ??."
+  description   = "Run compliance and security controls to detect Terraform Azure resources deviating from security best practices prior to deployment in your Azure subscriptions."
   color         = "#844FBA"
   documentation = file("./docs/index.md")
-  icon          = "/images/mods/turbot/terraform-sherlock.svg"
-  categories    = ["best practices", "terraform", "sherlock", "software development"]
+  icon          = "/images/mods/turbot/terraform-azure-compliance.svg"
+  categories    = ["azure", "compliance", "iaas", "security", "terraform"]
 
   opengraph {
     title        = "Steampipe Mod to Analyze Terraform"
-    description  = "Interrogate your Terraform resources with the help of the world's greatest detectives: Steampipe + Sherlock."
-    image        = "/images/mods/turbot/terraform-sherlock-social-graphic.png"
+    description  = "Run compliance and security controls to detect Terraform Azure resources deviating from security best practices prior to deployment in your Azure subscriptions."
+    image        = "/images/mods/turbot/terraform-azure-compliance-social-graphic.png"
   }
 
   require {

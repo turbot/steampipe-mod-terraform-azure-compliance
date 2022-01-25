@@ -1,10 +1,12 @@
 ---
-repository: "https://.com/turbot/steampipe-mod-terraform-sherlock"
+repository: "https://github.com/turbot/steampipe-mod-terraform-azure-compliance"
 ---
 
-# Terraform Sherlock Mod
+# Terraform Azure Compliance
 
-Interrogate your Terraform resources with the help of the world's greatest detectives: Steampipe + Sherlock.
+Run compliance and security controls to detect Terraform Azure resources deviating from security best practices prior to deployment in your Azure subscriptions.
+
+![image](https://raw.githubusercontent.com/turbot/steampipe-mod-terraform-aws-compliance/main/docs/terraform_azure_compliance_console_output.png)
 
 ## References
 
@@ -17,8 +19,8 @@ Interrogate your Terraform resources with the help of the world's greatest detec
 
 ## Documentation
 
-- **[Benchmarks and controls →](https://hub.steampipe.io/mods/turbot/_sherlock/controls)**
-- **[Named queries →](https://hub.steampipe.io/mods/turbot/_sherlock/queries)**
+- **[Benchmarks and controls →](https://hub.steampipe.io/mods/turbot/terraform_azure_compliance/controls)**
+- **[Named queries →](https://hub.steampipe.io/mods/turbot/terraform_azure_compliance/queries)**
 
 ## Get started
 
@@ -28,11 +30,26 @@ Install the Terraform plugin with [Steampipe](https://steampipe.io):
 steampipe plugin install terraform
 ```
 
+Configure the Terraform plugin, adding any path that contains your Terraform files to `paths`:
+
+```sh
+vi ~/.steampipe/config/terraform.spc
+```
+
+```hcl
+connection "terraform" {
+  plugin = "terraform"
+  paths  = ["/path/to/my/tf/files/*.tf"]
+}
+```
+
+For more details on connection configuration, please refer [Terraform Plugin Configuration](https://hub.steampipe.io/plugins/turbot/terraform#configuration).
+
 Clone:
 
 ```sh
-git clone https://github.com/turbot/steampipe-mod-terraform-sherlock.git
-cd steampipe-mod-terraform-sherlock
+git clone https://github.com/turbot/steampipe-mod-terraform-azure-compliance.git
+cd steampipe-mod-terraform-azure-compliance
 ```
 
 Run all benchmarks:
@@ -41,21 +58,27 @@ Run all benchmarks:
 steampipe check all
 ```
 
+Run all benchmarks for a specific compliance framework using tags:
+
+```shell
+steampipe check all --tag hipaa_hitrust_v92=true
+```
+
 Run a benchmark:
 
 ```shell
-steampipe check benchmark.TBD
+steampipe check terraform_azure_compliance.benchmark.??
 ```
 
 Run a specific control:
 
 ```shell
-steampipe check control.TBD
+steampipe check terraform_azure_compliance.control.??
 ```
 
 ### Credentials
 
-This mod uses the credentials configured in the [Steampipe Terraform plugin](https://hub.steampipe.io/plugins/turbot/).
+This mod uses the credentials configured in the [Steampipe Terraform plugin](https://hub.steampipe.io/plugins/turbot/terraform).
 
 ### Configuration
 
@@ -63,5 +86,5 @@ No extra configuration is required.
 
 ## Get involved
 
-* Contribute: [Terraform Repo](https://github.com/turbot/steampipe-mod-terraform-sherlock)
+* Contribute: [GitHub Repo](https://github.com/turbot/steampipe-mod-terraform-azure-compliance)
 * Community: [Slack Channel](https://steampipe.io/community/join)
