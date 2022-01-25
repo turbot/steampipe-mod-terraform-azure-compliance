@@ -2,7 +2,7 @@ select
   type || ' ' || name as resource,
   case
     when (arguments ->> 'resource_type') = 'SqlServers' and (arguments ->> 'tier') = 'Standard' then 'ok'
-    else 'info'
+    else 'skip'
   end status,
   name || case
     when (arguments ->> 'resource_type') = 'SqlServers' and (arguments ->> 'tier') = 'Standard' then ' Azure Defender on for SQL database servers'
