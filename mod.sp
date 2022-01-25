@@ -1,4 +1,4 @@
-mod "terraform_sherlock" {
+mod "terraform_azure_compliance" {
   # Hub metadata
   title         = "Terraform Azure Compliance"
   description   = "Run compliance and security controls to detect Terraform Azure resources deviating from security best practices prior to deployment in your Azure subscriptions."

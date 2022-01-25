@@ -6,7 +6,7 @@ repository: "https://github.com/turbot/steampipe-mod-terraform-azure-compliance"
 
 Run compliance and security controls to detect Terraform Azure resources deviating from security best practices prior to deployment in your Azure subscriptions.
 
-![image](https://raw.githubusercontent.com/turbot/steampipe-mod-terraform-aws-compliance/main/docs/terraform_azure_compliance_console_output.png)
+![image](https://raw.githubusercontent.com/turbot/steampipe-mod-terraform-azure-compliance/main/docs/terraform_azure_compliance_console_output.png)
 
 ## References
 
@@ -67,13 +67,13 @@ steampipe check all --tag hipaa_hitrust_v92=true
 Run a benchmark:
 
 ```shell
-steampipe check terraform_azure_compliance.benchmark.??
+steampipe check terraform_azure_compliance.benchmark.storage
 ```
 
 Run a specific control:
 
 ```shell
-steampipe check terraform_azure_compliance.control.??
+steampipe check terraform_azure_compliance.control.storage_account_infrastructure_encryption_enabled
 ```
 
 ### Credentials
