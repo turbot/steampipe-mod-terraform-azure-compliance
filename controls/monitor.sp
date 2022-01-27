@@ -43,6 +43,7 @@ control "monitor_logs_storage_container_not_public_accessible" {
   sql         = query.monitor_logs_storage_container_not_public_accessible.sql
 
   tags = merge(local.monitor_compliance_common_tags, {
+    cis         = "true"
     cis_item_id = "5.1.3"
     cis_level   = "1"
     cis_type    = "automated"

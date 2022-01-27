@@ -82,9 +82,10 @@ control "postgres_db_server_connection_throttling_on" {
   sql         = query.postgres_db_server_connection_throttling_on.sql
 
   tags = merge(local.postgres_compliance_common_tags, {
-    "cis_item_id" = "4.3.6"
-    "cis_level"   = "1"
-    "cis_type"    = "automated"
+    cis         = "true"
+    cis_item_id = "4.3.6"
+    cis_level   = "1"
+    cis_type    = "automated"
   })
 }
 
@@ -94,9 +95,10 @@ control "postgres_db_server_log_checkpoints_on" {
   sql         = query.postgres_db_server_log_checkpoints_on.sql
 
   tags = merge(local.postgres_compliance_common_tags, {
-    "cis_item_id" = "4.3.3"
-    "cis_level"   = "1"
-    "cis_type"    = "automated"
+    cis         = "true"
+    cis_item_id = "4.3.3"
+    cis_level   = "1"
+    cis_type    = "automated"
   })
 }
 
@@ -106,9 +108,10 @@ control "postgres_db_server_log_connections_on" {
   sql         = query.postgres_db_server_log_connections_on.sql
 
   tags = merge(local.postgres_compliance_common_tags, {
-    "cis_item_id" = "4.3.4"
-    "cis_level"   = "1"
-    "cis_type"    = "automated"
+    cis         = "true"
+    cis_item_id = "4.3.4"
+    cis_level   = "1"
+    cis_type    = "automated"
   })
 }
 
@@ -118,9 +121,10 @@ control "postgres_db_server_log_disconnections_on" {
   sql         = query.postgres_db_server_log_disconnections_on.sql
 
   tags = merge(local.postgres_compliance_common_tags, {
-    "cis_item_id" = "4.3.5"
-    "cis_level"   = "1"
-    "cis_type"    = "automated"
+    cis         = "true"
+    cis_item_id = "4.3.5"
+    cis_level   = "1"
+    cis_type    = "automated"
   })
 }
 
@@ -130,8 +134,9 @@ control "postgres_db_server_log_retention_days_3" {
   sql         = query.postgres_db_server_log_retention_days_3.sql
 
   tags = merge(local.postgres_compliance_common_tags, {
-    "cis_item_id" = "4.3.5"
-    "cis_level"   = "1"
-    "cis_type"    = "automated"
+    cis         = "true"
+    cis_item_id = "4.3.5"
+    cis_level   = "1"
+    cis_type    = "automated"
   })
 }

@@ -147,6 +147,7 @@ control "storage_account_blob_service_logging_enabled" {
   sql         = query.storage_account_blob_service_logging_enabled.sql
 
   tags = merge(local.storage_compliance_common_tags, {
+    cis         = "true"
     cis_item_id = "3.10"
     cis_level   = "2"
     cis_type    = "manual"
@@ -159,6 +160,7 @@ control "storage_account_queue_services_logging_enabled" {
   sql         = query.storage_account_queue_services_logging_enabled.sql
 
   tags = merge(local.storage_compliance_common_tags, {
+    cis         = "true"
     cis_item_id = "3.3"
     cis_level   = "2"
     cis_type    = "manual"
@@ -171,6 +173,7 @@ control "storage_account_trusted_microsoft_services_enabled" {
   sql         = query.storage_account_trusted_microsoft_services_enabled.sql
 
   tags = merge(local.storage_compliance_common_tags, {
+    cis         = "true"
     cis_item_id = "3.7"
     cis_level   = "2"
     cis_type    = "manual"
@@ -183,6 +186,7 @@ control "storage_account_blob_containers_public_access_private" {
   sql         = query.storage_account_blob_containers_public_access_private.sql
 
   tags = merge(local.storage_compliance_common_tags, {
+    cis         = "true"
     cis_item_id = "3.5"
     cis_level   = "1"
     cis_type    = "automated"

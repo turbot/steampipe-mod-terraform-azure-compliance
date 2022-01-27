@@ -83,6 +83,7 @@ control "securitycenter_azure_defender_on_for_appservice" {
   sql         = query.securitycenter_azure_defender_on_for_appservice.sql
 
   tags = merge(local.securitycenter_compliance_common_tags, {
+    cis         = "true"
     cis_item_id = "2.2"
     cis_type    = "manual"
     cis_level   = "2"
@@ -95,6 +96,7 @@ control "securitycenter_azure_defender_on_for_containerregistry" {
   sql         = query.securitycenter_azure_defender_on_for_containerregistry.sql
 
   tags = merge(local.securitycenter_compliance_common_tags, {
+    cis         = "true"
     cis_item_id = "2.7"
     cis_type    = "manual"
     cis_level   = "2"
@@ -107,6 +109,7 @@ control "securitycenter_azure_defender_on_for_k8s" {
   sql         = query.securitycenter_azure_defender_on_for_k8s.sql
 
   tags = merge(local.securitycenter_compliance_common_tags, {
+    cis         = "true"
     cis_item_id = "2.6"
     cis_type    = "manual"
     cis_level   = "2"
@@ -119,6 +122,7 @@ control "securitycenter_azure_defender_on_for_keyvault" {
   sql         = query.securitycenter_azure_defender_on_for_keyvault.sql
 
   tags = merge(local.securitycenter_compliance_common_tags, {
+    cis         = "true"
     cis_item_id = "2.8"
     cis_type    = "manual"
     cis_level   = "2"
@@ -131,6 +135,7 @@ control "securitycenter_azure_defender_on_for_server" {
   sql         = query.securitycenter_azure_defender_on_for_server.sql
 
   tags = merge(local.securitycenter_compliance_common_tags, {
+    cis         = "true"
     cis_item_id = "2.1"
     cis_type    = "manual"
     cis_level   = "2"
@@ -143,6 +148,7 @@ control "securitycenter_azure_defender_on_for_sqldb" {
   sql         = query.securitycenter_azure_defender_on_for_sqldb.sql
 
   tags = merge(local.securitycenter_compliance_common_tags, {
+    cis         = "true"
     cis_item_id = "2.3"
     cis_type    = "manual"
     cis_level   = "2"
@@ -155,6 +161,7 @@ control "securitycenter_azure_defender_on_for_storage" {
   sql         = query.securitycenter_azure_defender_on_for_storage.sql
 
   tags = merge(local.securitycenter_compliance_common_tags, {
+    cis         = "true"
     cis_item_id = "2.5"
     cis_type    = "manual"
     cis_level   = "2"

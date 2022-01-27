@@ -308,6 +308,7 @@ control "appservice_authentication_enabled" {
   sql         = query.appservice_authentication_enabled.sql
 
   tags = merge(local.appservice_compliance_common_tags, {
+    cis         = "true"
     cis_item_id = "9.1"
     cis_level   = "2"
     cis_type    = "automated"
@@ -320,6 +321,7 @@ control "appservice_ftp_deployment_disabled" {
   sql         = query.appservice_ftp_deployment_disabled.sql
 
   tags = merge(local.appservice_compliance_common_tags, {
+    cis         = "true"
     cis_item_id = "9.1"
     cis_level   = "2"
     cis_type    = "automated"
@@ -332,6 +334,7 @@ control "appservice_web_app_register_with_active_directory_enabled" {
   sql         = query.appservice_web_app_register_with_active_directory_enabled.sql
 
   tags = merge(local.appservice_compliance_common_tags, {
+    cis         = "true"
     cis_item_id = "9.5"
     cis_level   = "1"
     cis_type    = "automated"

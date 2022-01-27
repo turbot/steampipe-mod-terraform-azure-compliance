@@ -101,6 +101,7 @@ control "sql_database_allow_internet_access" {
   sql         = query.sql_database_allow_internet_access.sql
 
   tags = merge(local.sql_compliance_common_tags, {
+    cis         = "true"
     cis_item_id = "6.3"
     cis_level   = "1"
     cis_type    = "automated"
@@ -113,9 +114,10 @@ control "sql_server_atp_enabled" {
   sql         = query.sql_server_atp_enabled.sql
 
   tags = merge(local.sql_compliance_common_tags, {
-    "cis_item_id" = "4.2.1"
-    "cis_level"   = "2"
-    "cis_type"    = "automated"
+    cis         = "true"
+    cis_item_id = "4.2.1"
+    cis_level   = "2"
+    cis_type    = "automated"
   })
 }
 
@@ -125,9 +127,10 @@ control "sql_db_active_directory_admin_configured" {
   sql         = query.sql_db_active_directory_admin_configured.sql
 
   tags = merge(local.sql_compliance_common_tags, {
-    "cis_item_id" = "4.4"
-    "cis_level"   = "1"
-    "cis_type"    = "automated"
+    cis         = "true"
+    cis_item_id = "4.4"
+    cis_level   = "1"
+    cis_type    = "automated"
   })
 }
 
