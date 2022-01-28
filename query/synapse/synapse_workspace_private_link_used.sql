@@ -15,7 +15,6 @@ with synapse_workspaces as (
       type = 'azurerm_synapse_managed_private_endpoint'
 )
 select
-  -- Required Columns
   a.type || ' ' || a.name as resource,
   case
     when (s.arguments ->> 'synapse_workspace_id') is not null then 'ok'

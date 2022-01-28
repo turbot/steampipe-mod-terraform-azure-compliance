@@ -13,7 +13,6 @@ with container_registry as (
     jsonb_array_elements(arguments -> 'network_rule_set' -> 'virtual_network') as rule
 )
 select
-  -- Required Columns
   type || ' ' || a.name as resource,
   case
     when (arguments -> 'network_rule_set' ->> 'default_action')::text <> 'Deny' then 'alarm'

@@ -15,7 +15,6 @@ with sql_server as (
     and (arguments ->> 'retention_in_days')::int > 90
 )
 select
-  -- Required Columns
   a.type || ' ' || a.name as resource,
   case
     when (s.arguments ->> 'server_id') is not null then 'ok'

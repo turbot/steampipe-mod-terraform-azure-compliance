@@ -23,7 +23,6 @@ with batch_accounts as (
     and (ds.arguments -> 'log' -> 'retention_policy' ->> 'enabled')::boolean
 )
 select
-  -- Required Columns
   type || ' ' || a.name as resource,
   case
     when s.ba_name is null then 'alarm'

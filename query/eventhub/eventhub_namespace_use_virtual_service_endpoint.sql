@@ -16,7 +16,6 @@ with eventhub_namespaces as (
     and (rule -> 'virtual_network_rule' ->> 'subnet_id') is not null
 )
 select
-  -- Required Columns
   type || ' ' || a.name as resource,
   case
     when (arguments -> 'network_rulesets') is null then 'alarm'

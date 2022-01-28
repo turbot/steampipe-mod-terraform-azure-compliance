@@ -12,12 +12,11 @@ with kusto_clusters as (
     terraform_resource
   where
     type = 'azurerm_kusto_cluster_customer_managed_key'
-    and  (arguments ->> 'key_vault_id') is not null
+    and (arguments ->> 'key_vault_id') is not null
     and (arguments ->> 'key_name') is not null
     and (arguments ->> 'key_version') is not null
 )
 select
-  -- Required Columns
   type || ' ' || a.name as resource,
   case
     when s.cluster_name is null then 'alarm'

@@ -16,7 +16,6 @@ with postgresql_server as (
     and (arguments -> 'key_vault_key_id') is not null
 )
 select
-  -- Required Columns
   a.type || ' ' || a.name as resource,
   case
     when (s.arguments ->> 'server_id') is not null then 'ok'

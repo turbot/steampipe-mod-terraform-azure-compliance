@@ -13,7 +13,6 @@ with key_vaults as (
     jsonb_array_elements(arguments -> 'network_acls' -> 'virtual_network_subnet_ids') as id
 ) 
 select
-  -- Required Columns
   type || ' ' || a.name as resource,
   case
     when (arguments -> 'network_acls' ->> 'default_action')::text <> 'Deny' then 'alarm'
