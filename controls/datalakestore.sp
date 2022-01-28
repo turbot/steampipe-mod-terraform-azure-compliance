@@ -5,7 +5,7 @@ locals {
 }
 
 benchmark "datalakestore" {
-  title       = "Data lake"
+  title       = "Data lake Store"
   description = "This benchmark provides a set of controls that detect Terraform Azure Data Lake resources deviating from security best practices."
 
   children = [

@@ -25,7 +25,7 @@ benchmark "compute" {
 
 control "compute_vm_malware_agent_installed" {
   title       = "Deploy default Microsoft IaaSAntimalware extension for Windows Server"
-  description = "This policy deploys a Microsoft IaaSAntimalware extension with a default configuration when a VM is not configured with the antimalware extension."
+  description = "This policy deploys a Microsoft IaaSAntimalware extension with a default configuration when a VM is not configured with the anti-malware extension."
   sql         = query.compute_vm_malware_agent_installed.sql
 
   tags = merge(local.compute_compliance_common_tags, {

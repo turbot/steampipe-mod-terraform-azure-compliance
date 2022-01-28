@@ -76,7 +76,7 @@ control "appservice_web_app_remote_debugging_disabled" {
 
 control "appservice_function_app_latest_tls_version" {
   title       = "Latest TLS version should be used in your Function App"
-  description = "Upgrade to the latest TLS version."
+  description = "App service currently allows the function app to set TLS versions 1.0, 1.1 and 1.2. It is highly recommended to use the latest TLS 1.2 version for function app secure connections."
   sql         = query.appservice_function_app_latest_tls_version.sql
 
   tags = merge(local.appservice_compliance_common_tags, {
@@ -87,7 +87,7 @@ control "appservice_function_app_latest_tls_version" {
 
 control "appservice_web_app_latest_tls_version" {
   title       = "Latest TLS version should be used in your Web App"
-  description = "Upgrade to the latest TLS version."
+  description = "App service currently allows the web app to set TLS versions 1.0, 1.1 and 1.2. It is highly recommended to use the latest TLS 1.2 version for web app secure connections."
   sql         = query.appservice_web_app_latest_tls_version.sql
 
   tags = merge(local.appservice_compliance_common_tags, {
@@ -152,7 +152,7 @@ control "appservice_function_app_cors_no_star" {
 
 control "appservice_web_app_uses_managed_identity" {
   title       = "Managed identity should be used in your Web App"
-  description = "Use a managed identity for enhanced authentication security."
+  description = "Use a managed identity for enhanced authentication security.A managed identity from Azure Active Directory (Azure AD) allows your app to easily access other Azure AD-protected resources such as Azure Key Vault. The identity is managed by the Azure platform and does not require you to provision or rotate any secrets"
   sql         = query.appservice_web_app_uses_managed_identity.sql
 
   tags = merge(local.appservice_compliance_common_tags, {
@@ -163,7 +163,7 @@ control "appservice_web_app_uses_managed_identity" {
 
 control "appservice_function_app_uses_managed_identity" {
   title       = "Managed identity should be used in your Function App"
-  description = "Use a managed identity for enhanced authentication security."
+  description = "Use a managed identity for enhanced authentication security.A managed identity from Azure Active Directory (Azure AD) allows your app to easily access other Azure AD-protected resources such as Azure Key Vault. The identity is managed by the Azure platform and does not require you to provision or rotate any secrets"
   sql         = query.appservice_function_app_uses_managed_identity.sql
 
   tags = merge(local.appservice_compliance_common_tags, {
@@ -204,7 +204,7 @@ control "appservice_function_app_client_certificates_on" {
 
 control "appservice_function_app_ftps_enabled" {
   title       = "FTPS only should be required in your Function App"
-  description = "Enable FTPS enforcement for enhanced security."
+  description = "Enable FTPS enforcement for enhanced security. For enhanced security, you should allow FTP over TLS/SSL only. You can also disable both FTP and FTPS if you don't use FTP deployment"
   sql         = query.appservice_function_app_ftps_enabled.sql
 
   tags = merge(local.appservice_compliance_common_tags, {
@@ -214,7 +214,7 @@ control "appservice_function_app_ftps_enabled" {
 
 control "appservice_web_app_ftps_enabled" {
   title       = "FTPS should be required in your Web App"
-  description = "Enable FTPS enforcement for enhanced security."
+  description = "Enable FTPS enforcement for enhanced security. For enhanced security, you should allow FTP over TLS/SSL only. You can also disable both FTP and FTPS if you don't use FTP deployment"
   sql         = query.appservice_web_app_ftps_enabled.sql
 
   tags = merge(local.appservice_compliance_common_tags, {

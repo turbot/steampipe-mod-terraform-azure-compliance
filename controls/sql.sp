@@ -110,7 +110,7 @@ control "sql_database_allow_internet_access" {
 
 control "sql_server_atp_enabled" {
   title       = "Ensure that Advanced Threat Protection (ATP) on a SQL server is set to 'Enabled'"
-  description = "Enable 'Azure Defender for SQL' on critical SQL Servers."
+  description = "Enable 'Azure Defender for SQL' on critical SQL Servers. It is recommended to enable Azure Defender for SQL on critical SQL Servers. Azure Defender for SQL is a unified package for advanced security capabilities"
   sql         = query.sql_server_atp_enabled.sql
 
   tags = merge(local.sql_compliance_common_tags, {

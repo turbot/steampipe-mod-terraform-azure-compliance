@@ -18,8 +18,8 @@ benchmark "monitor" {
 }
 
 control "monitor_log_profile_enabled_for_all_categories" {
-  title       = "Azure Monitor log profile should collect logs for categories 'write,' 'delete,' and 'action'"
-  description = "This policy ensures that a log profile collects logs for categories 'write,' 'delete,' and 'action'."
+  title       = "Azure Monitor log profile should collect logs for categories 'write', 'delete' and 'action'"
+  description = "This policy ensures that a log profile collects logs for categories 'write', 'delete' and 'action'."
   sql         = query.monitor_log_profile_enabled_for_all_categories.sql
 
   tags = merge(local.monitor_compliance_common_tags, {

@@ -69,7 +69,7 @@ control "securitycenter_email_configured" {
 
 control "securitycenter_azure_defender_on_for_sqlservervm" {
   title       = "Azure Defender for SQL should be enabled for unprotected SQL Managed Instances"
-  description = "Audit each SQL Managed Instance without advanced data security."
+  description = "Audit each SQL Managed Instance without advanced data security. Turning on Azure Defender enables threat detection for SQL Managed Instance, providing threat intelligence, anomaly detection, and behavior analytics in the Azure Security Center"
   sql         = query.securitycenter_azure_defender_on_for_sqlservervm.sql
 
   tags = merge(local.securitycenter_compliance_common_tags, {

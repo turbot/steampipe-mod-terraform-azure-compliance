@@ -18,7 +18,7 @@ benchmark "cognitivesearch" {
 
 control "search_service_public_network_access_disabled" {
   title       = "Azure Cognitive Search services should disable public network access"
-  description = "Disabling public network access improves security by ensuring that your Azure Cognitive Search service is not exposed on the public internet. Creating private endpoints can limit exposure of your Search service."
+  description = "Disabling public network access improves security by ensuring that your Azure Cognitive Search service is not exposed on the public internet. Creating private endpoints can limit exposure of your search service."
   sql         = query.search_service_public_network_access_disabled.sql
 
   tags = merge(local.cognitivesearch_compliance_common_tags, {
