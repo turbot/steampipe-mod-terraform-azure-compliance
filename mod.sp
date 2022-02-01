@@ -5,7 +5,7 @@ mod "terraform_azure_compliance" {
   color         = "#844FBA"
   documentation = file("./docs/index.md")
   icon          = "/images/mods/turbot/terraform-azure-compliance.svg"
-  categories    = ["azure", "compliance", "iaas", "security", "terraform"]
+  categories    = ["azure", "compliance", "iac", "security", "terraform"]
 
   opengraph {
     title        = "Steampipe Mod to Analyze Terraform"
