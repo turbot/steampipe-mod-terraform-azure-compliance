@@ -16,7 +16,6 @@ with postgresql_server as (
     and (arguments ->> 'value')::int > 3
 )
 select
-  -- Required Columns
   a.type || ' ' || a.name as resource,
   case
     when (s.arguments ->> 'server_name') is not null then 'ok'

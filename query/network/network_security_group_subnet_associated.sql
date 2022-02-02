@@ -14,7 +14,6 @@ with all_subnet as (
     type = 'azurerm_subnet_network_security_group_association'
 )
 select
-  -- Required Columns
   a.type || ' ' || a.name as resource,
   case
     when (s.arguments ->> 'subnet_id') is not null then 'ok'

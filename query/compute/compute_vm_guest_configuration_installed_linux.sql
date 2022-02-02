@@ -22,7 +22,6 @@ vm_guest_configuration as (
     (b.arguments ->> 'publisher') = 'Microsoft.GuestConfiguration'
 )
 select
-  -- Required Columns
   type || ' ' || name as resource,
   case
     when d.vm_name is null then 'alarm'

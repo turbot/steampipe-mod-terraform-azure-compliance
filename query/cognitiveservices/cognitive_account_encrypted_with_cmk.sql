@@ -14,7 +14,6 @@ with all_cognitive_account as (
       type = 'azurerm_cognitive_account_customer_managed_key'
 )
 select
-  -- Required Columns
   c.type || ' ' || c.name as resource,
   case
     when (b.arguments ->> 'cognitive_account_id') is not null then 'ok'

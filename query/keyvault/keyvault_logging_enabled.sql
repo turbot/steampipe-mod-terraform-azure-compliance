@@ -21,11 +21,10 @@ with key_vaults as (
   where
     (ds.arguments ->> 'storage_account_id') is not null
     and (ds.arguments -> 'log' ->> 'category')::text = 'AuditEvent'
-    and  (ds.arguments -> 'log' ->> 'enabled')::boolean
-    and  (ds.arguments -> 'log' -> 'retention_policy' ->> 'enabled')::boolean
+    and (ds.arguments -> 'log' ->> 'enabled')::boolean
+    and (ds.arguments -> 'log' -> 'retention_policy' ->> 'enabled')::boolean
 )
 select
-  -- Required Columns
   type || ' ' || a.name as resource,
   case
     when s.kv_name is null then 'alarm'

@@ -16,7 +16,6 @@ with app_service as (
       and (arguments ->> 'subnet_id') is not null
 )
 select
-  -- Required Columns
   a.type || ' ' || a.name as resource,
   case
     when (s.arguments ->> 'app_service_id') is null then 'alarm'
