@@ -10,7 +10,7 @@ select
     when (arguments -> 'network_acls' ->> 'default_action') <> 'Deny' then ' publicly accessible.'
     else ' publicly not accessible'
   end || '.' reason,
-  path
+  path || ':' || start_line
 from
   terraform_resource
 where

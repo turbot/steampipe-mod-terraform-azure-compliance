@@ -8,7 +8,7 @@ select
     when (arguments -> 'enable_non_ssl_port')::boolean then ' secure connections disabled'
     else ' secure connections enabled'
   end || '.' reason,
-  path
+  path || ':' || start_line
 from
   terraform_resource
 where

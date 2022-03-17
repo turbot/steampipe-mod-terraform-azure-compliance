@@ -31,6 +31,6 @@ select
     when d.vm_name is null then ' have guest configuration extension not installed'
     else ' have guest configuration extension installed'
   end || '.' reason,
-  path
+  path || ':' || start_line
 from
   all_windows_vm as c left join vm_guest_configuration as d on c.name = d.vm_name;

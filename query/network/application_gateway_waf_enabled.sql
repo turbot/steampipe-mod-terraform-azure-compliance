@@ -8,7 +8,7 @@ select
     when (arguments -> 'waf_configuration') is not null then ' WAF enabled'
     else ' WAF disabled'
   end || '.' reason,
-  path
+  path || ':' || start_line
 from
   terraform_resource
 where

@@ -8,7 +8,7 @@ select
     when (arguments -> 'alert_notifications')::bool is true then ' notify alerts configured'
     else ' notify alerts not configured'
   end || '.' reason,
-  path
+  path || ':' || start_line
 from
   terraform_resource
 where

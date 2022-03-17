@@ -10,7 +10,7 @@ select
     when (arguments -> 'network_rules' ->> 'default_action') = 'Deny' then ' restricts network access'
     else ' allows network access'
   end || '.' reason,
-  path
+  path || ':' || start_line
 from
   terraform_resource
 where

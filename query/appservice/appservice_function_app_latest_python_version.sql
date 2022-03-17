@@ -12,7 +12,7 @@ select
     when (arguments -> 'site_config' ->> 'linux_fx_version')::text = 'PYTHON|3.9' then ' using the latest python version'
     else ' not using latest python version'
   end || '.' reason,
-  path
+  path || ':' || start_line
 from
   terraform_resource
 where

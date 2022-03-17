@@ -10,7 +10,7 @@ select
     when (arguments ->> 'enable_disk_encryption')::boolean then ' disk encryption enabled'
     else ' disk encryption disabled'
   end || '.' reason,
-  path
+  path || ':' || start_line
 from
   terraform_resource
 where

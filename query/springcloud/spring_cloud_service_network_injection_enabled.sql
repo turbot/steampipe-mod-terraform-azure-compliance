@@ -8,7 +8,7 @@ select
     when (arguments -> 'network') is null then ' network injection disabled'
     else ' network injection enabled'
   end || '.' reason,
-  path
+  path || ':' || start_line
 from
   terraform_resource
 where

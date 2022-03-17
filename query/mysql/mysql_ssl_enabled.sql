@@ -8,7 +8,7 @@ select
     when (arguments ->> 'ssl_enforcement_enabled')::boolean then ' SSL connection enabled'
     else ' SSL connection disabled'
   end || '.' reason,
-  path
+  path || ':' || start_line
 from
   terraform_resource
 where

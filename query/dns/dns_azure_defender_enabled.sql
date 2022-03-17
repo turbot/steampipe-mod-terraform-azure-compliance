@@ -8,7 +8,7 @@ select
     when (arguments ->> 'resource_type') = 'Dns' and (arguments ->> 'tier') = 'Standard' then ' Dns azure defender enabled'
     else ' Dns azure defender disabled'
   end || '.' reason,
-  path
+  path || ':' || start_line
 from
   terraform_resource
 where

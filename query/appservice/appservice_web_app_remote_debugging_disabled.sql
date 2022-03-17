@@ -10,7 +10,7 @@ select
     when (arguments -> 'site_config' -> 'remote_debugging_enabled')::boolean then ' remote debugging enabled'
     else ' remote debugging disabled'
   end || '.' reason,
-  path
+  path || ':' || start_line
 from
   terraform_resource
 where

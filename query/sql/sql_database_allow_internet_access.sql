@@ -23,7 +23,7 @@ select
     then ' allows ingress 0.0.0.0/0 or any ip over internet'
     else ' does not allow ingress 0.0.0.0/0 or any ip over internet'
   end || '.' reason,
-  path
+  path || ':' || start_line
 from
   terraform_resource
 where

@@ -10,7 +10,7 @@ select
     when (arguments -> 'site_config' ->> 'ftps_state')::text = 'FtpsOnly' then ' FTPS enabled'
     else '  FTPS disabled'
   end || '.' reason,
-  path
+  path || ':' || start_line
 from
   terraform_resource
 where
@@ -29,7 +29,7 @@ union
     when (arguments -> 'site_config' ->> 'ftps_state')::text = 'FtpsOnly' then ' FTPS enabled'
     else '  FTPS disabled'
   end || '.' reason,
-  path
+  path || ':' || start_line
 from
   terraform_resource
 where

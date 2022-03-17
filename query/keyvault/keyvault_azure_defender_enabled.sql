@@ -8,7 +8,7 @@ select
     when (arguments ->> 'resource_type') = 'KeyVaults' and (arguments ->> 'tier') = 'Standard' then ' Azure Defender on for KeyVaults'
     else ' Azure Defender off for KeyVaults'
   end || '.' reason,
-  path
+  path || ':' || start_line
 from
   terraform_resource
 where

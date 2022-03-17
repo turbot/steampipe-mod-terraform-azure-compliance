@@ -24,7 +24,7 @@ select
     when s.name is null then  ' not configured with virtual service endpoint'
     else ' configured with virtual service endpoint'
   end || '.' reason,
-  path
+  path || ':' || start_line
 from
   container_registry as a
   left join container_registry_subnet as s on a.name = s.name;

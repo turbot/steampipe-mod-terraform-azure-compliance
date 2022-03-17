@@ -8,7 +8,7 @@ select
     when (arguments -> 'identity') is null then ' ''identity'' is not defined'
     else ' uses ' || (arguments -> 'identity' ->> 'type') || ' identity'
   end || '.' reason,
-  path
+  path || ':' || start_line
 from
   terraform_resource
 where

@@ -25,7 +25,7 @@ select
     when (s.arguments ->> 'server_name') is not null then ' server parameter log_disconnections on'
     else ' server parameter log_disconnections off'
   end || '.' reason,
-  a.path
+  a.path || ':' || a.start_line
 from
   postgresql_server as a
   left join log_disconnections_configuration as s on a.name = (split_part((s.arguments ->> 'server_name'), '.', 2));

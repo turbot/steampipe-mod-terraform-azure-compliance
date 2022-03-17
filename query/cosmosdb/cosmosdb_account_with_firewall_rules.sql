@@ -12,7 +12,7 @@ select
       and (arguments ->>  'ip_range_filter') is null then  ' not have firewall rules'
     else ' have firewall rules'
   end || '.' reason,
-  path
+  path || ':' || start_line
 from
   terraform_resource
 where

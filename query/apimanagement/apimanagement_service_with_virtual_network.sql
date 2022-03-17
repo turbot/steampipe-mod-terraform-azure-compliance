@@ -9,7 +9,7 @@ select
     when (arguments -> 'virtual_network_type') is null then ' ''virtual_network_type'' is not set'
     else ' virtual network is set to ' || (arguments ->> 'virtual_network_type')
   end || '.' reason,
-  path
+  path || ':' || start_line
 from
   terraform_resource
 where

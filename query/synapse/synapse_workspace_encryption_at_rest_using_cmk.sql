@@ -10,7 +10,7 @@ select
     when (arguments -> 'customer_managed_key' -> 'key_versionless_id') is not null then ' encrypted with CMK'
     else ' not encrypted with CMK'
   end || '.' reason,
-  path
+  path || ':' || start_line
 from
   terraform_resource
 where

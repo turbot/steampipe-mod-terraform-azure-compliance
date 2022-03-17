@@ -10,7 +10,7 @@ select
     when (arguments -> 'addon_profile' -> 'azure_policy' ->>'enabled')::boolean then ' add on azure policy enabled'
     else ' add on azure policy disabled'
   end || '.' reason,
-  path
+  path || ':' || start_line
 from
   terraform_resource
 where

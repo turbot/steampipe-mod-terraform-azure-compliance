@@ -8,7 +8,7 @@ select
     when (arguments ->> 'expiration_date') is null then ' expiration_date not set'
     else ' expiration_date is set'
   end || '.' reason,
-  path
+  path || ':' || start_line
 from
   terraform_resource
 where

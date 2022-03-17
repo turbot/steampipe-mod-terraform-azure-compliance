@@ -8,7 +8,7 @@ select
     when (arguments -> 'resource_group_name') is null then ' does not use azure resource group manager'
     else ' uses azure resource group manager'
   end || '.' reason,
-  path
+  path || ':' || start_line
 from
   terraform_resource
 where

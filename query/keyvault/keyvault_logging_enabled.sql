@@ -34,7 +34,7 @@ select
     when s.kv_name is null then  ' logging disabled'
     else ' logging enabled'
   end || '.' reason,
-  a.path
+  a.path || ':' || a.start_line
 from
   key_vaults as a
   left join key_vaults_logging as s on a.name = s.kv_name;

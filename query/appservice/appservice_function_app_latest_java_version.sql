@@ -12,7 +12,7 @@ select
     when (arguments -> 'site_config' ->> 'linux_fx_version')::text like '%11' then ' using the latest JAVA version'
     else ' not using latest JAVA version'
   end || '.' reason,
-  path
+  path || ':' || start_line
 from
   terraform_resource
 where

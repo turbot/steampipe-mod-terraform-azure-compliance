@@ -23,7 +23,7 @@ select
     when (s.arguments ->> 'subnet_id') is not null then ' associated with subnet'
     else ' not associated with subnet'
   end || '.' reason,
-  a.path
+  a.path || ':' || a.start_line
 from
   all_subnet as a
   left join network_security_group_association as s on a.name = ( split_part((s.arguments ->> 'subnet_id'), '.', 2));

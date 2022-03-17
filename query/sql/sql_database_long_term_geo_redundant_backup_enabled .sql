@@ -16,7 +16,7 @@ select
       then ' long-term geo-redundant backup enabled'
     else ' long-term geo-redundant backup disabled'
   end || '.' reason,
-  path
+  path || ':' || start_line
 from
   terraform_resource
 where

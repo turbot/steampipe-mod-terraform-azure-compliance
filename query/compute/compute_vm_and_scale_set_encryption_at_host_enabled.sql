@@ -10,7 +10,7 @@
     when (arguments -> 'encryption_at_host_enabled')::boolean then ' encryption at host enabled'
     else ' encryption at host disabled'
   end || '.' reason,
-  path
+  path || ':' || start_line
 from
   terraform_resource
 where
@@ -31,7 +31,7 @@ select
     when (arguments -> 'encryption_at_host_enabled')::boolean then ' encryption at host enabled'
     else ' encryption at host disabled'
   end || '.' reason,
-  path
+  path || ':' || start_line
 from
   terraform_resource
 where

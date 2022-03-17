@@ -32,7 +32,7 @@ select
     when s.ba_name is null then ' logging disabled'
     else ' logging enabled'
   end || '.' reason,
-  a.path
+  a.path || ':' || a.start_line
 from
   batch_accounts as a
   left join batch_account_logging as s on a.name = s.ba_name;

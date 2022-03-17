@@ -24,7 +24,7 @@ select
     when (s.arguments ->> 'synapse_workspace_id') is not null then ' uses private link'
     else ' not uses private link'
   end || '.' reason,
-  a.path
+  a.path || ':' || a.start_line
 from
   synapse_workspaces as a
   left join synapse_workspace_private_link as s on a.sw_id = ( s.arguments ->> 'synapse_workspace_id');

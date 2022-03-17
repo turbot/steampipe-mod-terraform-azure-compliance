@@ -14,7 +14,7 @@ select
       and (arguments -> 'cluster_setting' ->> 'value')::text = 'true' then ' internal encryption enabled'
     else ' internal encryption disabled'
   end || '.' reason,
-  path
+  path || ':' || start_line
 from
   terraform_resource
 where

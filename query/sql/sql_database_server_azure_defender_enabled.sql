@@ -8,7 +8,7 @@ select
      when (arguments ->> 'tier') = 'Standard' and (arguments ->> 'resource_type') = 'SqlServers' then ' Azure defender enabled for SqlServer(s)'
     else ' Azure defender enabled for ' || (arguments ->> 'resource_type') || ''
   end || '.' reason,
-  path
+  path || ':' || start_line
 from
   terraform_resource
 where

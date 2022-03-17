@@ -8,7 +8,7 @@ select
     when (arguments ->> 'infrastructure_encryption_enabled')::boolean then ' infrastructure encryption enabled'
     else ' infrastructure encryption disabled'
   end || '.' reason,
-  path
+  path || ':' || start_line
 from
   terraform_resource
 where

@@ -10,7 +10,7 @@ select
     when (arguments -> 'allow_blob_public_access')::bool then ' allows public access to all the blobs or containers'
     else ' does not allow public access to the blobs or containers'
   end || '.' reason,
-  path
+  path || ':' || start_line
 from
   terraform_resource
 where

@@ -8,7 +8,7 @@ select
     when (arguments -> 'private_link_access') is null then ' does not use private link'
     else ' uses private link'
   end || '.' reason,
-  path
+  path || ':' || start_line
 from
   terraform_resource
 where

@@ -25,7 +25,7 @@ select
     when (a.arguments ->> 'name')::text = 'GatewaySubnet' and (s.arguments ->> 'subnet_id') is null then ' Gateway subnet not configured with network security group'
     else ' not of gateway subnet type'
   end || '.' reason,
-  a.path
+  a.path || ':' || a.start_line
 from
   all_subnet as a
   left join network_security_group_association as s on a.name = ( split_part((s.arguments ->> 'subnet_id'), '.', 2));

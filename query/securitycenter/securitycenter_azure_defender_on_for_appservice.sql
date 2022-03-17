@@ -8,7 +8,7 @@ select
     when (arguments ->> 'resource_type') = 'AppServices' and (arguments ->> 'tier') = 'Standard' then ' Azure Defender on for App Services'
     else ' Azure Defender off for App Services'
   end || '.' reason,
-  path
+  path || ':' || start_line
 from
   terraform_resource
 where

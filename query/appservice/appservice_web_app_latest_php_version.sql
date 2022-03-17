@@ -12,7 +12,7 @@ select
     when (arguments -> 'site_config' ->> 'linux_fx_version')::text = 'PHP|8.0' then ' using the latest php version'
     else ' not using latest php version'
   end || '.' reason,
-  path
+  path || ':' || start_line
 from
   terraform_resource
 where

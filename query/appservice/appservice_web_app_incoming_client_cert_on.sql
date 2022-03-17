@@ -8,7 +8,7 @@ select
     when (arguments ->> 'client_cert_enabled')::boolean then ' incoming client certificates set to on'
     else ' incoming client certificates set to off'
   end || '.' reason,
-  path
+  path || ':' || start_line
 from
   terraform_resource
 where

@@ -10,7 +10,7 @@ select
     when (arguments -> 'virtual_network_rule' ->> 'id') is not null then ' configured with virtual network service endpointle'
     else ' not configured with virtual network service endpoint'
   end || '.' reason,
-  path
+  path || ':' || start_line
 from
   terraform_resource
 where

@@ -12,7 +12,7 @@ select
     when (arguments -> 'fabric_settings' ->> 'parameters') like '%EncryptAndSign%' then ' Cluster Protection Level set to EncryptAndSign'
     else ' Cluster Protection Level not set to EncryptAndSign'
   end || '.' reason,
-  path
+  path || ':' || start_line
 from
   terraform_resource
 where

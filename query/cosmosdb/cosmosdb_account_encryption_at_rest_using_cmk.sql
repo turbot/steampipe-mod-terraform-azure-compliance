@@ -8,7 +8,7 @@ select
     when (arguments ->> 'key_vault_key_id') is not null then  ' encrypted at rest using CMK'
     else ' not encrypted at rest using CMK'
   end || '.' reason,
-  path
+  path || ':' || start_line
 from
   terraform_resource
 where

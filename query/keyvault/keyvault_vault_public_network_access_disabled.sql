@@ -10,7 +10,7 @@ select
     when (arguments -> 'network_acls' ->> 'default_action')::text != 'Deny' then ' public network access enabled'
     else ' public network access disabled'
   end || '.' reason,
-  path
+  path || ':' || start_line
 from
   terraform_resource
 where

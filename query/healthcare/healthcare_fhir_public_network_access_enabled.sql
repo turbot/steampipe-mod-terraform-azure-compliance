@@ -10,7 +10,7 @@ select
     when (arguments -> 'public_network_access_enabled')::bool then ' public access disabled'
     else ' public access enabled'
   end || '.' reason,
-  path
+  path || ':' || start_line
 from
   terraform_resource
 where

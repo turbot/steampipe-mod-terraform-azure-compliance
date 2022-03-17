@@ -10,7 +10,7 @@ select
     when (arguments -> 'geo_redundant_backup_enabled')::bool then ' geo-redundant backup enabled'
     else ' geo-redundant backup disabled'
   end || '.' reason,
-  path
+  path || ':' || start_line
 from
   terraform_resource
 where

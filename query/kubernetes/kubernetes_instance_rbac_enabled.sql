@@ -10,7 +10,7 @@ select
     when (arguments -> 'role_based_access_control' -> 'azure_active_directory' -> 'azure_rbac_enabled')::boolean then ' role based access control enabled'
     else ' role based access control disabled'
   end || '.' reason,
-  path
+  path || ':' || start_line
 from
   terraform_resource
 where

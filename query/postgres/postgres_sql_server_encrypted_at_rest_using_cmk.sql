@@ -25,7 +25,7 @@ select
     when (s.arguments ->> 'server_id') is not null then ' encrypted with CMK'
     else ' not encrypted with CMK'
   end || '.' reason,
-  a.path
+  a.path || ':' || a.start_line
 from
   postgresql_server as a
   left join server_keys as s on a.pg_id = ( s.arguments ->> 'server_id');

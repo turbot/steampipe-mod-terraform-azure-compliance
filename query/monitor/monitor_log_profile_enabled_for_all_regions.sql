@@ -10,7 +10,7 @@ select
     "norwayeast", "norwaywest", "southafricanorth", "southafricawest", "southcentralus", "southeastasia", "southindia", "switzerlandnorth", "switzerlandwest", "uaecentral", "uaenorth", "uksouth", "ukwest", "westcentralus", "westeurope", "westindia", "westus", "westus2", "westus3"]' then ' collect activity logs from all regions'
     else ' not collect activity logs from all regions'
   end || '.' reason,
-  path
+  path || ':' || start_line
 from
   terraform_resource
 where
