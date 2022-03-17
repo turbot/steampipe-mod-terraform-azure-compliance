@@ -8,7 +8,7 @@ select
     when (arguments -> 'api_server_authorized_ip_ranges') is null then ' authorized IP ranges not defined'
     else ' authorized IP ranges not defined'
   end || '.' reason,
-  path
+  path || ':' || start_line
 from
   terraform_resource
 where

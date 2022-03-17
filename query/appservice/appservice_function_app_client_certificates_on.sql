@@ -8,7 +8,7 @@ select
     when (arguments -> 'client_cert_mode') is not null then ' cilient certificate enabled'
     else ' client certificate disabled'
   end || '.' reason,
-  path
+  path || ':' || start_line
 from
   terraform_resource
 where

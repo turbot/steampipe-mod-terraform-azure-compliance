@@ -8,7 +8,7 @@ select
     when (arguments -> 'alerts_to_admins')::bool is true and (arguments -> 'alert_notifications')::bool is true then ' notify alerts to admins configured'
     else ' notify alerts to admin not configured'
   end || '.' reason,
-  path
+  path || ':' || start_line
 from
   terraform_resource
 where

@@ -10,7 +10,7 @@ select
     when (arguments -> 'routing_rule' -> 'frontend_endpoint' -> 'web_application_firewall_policy_link_id') is null then ' WAF disabled'
     else ' WAF enabled'
   end || '.' reason,
-  path
+  path || ':' || start_line
 from
   terraform_resource
 where

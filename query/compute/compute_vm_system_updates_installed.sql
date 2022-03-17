@@ -8,7 +8,7 @@ select
     when (arguments -> 'os_profile_windows_config' ->> 'enable_automatic_upgrades')::boolean then ' automatic system updates enabled'
     else ' automatic system updates disabled'
   end || '.' reason,
-  path
+  path || ':' || start_line
 from
   terraform_resource
 where

@@ -10,7 +10,7 @@ select
     when (arguments ->> 'incoming_traffic_policy') = 'AllowAllTraffic' then ' uses public networks'
     else ' uses private link'
   end || '.' reason,
-  path
+  path || ':' || start_line
 from
   terraform_resource
 where

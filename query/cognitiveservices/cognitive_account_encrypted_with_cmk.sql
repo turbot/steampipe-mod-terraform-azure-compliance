@@ -23,6 +23,6 @@ select
     when (b.arguments ->> 'cognitive_account_id') is not null then ' encrypted with CMK'
     else ' not encrypted with CMK'
   end || '.' reason,
-  c.path
+  c.path || c.start_line
 from
   all_cognitive_account as c left join cognitive_account_cmk as b on c.name = (split_part((b.arguments ->> 'cognitive_account_id'), '.', 2))

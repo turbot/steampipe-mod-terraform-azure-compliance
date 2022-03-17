@@ -8,7 +8,7 @@ select
     when (arguments ->> 'resource_type') = 'Arm' and (arguments ->> 'tier') = 'Standard' then ' Arm azure defender enabled'
     else 'Arm azure defender disabled'
   end || '.' reason,
-  path
+  path || ':' || start_line
 from
   terraform_resource
 where

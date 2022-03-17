@@ -8,7 +8,7 @@ select
     when (arguments -> 'email') is not null and (arguments -> 'alert_notifications')::bool is true then ' additional email & alert notifications configured'
     else ' additional email & alert notifications not configured'
   end || '.' reason,
-  path
+  path || ':' || start_line
 from
   terraform_resource
 where

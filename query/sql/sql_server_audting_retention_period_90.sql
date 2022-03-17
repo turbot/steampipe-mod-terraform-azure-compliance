@@ -24,7 +24,7 @@ select
     when (s.arguments ->> 'server_name') is not null then ' audit retention greater than 90 days'
     else ' audit retention less than 90 days'
   end || '.' reason,
-  a.path
+  a.path || ':' || a.start_line
 from
   sql_server as a
   left join server_audit_policy as s on a.name = ( split_part((s.arguments ->> 'server_id'), '.', 2));

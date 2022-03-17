@@ -16,7 +16,7 @@ select
       and (arguments -> 'logs' -> 'http_logs' -> 'file_system') is not null then ' diagnostic logs enabled'
     else ' diagnostic logs disabled'
   end || '.' reason,
-  path
+  path || ':' || start_line
 from
   terraform_resource
 where

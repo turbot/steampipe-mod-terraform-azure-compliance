@@ -8,7 +8,7 @@ select
     when (arguments -> 'subnet_id') is not null then ' in virtual network'
     else ' not in virtual network'
   end || '.' reason,
-  path
+  path || ':' || start_line
 from
   terraform_resource
 where

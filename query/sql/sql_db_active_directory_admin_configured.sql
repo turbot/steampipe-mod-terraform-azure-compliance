@@ -8,7 +8,7 @@ select
     when (arguments -> 'azuread_administrator') is null then ' Azure AD authentication not configured.'
     else ' Azure AD authentication configured'
   end || '.' reason,
-  path
+  path || ':' || start_line
 from
   terraform_resource
 where

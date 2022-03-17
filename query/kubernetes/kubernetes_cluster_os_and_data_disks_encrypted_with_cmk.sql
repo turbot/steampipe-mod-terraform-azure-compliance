@@ -8,7 +8,7 @@ select
     when (arguments -> 'disk_encryption_set_id') is null then ' os and data diska not encrypted with CMK'
     else ' os and data diska encrypted with CMK'
   end || '.' reason,
-  path
+  path || ':' || start_line
 from
   terraform_resource
 where

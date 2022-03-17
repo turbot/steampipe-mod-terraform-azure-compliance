@@ -8,7 +8,7 @@ select
     when (arguments -> 'encryption') is null then ' not encrypted with CMK'
     else ' encrypted with CMK'
   end || '.' reason,
-  path
+  path || ':' || start_line
 from
   terraform_resource
 where

@@ -8,7 +8,7 @@ select
     when (arguments -> 'default_node_pool' ->> 'enable_host_encryption')::boolean then ' encrypted at host'
     else ' not encrypted at host'
   end || '.' reason,
-  path
+  path || ':' || start_line
 from
   terraform_resource
 where

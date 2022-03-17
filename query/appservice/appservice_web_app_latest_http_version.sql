@@ -10,7 +10,7 @@ select
     when (arguments -> 'site_config' ->> 'http2_enabled')::boolean then ' HTTP version is latest'
     else ' HTTP version not latest'
   end || '.' reason,
-  path
+  path || ':' || start_line
 from
   terraform_resource
 where

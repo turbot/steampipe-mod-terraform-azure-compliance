@@ -24,7 +24,7 @@ select
     when s.name is null then  ' not configured with virtual service endpoint'
     else ' configured with virtual service endpoint'
   end || '.' reason,
-  path
+  path || ':' || start_line
 from
   key_vaults as a
   left join key_vaults_subnet as s on a.name = s.name;

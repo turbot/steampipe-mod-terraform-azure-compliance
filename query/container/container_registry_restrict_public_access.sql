@@ -10,7 +10,7 @@ select
     when (arguments -> 'network_rule_set' ->> 'default_action')::text = 'Deny' then ' publicly not accessible'
     else ' publicly accessible'
   end || '.' reason,
-  path
+  path || ':' || start_line
 from
   terraform_resource
 where

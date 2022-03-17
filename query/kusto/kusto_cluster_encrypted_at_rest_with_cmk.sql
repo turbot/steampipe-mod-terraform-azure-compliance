@@ -26,7 +26,7 @@ select
     when s.cluster_name is null then  ' logging disabled'
     else ' logging enabled'
   end || '.' reason,
-  a.path
+  a.path || ':' || a.start_line
 from
   kusto_clusters as a
   left join kusto_cluster_customer_managed_key as s on a.name = s.cluster_name;

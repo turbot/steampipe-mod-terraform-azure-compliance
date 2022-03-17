@@ -27,7 +27,7 @@ select
     when (s.name is not null) or ((arguments -> 'network_rulesets' -> 'virtual_network_rule' -> 'subnet_id') is not null) then ' configured with virtual network service endpoint'
     else ' not configured with virtual network service endpoint'
   end || '.' reason,
-  path
+  path || ':' || start_line
 from
   eventhub_namespaces as a
   left join eventhub_namespaces_subnet as s on (a.name)::text = s.name;

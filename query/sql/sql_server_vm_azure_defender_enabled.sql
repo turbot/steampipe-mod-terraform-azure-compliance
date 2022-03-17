@@ -8,7 +8,7 @@ select
     when (arguments ->> 'resource_type') = 'SqlServerVirtualMachines' and (arguments ->> 'tier') = 'Standard' then ' Azure Defender on for SqlServerVirtualMachines'
     else ' Azure Defender off for SqlServerVirtualMachines'
   end || '.' reason,
-  path
+  path || ':' || start_line
 from
   terraform_resource
 where

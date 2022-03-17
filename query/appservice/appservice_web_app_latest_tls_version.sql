@@ -10,7 +10,7 @@ select
     when (arguments -> 'site_config' ->> 'min_tls_version')::float < 1.2 then ' not using the latest version of TLS encryption'
     else ' using the latest version of TLS encryption'
   end || '.' reason,
-  path
+  path || ':' || start_line
 from
   terraform_resource
 where

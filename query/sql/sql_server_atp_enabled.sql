@@ -10,7 +10,7 @@ select
     when (arguments -> 'threat_detection_policy' ->> 'state') = 'Disabled' then ' does not have ATP enabled'
     else ' has ATP enabled'
   end || '.' reason,
-  path
+  path || ':' || start_line
 from
   terraform_resource
 where

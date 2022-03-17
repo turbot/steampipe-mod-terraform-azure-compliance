@@ -8,7 +8,7 @@ select
     when (arguments -> 'azure_active_directory') is null then ' does not use Azure Active Directory for client authentication'
     else ' uses Azure Active Directory for client authentication'
   end || '.' reason,
-  path
+  path || ':' || start_line
 from
   terraform_resource
 where

@@ -8,7 +8,7 @@ select
     when (arguments ->> 'resource_type') = 'ContainerRegistry' and (arguments ->> 'tier') = 'Standard' then ' Azure Defender on for ContainerRegistry'
     else ' Azure Defender off for ContainerRegistry'
   end || '.' reason,
-  path
+  path || ':' || start_line
 from
   terraform_resource
 where

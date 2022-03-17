@@ -8,7 +8,7 @@ select
     when (arguments ->> 'resource_type') = 'KubernetesService' and (arguments ->> 'tier') = 'Standard' then ' Azure Defender on for Kubernetes Service'
     else ' Azure Defender off for Kubernetes Service'
   end || '.' reason,
-  path
+  path || ':' || start_line
 from
   terraform_resource
 where

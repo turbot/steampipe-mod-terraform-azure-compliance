@@ -14,7 +14,7 @@ select
     when (arguments -> 'threat_detection_policy' -> 'retention_days')::integer < 90 then ' auditing to storage account destination not configured with 90 days retention or higher'
     else ' auditing to storage account destination configured with 90 days retention or higher'
   end || '.' reason,
-  path
+  path || ':' || start_line
 from
   terraform_resource
 where

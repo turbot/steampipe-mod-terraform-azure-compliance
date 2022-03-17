@@ -8,7 +8,7 @@ select
     when (arguments ->> 'client_cert_enabled')::boolean then ' client certificate enabled'
     else ' client certificate disabled'
   end || '.' reason,
-  path
+  path || ':' || start_line
 from
   terraform_resource
 where

@@ -10,7 +10,7 @@ select
     when (arguments -> 'identity' ->> 'type')::text = 'SystemAssigned' then ' register with azure active directory enabled'
     else ' register with azure active directory disabled.'
   end || '.' reason,
-  path
+  path || ':' || start_line
 from
   terraform_resource
 where

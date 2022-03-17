@@ -8,7 +8,7 @@ select
     when (arguments -> 'https_only')::boolean then ' https-only accessible enabled'
     else ' https-only accessible disabled'
   end || '.' reason,
-  path
+  path || ':' || start_line
 from
   terraform_resource
 where

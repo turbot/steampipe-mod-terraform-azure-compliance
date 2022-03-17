@@ -24,7 +24,7 @@ select
     when (s.arguments ->> 'server_id') is not null then ' encrypted with CMK'
     else ' not encrypted with CMK'
   end || '.' reason,
-  a.path
+  a.path || ':' || a.start_line
 from
   mysql_server as a
   left join server_keys as s on a.name = (split_part((s.arguments ->> 'server_id'), '.', 2));

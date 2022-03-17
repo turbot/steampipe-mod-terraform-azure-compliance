@@ -10,7 +10,7 @@ select
     when (arguments ->> 'container_access_type') ilike 'Private' then ' container insights-operational-logs storing activity logs not publicly accessible'
     else ' container insights-operational-logs storing activity logs publicly accessible'
   end || '.' reason,
-  path
+  path || ':' || start_line
 from
   terraform_resource
 where

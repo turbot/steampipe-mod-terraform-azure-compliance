@@ -10,7 +10,7 @@ select
     when (arguments -> 'enable_https_traffic_only')::bool then ' encryption in transit enabled'
     else ' encryption in transit not enabled'
   end || '.' reason,
-  path
+  path || ':' || start_line
 from
   terraform_resource
 where

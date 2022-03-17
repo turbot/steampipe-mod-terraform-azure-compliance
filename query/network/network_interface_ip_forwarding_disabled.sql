@@ -8,7 +8,7 @@ select
     when (arguments ->> 'enable_ip_forwarding')::boolean then ' network interface enabled with IP forwarding'
     else ' network interface disabled with IP forwarding'
   end || '.' reason,
-  path
+  path || ':' || start_line
 from
   terraform_resource
 where

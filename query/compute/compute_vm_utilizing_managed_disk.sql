@@ -10,7 +10,7 @@ select
     (arguments -> 'storage_os_disk' ->> 'managed_disk_id') is not null  then ' utilizing managed disks'
     else ' not utilizing managed disks'
   end || '.' reason,
-  path
+  path || ':' || start_line
 from
   terraform_resource
 where

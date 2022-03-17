@@ -25,7 +25,7 @@ select
     when (s.arguments ->> 'app_service_id') is null then  ' not configured with virtual network service endpoint'
     else ' configured with virtual network service endpoint'
   end || '.' reason,
-  a.path
+  a.path || ':' || a.start_line
 from
   app_service as a
   left join app_service_vnet as s on a.id = (s.arguments ->> 'app_service_id');

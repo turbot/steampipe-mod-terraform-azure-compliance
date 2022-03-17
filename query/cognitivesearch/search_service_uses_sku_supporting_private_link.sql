@@ -8,7 +8,7 @@ select
     when (arguments ->> 'sku')::text = 'free' then ' SKU does not supports private link'
     else ' SKU supports private link'
   end || '.' reason,
-  path
+  path || ':' || start_line
 from
   terraform_resource
 where

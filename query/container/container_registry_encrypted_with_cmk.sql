@@ -10,7 +10,7 @@ select
     when (arguments -> 'encryption' ->> 'enabled')::boolean then ' encrypted with CMK'
     else ' not encrypted with CMK'
   end || '.' reason,
-  path
+  path || ':' || start_line
 from
   terraform_resource
 where

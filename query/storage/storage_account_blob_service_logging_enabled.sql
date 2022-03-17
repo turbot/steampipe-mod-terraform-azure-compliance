@@ -10,7 +10,7 @@ select
     when not (arguments -> 'queue_properties' -> 'logging' ->> 'Read')::boolean or not (arguments -> 'queue_properties' -> 'logging' ->> 'Write')::boolean or not (arguments -> 'queue_properties' -> 'logging' ->> 'Delete')::boolean then ' blob service logging not enabled'
     else ' blob service logging enabled'
   end || '.' reason,
-  path
+  path || ':' || start_line
 from
   terraform_resource
 where

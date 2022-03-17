@@ -8,7 +8,7 @@ select
     when (arguments ->> 'encryption_state') = 'Enabled' then ' encryption at rest enabled'
     else ' encryption at rest disabled'
   end || '.' reason,
-  path
+  path || ':' || start_line
 from
   terraform_resource
 where

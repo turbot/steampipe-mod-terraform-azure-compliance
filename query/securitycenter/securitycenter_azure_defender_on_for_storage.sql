@@ -8,7 +8,7 @@ select
     when (arguments ->> 'resource_type') = 'StorageAccounts' and (arguments ->> 'tier') = 'Standard' then ' Azure Defender on for Storage'
     else ' Azure Defender off for Storage'
   end || '.' reason,
-  path
+  path || ':' || start_line
 from
   terraform_resource
 where

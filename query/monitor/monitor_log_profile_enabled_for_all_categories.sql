@@ -8,7 +8,7 @@ select
      when (arguments -> 'categories') @> '["Write", "Action", "Delete"]' then ' collects logs for categories write, delete and action'
     else ' does not collects logs for all categories.'
   end || '.' reason,
-  path
+  path || ':' || start_line
 from
   terraform_resource
 where

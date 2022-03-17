@@ -8,7 +8,7 @@ select
     when (arguments ->> 'local_auth_enabled')::boolean then ' account local authentication enabled'
     else ' account local authentication disabled'
   end || '.' reason,
-  path
+  path || ':' || start_line
 from
   terraform_resource
 where
