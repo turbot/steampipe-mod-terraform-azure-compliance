@@ -1,3 +1,9 @@
+## v0.3 [2022-03-17]
+
+_Enhancements_
+
+- Paths in control outputs now also include the starting line number for the resource
+
 ## v0.2 [2022-02-10]
 
 _Enhancements_
