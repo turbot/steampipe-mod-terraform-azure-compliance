@@ -1,3 +1,9 @@
+## v0.4 [2022-05-02]
+
+_Enhancements_
+
+- Added `category`, `service`, and `type` tags to benchmarks and controls. ([#14](https://github.com/turbot/steampipe-mod-terraform-azure-compliance/pull/14))
+
 ## v0.3 [2022-03-17]
 
 _Enhancements_
