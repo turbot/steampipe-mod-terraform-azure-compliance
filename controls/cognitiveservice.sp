@@ -1,11 +1,11 @@
 locals {
-  cognitiveservice_compliance_common_tags = merge(local.compliance_common_tags, {
+  cognitiveservice_compliance_common_tags = merge(local.terraform_azure_compliance_common_tags, {
     service = "Azure/CognitiveServices"
   })
 }
 
-benchmark "cognitiveservice" {
-  title       = "Cognitive Service"
+benchmark "cognitiveservices" {
+  title       = "Cognitive Services"
   description = "This benchmark provides a set of controls that detect Terraform Azure Cognitive Service resources deviating from security best practices."
 
   children = [

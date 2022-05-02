@@ -1,5 +1,5 @@
 locals {
-  storage_compliance_common_tags = merge(local.compliance_common_tags, {
+  storage_compliance_common_tags = merge(local.terraform_azure_compliance_common_tags, {
     service = "Azure/Storage"
   })
 }
