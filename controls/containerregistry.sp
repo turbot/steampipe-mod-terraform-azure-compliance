@@ -1,6 +1,6 @@
 locals {
   containerregistry_compliance_common_tags = merge(local.compliance_common_tags, {
-    service = "containerregistry"
+    service = "Azure/ContainerRegistry"
   })
 }
 
@@ -14,8 +14,10 @@ benchmark "containerregistry" {
     control.container_registry_restrict_public_access,
     control.container_registry_use_virtual_service_endpoint
   ]
-  
-  tags = local.containerregistry_compliance_common_tags
+
+  tags = merge(local.containerregistry_compliance_common_tags, {
+    type    = "Benchmark"
+  })
 }
 
 control "container_registry_use_virtual_service_endpoint" {

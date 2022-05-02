@@ -1,6 +1,6 @@
 locals {
   postgres_compliance_common_tags = merge(local.compliance_common_tags, {
-    service = "postgres"
+    service = "Azure/PostgreSQL"
   })
 }
 
@@ -20,8 +20,10 @@ benchmark "postgres" {
     control.postgresql_server_infrastructure_encryption_enabled,
     control.postgresql_server_public_network_access_disabled
   ]
-  
-  tags = local.postgres_compliance_common_tags
+
+  tags = merge(local.postgres_compliance_common_tags, {
+    type    = "Benchmark"
+  })
 }
 
 control "postgres_db_server_geo_redundant_backup_enabled" {

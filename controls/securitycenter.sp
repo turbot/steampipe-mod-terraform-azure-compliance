@@ -1,6 +1,6 @@
 locals {
   securitycenter_compliance_common_tags = merge(local.compliance_common_tags, {
-    service = "securitycenter"
+    service = "Azure/SecurityCenter"
   })
 }
 
@@ -22,8 +22,10 @@ benchmark "securitycenter" {
     control.securitycenter_notify_alerts_configured,
     control.securitycenter_security_alerts_to_owner_enabled
   ]
-  
-  tags = local.securitycenter_compliance_common_tags
+
+  tags = merge(local.securitycenter_compliance_common_tags, {
+    type    = "Benchmark"
+  })
 }
 
 control "securitycenter_automatic_provisioning_monitoring_agent_on" {

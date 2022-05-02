@@ -1,6 +1,6 @@
 locals {
   cognitiveservice_compliance_common_tags = merge(local.compliance_common_tags, {
-    service = "cognitiveservice"
+    service = "Azure/CognitiveServices"
   })
 }
 
@@ -9,13 +9,15 @@ benchmark "cognitiveservice" {
   description = "This benchmark provides a set of controls that detect Terraform Azure Cognitive Service resources deviating from security best practices."
 
   children = [
-    control.cognitive_account_encrypted_with_cmk,    
+    control.cognitive_account_encrypted_with_cmk,
     control.cognitive_account_public_network_access_disabled,
     control.cognitive_account_restrict_public_access,
     control.cognitive_service_local_auth_disabled
   ]
-  
-  tags = local.cognitiveservice_compliance_common_tags
+
+  tags = merge(local.cognitiveservice_compliance_common_tags, {
+    type    = "Benchmark"
+  })
 }
 
 control "cognitive_service_local_auth_disabled" {

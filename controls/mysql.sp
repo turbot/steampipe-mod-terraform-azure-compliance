@@ -1,6 +1,6 @@
 locals {
   mysql_compliance_common_tags = merge(local.compliance_common_tags, {
-    service = "mysql"
+    service = "Azure/MySQL"
   })
 }
 
@@ -15,8 +15,10 @@ benchmark "mysql" {
     control.mysql_server_public_network_access_disabled,
     control.mysql_ssl_enabled
   ]
-  
-  tags = local.mysql_compliance_common_tags
+
+  tags = merge(local.mysql_compliance_common_tags, {
+    type    = "Benchmark"
+  })
 }
 
 control "mysql_ssl_enabled" {

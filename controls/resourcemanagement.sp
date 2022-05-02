@@ -1,6 +1,6 @@
 locals {
   resourcemanagement_compliance_common_tags = merge(local.compliance_common_tags, {
-    service = "resourcemanagement"
+    service = "Azure/ResourceManager"
   })
 }
 
@@ -11,8 +11,10 @@ benchmark "resourcemanagement" {
   children = [
     control.resource_manager_azure_defender_enabled
   ]
-  
-  tags = local.resourcemanagement_compliance_common_tags
+
+  tags = merge(local.resourcemanagement_compliance_common_tags, {
+    type    = "Benchmark"
+  })
 }
 
 control "resource_manager_azure_defender_enabled" {

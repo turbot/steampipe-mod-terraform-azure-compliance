@@ -1,6 +1,6 @@
 locals {
   servicefabric_compliance_common_tags = merge(local.compliance_common_tags, {
-    service = "servicefabric"
+    service = "Azure/ServiceFabric"
   })
 }
 
@@ -12,8 +12,10 @@ benchmark "servicefabric" {
     control.servicefabric_cluster_active_directory_authentication_enabled,
     control.servicefabric_cluster_protection_level_as_encrypt_and_sign
   ]
-  
-  tags = local.servicefabric_compliance_common_tags
+
+  tags = merge(local.servicefabric_compliance_common_tags, {
+    type    = "Benchmark"
+  })
 }
 
 control "servicefabric_cluster_active_directory_authentication_enabled" {

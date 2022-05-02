@@ -1,6 +1,6 @@
 locals {
   datafactory_compliance_common_tags = merge(local.compliance_common_tags, {
-    service = "datafactory"
+    service = "Azure/DataFactory"
   })
 }
 
@@ -11,8 +11,10 @@ benchmark "datafactory" {
   children = [
     control.data_factory_encrypted_with_cmk
   ]
-  
-  tags = local.datafactory_compliance_common_tags
+
+  tags = merge(local.datafactory_compliance_common_tags, {
+    type    = "Benchmark"
+  })
 }
 
 control "data_factory_encrypted_with_cmk" {

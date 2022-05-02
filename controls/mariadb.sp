@@ -1,6 +1,6 @@
 locals {
   mariadb_compliance_common_tags = merge(local.compliance_common_tags, {
-    service = "mariadb"
+    service = "Azure/MariaDB"
   })
 }
 
@@ -12,8 +12,10 @@ benchmark "mariadb" {
     control.mariadb_server_geo_redundant_backup_enabled,
     control.mariadb_server_public_network_access_disabled
   ]
-  
-  tags = local.mariadb_compliance_common_tags
+
+  tags = merge(local.mariadb_compliance_common_tags, {
+    type    = "Benchmark"
+  })
 }
 
 control "mariadb_server_geo_redundant_backup_enabled" {

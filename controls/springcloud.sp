@@ -1,6 +1,6 @@
 locals {
   springcloud_compliance_common_tags = merge(local.compliance_common_tags, {
-    service = "springcloud"
+    service = "Azure/SpringCloud"
   })
 }
 
@@ -11,8 +11,10 @@ benchmark "springcloud" {
   children = [
     control.spring_cloud_service_network_injection_enabled
   ]
-  
-  tags = local.springcloud_compliance_common_tags
+
+  tags = merge(local.springcloud_compliance_common_tags, {
+    type    = "Benchmark"
+  })
 }
 
 control "spring_cloud_service_network_injection_enabled" {

@@ -1,6 +1,6 @@
 locals {
   batch_compliance_common_tags = merge(local.compliance_common_tags, {
-    service = "batch"
+    service = "Azure/Batch"
   })
 }
 
@@ -12,8 +12,10 @@ benchmark "batch" {
     control.batch_account_encrypted_with_cmk,
     control.batch_account_logging_enabled
   ]
-  
-  tags = local.batch_compliance_common_tags
+
+  tags = merge(local.batch_compliance_common_tags, {
+    type    = "Benchmark"
+  })
 }
 
 control "batch_account_logging_enabled" {

@@ -1,6 +1,6 @@
 locals {
   redis_compliance_common_tags = merge(local.compliance_common_tags, {
-    service = "redis"
+    service = "Azure/Redis"
   })
 }
 
@@ -12,8 +12,10 @@ benchmark "redis" {
     control.azure_redis_cache_in_virtual_network,
     control.azure_redis_cache_ssl_enabled
   ]
-  
-  tags = local.redis_compliance_common_tags
+
+  tags = merge(local.redis_compliance_common_tags, {
+    type    = "Benchmark"
+  })
 }
 
 control "azure_redis_cache_ssl_enabled" {

@@ -1,6 +1,6 @@
 locals {
   appservice_compliance_common_tags = merge(local.compliance_common_tags, {
-    service = "appservice"
+    service = "Azure/AppService"
   })
 }
 
@@ -38,8 +38,10 @@ benchmark "appservice" {
     control.appservice_web_app_use_virtual_service_endpoint,
     control.appservice_web_app_uses_managed_identity
   ]
-  
-  tags = local.appservice_compliance_common_tags
+
+  tags = merge(local.appservice_compliance_common_tags, {
+    type    = "Benchmark"
+  })
 }
 
 control "appservice_web_app_use_https" {
