@@ -1,6 +1,6 @@
 locals {
-  kubernetes_compliance_common_tags = merge(local.compliance_common_tags, {
-    service = "kubernetes"
+  kubernetes_compliance_common_tags = merge(local.terraform_azure_compliance_common_tags, {
+    service = "Azure/KubernetesService"
   })
 }
 
@@ -16,8 +16,10 @@ benchmark "kubernetes" {
     control.kubernetes_cluster_temp_disks_and_agent_node_pool_cache_encrypted_at_host,
     control.kubernetes_instance_rbac_enabled
   ]
-  
-  tags = local.kubernetes_compliance_common_tags
+
+  tags = merge(local.kubernetes_compliance_common_tags, {
+    type    = "Benchmark"
+  })
 }
 
 control "kubernetes_instance_rbac_enabled" {

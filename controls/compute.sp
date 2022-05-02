@@ -1,6 +1,6 @@
 locals {
-  compute_compliance_common_tags = merge(local.compliance_common_tags, {
-    service = "compute"
+  compute_compliance_common_tags = merge(local.terraform_azure_compliance_common_tags, {
+    service = "Azure/Compute"
   })
 }
 
@@ -19,8 +19,10 @@ benchmark "compute" {
     control.compute_vm_uses_azure_resource_manager,
     control.network_interface_ip_forwarding_disabled
   ]
-  
-  tags = local.compute_compliance_common_tags
+
+  tags = merge(local.compute_compliance_common_tags, {
+    type    = "Benchmark"
+  })
 }
 
 control "compute_vm_malware_agent_installed" {

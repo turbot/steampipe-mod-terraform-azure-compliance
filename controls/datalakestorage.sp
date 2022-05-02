@@ -1,6 +1,6 @@
 locals {
-  datalakestorage_compliance_common_tags = merge(local.compliance_common_tags, {
-    service = "datalakestorage"
+  datalakestorage_compliance_common_tags = merge(local.terraform_azure_compliance_common_tags, {
+    service = "Azure/DataLakeStorage"
   })
 }
 
@@ -11,8 +11,10 @@ benchmark "datalakestorage" {
   children = [
     control.datalake_store_account_encryption_enabled
   ]
-  
-  tags = local.datalakestorage_compliance_common_tags
+
+  tags = merge(local.datalakestorage_compliance_common_tags, {
+    type    = "Benchmark"
+  })
 }
 
 control "datalake_store_account_encryption_enabled" {

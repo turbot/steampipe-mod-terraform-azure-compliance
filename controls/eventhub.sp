@@ -1,6 +1,6 @@
 locals {
-  eventhub_compliance_common_tags = merge(local.compliance_common_tags, {
-    service = "eventhub"
+  eventhub_compliance_common_tags = merge(local.terraform_azure_compliance_common_tags, {
+    service = "Azure/EventHub"
   })
 }
 
@@ -12,8 +12,10 @@ benchmark "eventhub" {
     control.eventhub_namespace_cmk_encryption_enabled,
     control.eventhub_namespace_use_virtual_service_endpoint
   ]
-  
-  tags = local.eventhub_compliance_common_tags
+
+  tags = merge(local.eventhub_compliance_common_tags, {
+    type    = "Benchmark"
+  })
 }
 
 control "eventhub_namespace_use_virtual_service_endpoint" {

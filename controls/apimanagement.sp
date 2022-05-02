@@ -1,6 +1,6 @@
 locals {
-  apimanagement_compliance_common_tags = merge(local.compliance_common_tags, {
-    service = "apimanagement"
+  apimanagement_compliance_common_tags = merge(local.terraform_azure_compliance_common_tags, {
+    service = "Azure/APIManagement"
   })
 }
 
@@ -11,8 +11,11 @@ benchmark "apimanagement" {
   children = [
     control.apimanagement_service_with_virtual_network
   ]
-  
-  tags = local.apimanagement_compliance_common_tags
+
+  tags = merge(local.apimanagement_compliance_common_tags, {
+    type    = "Benchmark"
+  })
+
 }
 
 control "apimanagement_service_with_virtual_network" {

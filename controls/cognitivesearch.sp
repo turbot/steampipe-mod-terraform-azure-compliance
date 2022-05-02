@@ -1,6 +1,6 @@
 locals {
-  cognitivesearch_compliance_common_tags = merge(local.compliance_common_tags, {
-    service = "cognitivesearch"
+  cognitivesearch_compliance_common_tags = merge(local.terraform_azure_compliance_common_tags, {
+    service = "Azure/CognitiveSearch"
   })
 }
 
@@ -12,8 +12,10 @@ benchmark "cognitivesearch" {
     control.search_service_public_network_access_disabled,
     control.search_service_uses_private_link
   ]
-  
-  tags = local.cognitivesearch_compliance_common_tags
+
+  tags = merge(local.cognitivesearch_compliance_common_tags, {
+    type    = "Benchmark"
+  })
 }
 
 control "search_service_public_network_access_disabled" {

@@ -1,18 +1,20 @@
 locals {
-  storagesync_compliance_common_tags = merge(local.compliance_common_tags, {
-    service = "storagesync"
+  storagesync_compliance_common_tags = merge(local.terraform_azure_compliance_common_tags, {
+    service = "Azure/StorageSync"
   })
 }
 
 benchmark "storagesync" {
-  title       = "File Sync"
+  title       = "Storage Sync"
   description = "This benchmark provides a set of controls that detect Terraform Azure File Sync resources deviating from security best practices."
 
   children = [
     control.storage_sync_private_link_used
   ]
-  
-  tags = local.storagesync_compliance_common_tags
+
+  tags = merge(local.storagesync_compliance_common_tags, {
+    type    = "Benchmark"
+  })
 }
 
 control "storage_sync_private_link_used" {

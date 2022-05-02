@@ -1,6 +1,6 @@
 locals {
-  healthcare_compliance_common_tags = merge(local.compliance_common_tags, {
-    service = "healthcare"
+  healthcare_compliance_common_tags = merge(local.terraform_azure_compliance_common_tags, {
+    service = "Azure/HealthcareAPIs"
   })
 }
 
@@ -12,8 +12,10 @@ benchmark "healthcare" {
     control.healthcare_fhir_azure_api_encrypted_at_rest_with_cmk,
     control.healthcare_fhir_public_network_access_enabled
   ]
-  
-  tags = local.healthcare_compliance_common_tags
+
+  tags = merge(local.healthcare_compliance_common_tags, {
+    type    = "Benchmark"
+  })
 }
 
 control "healthcare_fhir_public_network_access_enabled" {
