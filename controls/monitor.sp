@@ -1,6 +1,6 @@
 locals {
-  monitor_compliance_common_tags = merge(local.compliance_common_tags, {
-    service = "monitor"
+  monitor_compliance_common_tags = merge(local.terraform_azure_compliance_common_tags, {
+    service = "Azure/Monitor"
   })
 }
 
@@ -13,8 +13,10 @@ benchmark "monitor" {
     control.monitor_log_profile_enabled_for_all_regions,
     control.monitor_logs_storage_container_not_public_accessible
   ]
-  
-  tags = local.monitor_compliance_common_tags
+
+  tags = merge(local.monitor_compliance_common_tags, {
+    type    = "Benchmark"
+  })
 }
 
 control "monitor_log_profile_enabled_for_all_categories" {

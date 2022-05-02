@@ -1,19 +1,21 @@
 locals {
-  synapse_compliance_common_tags = merge(local.compliance_common_tags, {
-    service = "synapse"
+  synapse_compliance_common_tags = merge(local.terraform_azure_compliance_common_tags, {
+    service = "Azure/SynapseAnalytics"
   })
 }
 
 benchmark "synapse" {
-  title       = "Synapse"
+  title       = "Synapse Analytics"
   description = "This benchmark provides a set of controls that detect Terraform Azure Synapse resources deviating from security best practices."
 
   children = [
     control.synapse_workspace_encryption_at_rest_using_cmk,
     control.synapse_workspace_private_link_used
   ]
-  
-  tags = local.synapse_compliance_common_tags
+
+  tags = merge(local.synapse_compliance_common_tags, {
+    type    = "Benchmark"
+  })
 }
 
 control "synapse_workspace_private_link_used" {

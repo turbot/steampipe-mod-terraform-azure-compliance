@@ -1,6 +1,6 @@
 locals {
-  storage_compliance_common_tags = merge(local.compliance_common_tags, {
-    service = "storage"
+  storage_compliance_common_tags = merge(local.terraform_azure_compliance_common_tags, {
+    service = "Azure/Storage"
   })
 }
 
@@ -25,8 +25,10 @@ benchmark "storage" {
     control.storage_account_uses_private_link,
     control.storage_azure_defender_enabled
   ]
-  
-  tags = local.storage_compliance_common_tags
+
+  tags = merge(local.storage_compliance_common_tags, {
+    type    = "Benchmark"
+  })
 }
 
 control "storage_account_secure_transfer_required_enabled" {

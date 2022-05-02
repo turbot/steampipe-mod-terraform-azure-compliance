@@ -1,6 +1,6 @@
 locals {
-  machinelearning_compliance_common_tags = merge(local.compliance_common_tags, {
-    service = "machinelearning"
+  machinelearning_compliance_common_tags = merge(local.terraform_azure_compliance_common_tags, {
+    service = "Azure/MachineLearning"
   })
 }
 
@@ -11,8 +11,10 @@ benchmark "machinelearning" {
   children = [
     control.machine_learning_workspace_encrypted_with_cmk
   ]
-  
-  tags = local.machinelearning_compliance_common_tags
+
+  tags = merge(local.machinelearning_compliance_common_tags, {
+    type    = "Benchmark"
+  })
 }
 
 control "machine_learning_workspace_encrypted_with_cmk" {

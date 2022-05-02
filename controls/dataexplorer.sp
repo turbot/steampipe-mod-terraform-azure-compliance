@@ -1,6 +1,6 @@
 locals {
-  dataexplorer_compliance_common_tags = merge(local.compliance_common_tags, {
-    service = "dataexplorer"
+  dataexplorer_compliance_common_tags = merge(local.terraform_azure_compliance_common_tags, {
+    service = "Azure/DataExplorer"
   })
 }
 
@@ -13,8 +13,10 @@ benchmark "dataexplorer" {
     control.kusto_cluster_double_encryption_enabled,
     control.kusto_cluster_encrypted_at_rest_with_cmk
   ]
-  
-  tags = local.dataexplorer_compliance_common_tags
+
+  tags = merge(local.dataexplorer_compliance_common_tags, {
+    type    = "Benchmark"
+  })
 }
 
 control "kusto_cluster_encrypted_at_rest_with_cmk" {

@@ -1,6 +1,6 @@
 locals {
-  iothub_compliance_common_tags = merge(local.compliance_common_tags, {
-    service = "iothub"
+  iothub_compliance_common_tags = merge(local.terraform_azure_compliance_common_tags, {
+    service = "Azure/IoTHub"
   })
 }
 
@@ -11,8 +11,10 @@ benchmark "iothub" {
   children = [
     control.iot_hub_logging_enabled
   ]
-  
-  tags = local.iothub_compliance_common_tags
+
+  tags = merge(local.iothub_compliance_common_tags, {
+    type    = "Benchmark"
+  })
 }
 
 control "iot_hub_logging_enabled" {

@@ -1,6 +1,6 @@
 locals {
-  keyvault_compliance_common_tags = merge(local.compliance_common_tags, {
-    service = "keyvault"
+  keyvault_compliance_common_tags = merge(local.terraform_azure_compliance_common_tags, {
+    service = "Azure/KeyVault"
   })
 }
 
@@ -19,8 +19,10 @@ benchmark "keyvault" {
     control.keyvault_vault_public_network_access_disabled,
     control.keyvault_vault_use_virtual_service_endpoint
   ]
-  
-  tags = local.keyvault_compliance_common_tags
+
+  tags = merge(local.keyvault_compliance_common_tags, {
+    type    = "Benchmark"
+  })
 }
 
 control "keyvault_purge_protection_enabled" {

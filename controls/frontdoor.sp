@@ -1,6 +1,6 @@
 locals {
-  frontdoor_compliance_common_tags = merge(local.compliance_common_tags, {
-    service = "frontdoor"
+  frontdoor_compliance_common_tags = merge(local.terraform_azure_compliance_common_tags, {
+    service = "Azure/FrontDoor"
   })
 }
 
@@ -11,8 +11,10 @@ benchmark "frontdoor" {
   children = [
     control.frontdoor_waf_enabled
   ]
-  
-  tags = local.frontdoor_compliance_common_tags
+
+  tags = merge(local.frontdoor_compliance_common_tags, {
+    type    = "Benchmark"
+  })
 }
 
 control "frontdoor_waf_enabled" {

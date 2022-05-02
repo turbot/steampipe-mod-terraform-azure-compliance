@@ -1,6 +1,6 @@
 locals {
-  network_compliance_common_tags = merge(local.compliance_common_tags, {
-    service = "network"
+  network_compliance_common_tags = merge(local.terraform_azure_compliance_common_tags, {
+    service = "Azure/Network"
   })
 }
 
@@ -13,8 +13,10 @@ benchmark "network" {
     control.network_security_group_not_configured_gateway_subnets,
     control.network_security_group_subnet_associated
   ]
-  
-  tags = local.network_compliance_common_tags
+
+  tags = merge(local.network_compliance_common_tags, {
+    type    = "Benchmark"
+  })
 }
 
 control "network_security_group_subnet_associated" {

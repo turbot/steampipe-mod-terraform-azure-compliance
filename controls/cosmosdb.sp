@@ -1,6 +1,6 @@
 locals {
-  cosmosdb_compliance_common_tags = merge(local.compliance_common_tags, {
-    service = "cosmosdb"
+  cosmosdb_compliance_common_tags = merge(local.terraform_azure_compliance_common_tags, {
+    service = "Azure/CosmosDB"
   })
 }
 
@@ -13,8 +13,10 @@ benchmark "cosmosdb" {
     control.cosmosdb_account_with_firewall_rules,
     control.cosmosdb_use_virtual_service_endpoint
   ]
-  
-  tags = local.cosmosdb_compliance_common_tags
+
+  tags = merge(local.cosmosdb_compliance_common_tags, {
+    type    = "Benchmark"
+  })
 }
 
 control "cosmosdb_use_virtual_service_endpoint" {

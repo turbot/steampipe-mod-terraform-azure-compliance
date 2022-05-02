@@ -1,6 +1,6 @@
 locals {
-  sql_compliance_common_tags = merge(local.compliance_common_tags, {
-    service = "sql"
+  sql_compliance_common_tags = merge(local.terraform_azure_compliance_common_tags, {
+    service = "Azure/SQL"
   })
 }
 
@@ -20,8 +20,10 @@ benchmark "sql" {
     control.sql_server_azure_defender_enabled,
     control.sql_server_vm_azure_defender_enabled
   ]
-  
-  tags = local.sql_compliance_common_tags
+
+  tags = merge(local.sql_compliance_common_tags, {
+    type    = "Benchmark"
+  })
 }
 
 control "sql_database_long_term_geo_redundant_backup_enabled" {

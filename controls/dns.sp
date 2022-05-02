@@ -1,6 +1,6 @@
 locals {
-  dns_compliance_common_tags = merge(local.compliance_common_tags, {
-    service = "dns"
+  dns_compliance_common_tags = merge(local.terraform_azure_compliance_common_tags, {
+    service = "Azure/DNS"
   })
 }
 
@@ -11,8 +11,10 @@ benchmark "dns" {
   children = [
     control.dns_azure_defender_enabled
   ]
-  
-  tags = local.dns_compliance_common_tags
+
+  tags = merge(local.dns_compliance_common_tags, {
+    type    = "Benchmark"
+  })
 }
 
 control "dns_azure_defender_enabled" {
