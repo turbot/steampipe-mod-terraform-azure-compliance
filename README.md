@@ -4,11 +4,11 @@
 
 Run checks in a dashboard:
 
-![image](https://raw.githubusercontent.com/turbot/steampipe-mod-terraform-azure-compliance/update-doc-fix/docs/terraform_azure_compliance_dashboard.png)
+![image](https://raw.githubusercontent.com/turbot/steampipe-mod-terraform-azure-compliance/main/docs/terraform_azure_compliance_dashboard.png)
 
 Or in a terminal:
 
-![image](https://raw.githubusercontent.com/turbot/steampipe-mod-terraform-azure-compliance/update-doc-fix/docs/terraform_azure_compliance_console_output.png)
+![image](https://raw.githubusercontent.com/turbot/steampipe-mod-terraform-azure-compliance/main/docs/terraform_azure_compliance_console_output.png)
 
 ## Getting started
 

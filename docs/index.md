@@ -6,9 +6,9 @@ repository: "https://github.com/turbot/steampipe-mod-terraform-azure-compliance"
 
 Run compliance and security controls to detect Terraform Azure resources deviating from security best practices prior to deployment in your Azure subscriptions.
 
-<img src="https://raw.githubusercontent.com/turbot/steampipe-mod-terraform-azure-compliance/update-doc-fix/docs/terraform_azure_compliance_dashboard.png" width="50%" type="thumbnail"/>
-<img src="https://raw.githubusercontent.com/turbot/steampipe-mod-terraform-azure-compliance/update-doc-fix/docs/terraform_azure_compliance_storage_dashboard.png" width="50%" type="thumbnail"/>
-<img src="https://raw.githubusercontent.com/turbot/steampipe-mod-terraform-azure-compliance/update-doc-fix/docs/terraform_azure_compliance_console_output.png" width="50%" type="thumbnail"/>
+<img src="https://raw.githubusercontent.com/turbot/steampipe-mod-terraform-azure-compliance/main/docs/terraform_azure_compliance_dashboard.png" width="50%" type="thumbnail"/>
+<img src="https://raw.githubusercontent.com/turbot/steampipe-mod-terraform-azure-compliance/main/docs/terraform_azure_compliance_storage_dashboard.png" width="50%" type="thumbnail"/>
+<img src="https://raw.githubusercontent.com/turbot/steampipe-mod-terraform-azure-compliance/main/docs/terraform_azure_compliance_console_output.png" width="50%" type="thumbnail"/>
 
 ## References
 
