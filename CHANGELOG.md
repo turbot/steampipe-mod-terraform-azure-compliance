@@ -1,5 +1,7 @@
 ## v0.5 [2022-05-10]
 
+_Enhancements_
+
 - Updated docs/index.md and README with new dashboard screenshots and latest format. ([#18](https://github.com/turbot/steampipe-mod-terraform-azure-compliance/pull/18))
 
 ## v0.4 [2022-05-02]
