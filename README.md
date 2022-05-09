@@ -31,58 +31,26 @@ Clone:
 
 ```sh
 git clone https://github.com/turbot/steampipe-mod-terraform-azure-compliance.git
-cd steampipe-mod-terraform-azure-compliance
 ```
-
-### Configuration
-
-By default, the Terraform plugin configuration loads Terraform configuration
-files in your current working directory. If you are running benchmarks and
-controls from the current working directory, no extra plugin configuration is
-necessary.
-
-If you want to run benchmarks and controls across multiple directories, they
-can be run from within the `steampipe-mod-terraform-azure-compliance` mod
-directory after configuring the Terraform plugin configuration:
-
-```sh
-vi ~/.steampipe/config/terraform.spc
-```
-
-```hcl
-connection "terraform" {
-  plugin = "terraform"
-  paths  = ["/path/to/files/*.tf", "/path/to/more/files/*.tf"]
-}
-```
-
-For more details on connection configuration, please refer to [Terraform Plugin Configuration](https://hub.steampipe.io/plugins/turbot/terraform#configuration).
 
 ### Usage
 
-If you are running from the current working directory containing your Terraform
-configuration files, the Steampipe workspace must be set to the location where
-you downloaded the `steampipe-mod-terraform-azure-compliance` mod:
+By default, the Terraform plugin configuration loads Terraform configuration
+files in your current working directory (CWD).
 
-Set through an environment variable:
+To get started, change your CWD to where your TF files are located:
+
+```sh
+cd /path/to/tf_files
+```
+
+Then set the `STEAMPIPE_WORKSPACE_CHDIR` environment variable to the mod directory so Steampipe knows where to load benchmarks from:
 
 ```sh
 export STEAMPIPE_WORKSPACE_CHDIR=/path/to/steampipe-mod-terraform-azure-compliance
 ```
 
-Set through the CLI argument:
-
-```sh
-steampipe check all --workspace-chdir=/path/to/steampipe-mod-terraform-azure-compliance
-```
-
-However, if you are running from within the
-`steampipe-mod-terraform-azure-compliance` mod directory and `paths` was
-configured in the Terraform plugin configuration, the Steampipe workspace does
-not need to be set (since you are already in the Steampipe workspace
-directory).
-
-Start your dashboard server to get started:
+Start your dashboard server:
 
 ```sh
 steampipe dashboard
@@ -104,7 +72,7 @@ steampipe check all
 Run all benchmarks for a specific compliance framework using tags:
 
 ```sh
-steampipe check all --tag hipaa_hitrust_v92=true
+steampipe check all --tag cft_scorecard_v1=true
 ```
 
 Run a benchmark:
@@ -116,11 +84,49 @@ steampipe check terraform_azure_compliance.benchmark.storage
 Run a specific control:
 
 ```sh
-terraform_azure_compliance.control.storage_account_infrastructure_encryption_enabled
+steampipe check terraform_azure_compliance.control.storage_account_infrastructure_encryption_enabled
+```
+
+When running checks from the CWD, you can also run the `steampipe dashboard` and `steampipe check` commands using the `--workspace-chdir` command line argument:
+
+```sh
+steampipe dashboard --workspace-chdir=/path/to/steampipe-mod-terraform-azure-compliance
+steampipe check all --workspace-chdir=/path/to/steampipe-mod-terraform-azure-compliance
 ```
 
 Different output formats are also available, for more information please see
 [Output Formats](https://steampipe.io/docs/reference/cli/check#output-formats).
+
+### Credentials
+
+No credentials are required.
+
+### Configuration
+
+If you want to run benchmarks and controls across multiple directories
+containing Terraform configuration files, they can be run from within the
+`steampipe-mod-terraform-azure-compliance` mod directory after configuring the
+Terraform plugin configuration:
+
+```sh
+vi ~/.steampipe/config/terraform.spc
+```
+
+```hcl
+connection "terraform" {
+  plugin = "terraform"
+  paths  = ["/path/to/files/*.tf", "/path/to/nested/files/**/*.tf"]
+}
+```
+
+After setting up your Terraform plugin configuration, navigate to the `steampipe-mod-terraform-azure-compliance` mod directory and start the dashboard server:
+
+```sh
+cd /path/to/steampipe-mod-terraform-azure-compliance
+steampipe dashboard
+```
+
+For more details on connection configuration, please refer to [Terraform Plugin Configuration](https://hub.steampipe.io/plugins/turbot/terraform#configuration).
 
 ## Contributing
 
