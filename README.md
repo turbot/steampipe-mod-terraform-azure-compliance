@@ -1,4 +1,4 @@
-# Terraform Azure Compliance
+# Terraform Azure Compliance Mod for Steampipe
 
 150+ compliance and security controls to test your Terraform Azure resources against security best practices prior to deployment in your Azure subscriptions.
 
