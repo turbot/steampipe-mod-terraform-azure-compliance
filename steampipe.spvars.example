@@ -1,0 +1,4 @@
+# Dimensions
+common_dimensions = [ "path" ]
+tag_dimensions    = []
+
