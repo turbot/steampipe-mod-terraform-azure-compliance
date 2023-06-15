@@ -67,21 +67,23 @@ query "storage_account_queue_services_logging_enabled" {
 query "storage_account_use_virtual_service_endpoint" {
   sql = <<-EOQ
     with storage_account_network_rules as (
-        select
-          name,
-          type,
-          path,
-          start_line,
-          split_part((arguments ->> 'storage_account_name'), '.',2) as storage_account_name
-        from
-          terraform_resource
-        where
-          type = 'azurerm_storage_account_network_rules' and (arguments ->> 'default_action') = 'Deny'
+      select
+        name,
+        type,
+        path,
+        start_line,
+        split_part((arguments ->> 'storage_account_name'), '.',2) as storage_account_name
+      from
+        terraform_resource
+      where
+        type = 'azurerm_storage_account_network_rules'
+        and (arguments ->> 'default_action') = 'Deny'
     ), storage_account_name as (
         select
           name,
           type,
           path,
+          _ctx,
           start_line
         from
           terraform_resource
@@ -97,7 +99,7 @@ query "storage_account_use_virtual_service_endpoint" {
       san.name || case
         when sanr.name is null then ' does not use virtual service endpoint'
         else ' uses virtual service endpoint'
-      end || '.' reason      
+      end || '.' reason
       ${replace(local.tag_dimensions_qualifier_sql, "__QUALIFIER__", "san.")}
       ${replace(local.common_dimensions_qualifier_sql, "__QUALIFIER__", "san.")}
     from
@@ -199,21 +201,23 @@ query "storage_account_default_network_access_rule_denied" {
 query "storage_account_trusted_microsoft_services_enabled" {
   sql = <<-EOQ
     with storage_account_network_rules as (
-        select
-          name,
-          type,
-          path,
-          start_line,
-          split_part((arguments ->> 'storage_account_name'), '.',2) as storage_account_name
-        from
-          terraform_resource
-        where
-          type = 'azurerm_storage_account_network_rules' and (arguments ->> 'bypass') like '%AzureServices%'
+      select
+        name,
+        type,
+        path,
+        start_line,
+        split_part((arguments ->> 'storage_account_name'), '.',2) as storage_account_name
+      from
+        terraform_resource
+      where
+        type = 'azurerm_storage_account_network_rules'
+        and (arguments ->> 'bypass') like '%AzureServices%'
     ), storage_account_name as (
         select
           name,
           type,
           path,
+          _ctx,
           start_line
         from
           terraform_resource

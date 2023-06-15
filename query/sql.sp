@@ -117,8 +117,7 @@ query "sql_server_audting_retention_period_90" {
       a.name || case
         when (s.arguments ->> 'server_name') is not null then ' audit retention greater than 90 days'
         else ' audit retention less than 90 days'
-      end || '.' reason,
-      a.path || ':' || a.start_line
+      end || '.' reason
       ${replace(local.tag_dimensions_qualifier_sql, "__QUALIFIER__", "a.")}
       ${replace(local.common_dimensions_qualifier_sql, "__QUALIFIER__", "a.")}
     from
@@ -201,7 +200,7 @@ query "sql_database_allow_internet_access" {
     select
       type || ' ' || name as resource,
       case
-        when 
+        when
           coalesce(trim(arguments ->> 'start_ip_address'), '') = ''
           or coalesce(trim(arguments ->> 'end_ip_address'), '') = ''
           or (arguments ->> 'end_ip_address' = '0.0.0.0'

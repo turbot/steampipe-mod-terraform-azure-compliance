@@ -39,7 +39,8 @@ query "batch_account_logging_enabled" {
       select
         ba.name as ba_name
       from
-        batch_accounts as ba left join diagnostic_setting as ds on ba.name = (split_part((ds.arguments ->> 'target_resource_id'), '.', 2))
+        batch_accounts as ba
+        left join diagnostic_setting as ds on ba.name = (split_part((ds.arguments ->> 'target_resource_id'), '.', 2))
       where
         (ds.arguments ->> 'storage_account_id') is not null
         and (ds.arguments -> 'log' ->> 'enabled')::boolean

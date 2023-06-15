@@ -33,14 +33,14 @@ query "monitor_logs_storage_container_not_public_accessible" {
         when (arguments -> 'container_access_type') is null then ' container insights-operational-logs storing activity logs not publicly accessible'
         when (arguments ->> 'container_access_type') ilike 'Private' then ' container insights-operational-logs storing activity logs not publicly accessible'
         else ' container insights-operational-logs storing activity logs publicly accessible'
-      end || '.' reason,
-      path || ':' || start_line
+      end || '.' reason
       ${local.tag_dimensions_sql}
       ${local.common_dimensions_sql}
     from
       terraform_resource
     where
-      type = 'azurerm_storage_container' and (arguments ->> 'name') ilike 'insights-operational-logs';
+      type = 'azurerm_storage_container'
+      and (arguments ->> 'name') ilike 'insights-operational-logs';
   EOQ
 }
 

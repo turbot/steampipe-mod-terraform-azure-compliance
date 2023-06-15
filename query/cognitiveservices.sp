@@ -49,7 +49,8 @@ query "cognitive_account_encrypted_with_cmk" {
       ${replace(local.tag_dimensions_qualifier_sql, "__QUALIFIER__", "c.")}
       ${replace(local.common_dimensions_qualifier_sql, "__QUALIFIER__", "c.")}
     from
-      all_cognitive_account as c left join cognitive_account_cmk as b on c.name = (split_part((b.arguments ->> 'cognitive_account_id'), '.', 2))
+      all_cognitive_account as c
+      left join cognitive_account_cmk as b on c.name = (split_part((b.arguments ->> 'cognitive_account_id'), '.', 2))
   EOQ
 }
 
@@ -96,4 +97,3 @@ query "cognitive_account_restrict_public_access" {
       type = 'azurerm_cognitive_account';
   EOQ
 }
-

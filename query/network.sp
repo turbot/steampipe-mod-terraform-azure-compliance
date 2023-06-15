@@ -45,8 +45,7 @@ query "network_security_group_subnet_associated" {
       a.name || case
         when (s.arguments ->> 'subnet_id') is not null then ' associated with subnet'
         else ' not associated with subnet'
-      end || '.' reason,
-      a.path || ':' || a.start_line
+      end || '.' reason
       ${replace(local.common_dimensions_qualifier_sql, "__QUALIFIER__", "a.")}
     from
       all_subnet as a

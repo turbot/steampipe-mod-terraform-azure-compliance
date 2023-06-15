@@ -39,4 +39,3 @@ query "search_service_uses_sku_supporting_private_link" {
       type = 'azurerm_search_service';
   EOQ
 }
-

@@ -23,11 +23,12 @@ query "compute_vm_guest_configuration_installed_windows" {
   sql = <<-EOQ
     with all_windows_vm as (
       select
-      *
+        *
       from
         terraform_resource
       where
-        type = 'azurerm_virtual_machine' and (arguments -> 'os_profile_windows_config') is not null
+        type = 'azurerm_virtual_machine'
+        and (arguments -> 'os_profile_windows_config') is not null
     ), vm_extensions as (
         select
           *
@@ -40,7 +41,8 @@ query "compute_vm_guest_configuration_installed_windows" {
       select
         split_part((b.arguments ->> 'virtual_machine_id'), '.', 2) as vm_name
       from
-        all_windows_vm as a left join vm_extensions as b on  (split_part((b.arguments ->> 'virtual_machine_id'), '.', 2)) = a.name
+        all_windows_vm as a
+        left join vm_extensions as b on  (split_part((b.arguments ->> 'virtual_machine_id'), '.', 2)) = a.name
       where
         (b.arguments ->> 'publisher') = 'Microsoft.GuestConfiguration'
     )
@@ -57,7 +59,8 @@ query "compute_vm_guest_configuration_installed_windows" {
       ${local.tag_dimensions_sql}
       ${local.common_dimensions_sql}
     from
-      all_windows_vm as c left join vm_guest_configuration as d on c.name = d.vm_name;
+      all_windows_vm as c
+      left join vm_guest_configuration as d on c.name = d.vm_name;
   EOQ
 }
 
@@ -82,7 +85,8 @@ query "compute_vm_guest_configuration_installed" {
       select
         split_part((b.arguments ->> 'virtual_machine_id'), '.', 2) as vm_name
       from
-        all_vm as a left join vm_extensions as b on (split_part((b.arguments ->> 'virtual_machine_id'), '.', 2)) = a.name
+        all_vm as a
+        left join vm_extensions as b on (split_part((b.arguments ->> 'virtual_machine_id'), '.', 2)) = a.name
       where
         (b.arguments ->> 'publisher') = 'Microsoft.GuestConfiguration'
     )
@@ -99,7 +103,8 @@ query "compute_vm_guest_configuration_installed" {
       ${local.tag_dimensions_sql}
       ${local.common_dimensions_sql}
     from
-      all_vm as c left join vm_guest_configuration as d on c.name = d.vm_name;
+      all_vm as c
+      left join vm_guest_configuration as d on c.name = d.vm_name;
   EOQ
 }
 
@@ -130,11 +135,12 @@ query "compute_vm_guest_configuration_installed_linux" {
   sql = <<-EOQ
     with all_linux_vm as (
       select
-      *
+        *
       from
         terraform_resource
       where
-        type = 'azurerm_virtual_machine' and (arguments -> 'os_profile_linux_config') is not null
+        type = 'azurerm_virtual_machine'
+        and (arguments -> 'os_profile_linux_config') is not null
     ), vm_extensions as (
         select
           *
@@ -147,7 +153,8 @@ query "compute_vm_guest_configuration_installed_linux" {
       select
         split_part((b.arguments ->> 'virtual_machine_id'), '.', 2) as vm_name
       from
-        all_linux_vm as a left join vm_extensions as b on  split_part((b.arguments ->> 'virtual_machine_id'), '.', 2) = a.name
+        all_linux_vm as a
+        left join vm_extensions as b on  split_part((b.arguments ->> 'virtual_machine_id'), '.', 2) = a.name
       where
         (b.arguments ->> 'publisher') = 'Microsoft.GuestConfiguration'
     )
@@ -164,13 +171,15 @@ query "compute_vm_guest_configuration_installed_linux" {
       ${local.tag_dimensions_sql}
       ${local.common_dimensions_sql}
     from
-      all_linux_vm as c left join vm_guest_configuration as d on c.name = d.vm_name;
+      all_linux_vm as c
+      left join vm_guest_configuration as d on c.name = d.vm_name;
   EOQ
 }
 
 query "compute_vm_and_scale_set_encryption_at_host_enabled" {
   sql = <<-EOQ
-    (select
+    (
+    select
       type || ' ' || name as resource,
       case
         when (arguments -> 'encryption_at_host_enabled') is null then 'alarm'
@@ -181,8 +190,7 @@ query "compute_vm_and_scale_set_encryption_at_host_enabled" {
         when (arguments -> 'encryption_at_host_enabled') is null then ' ''encryption_at_host_enabled'' is not defined'
         when (arguments -> 'encryption_at_host_enabled')::boolean then ' encryption at host enabled'
         else ' encryption at host disabled'
-      end || '.' reason,
-      path || ':' || start_line
+      end || '.' reason
       ${local.tag_dimensions_sql}
       ${local.common_dimensions_sql}
     from
@@ -227,8 +235,7 @@ query "compute_vm_uses_azure_resource_manager" {
       name || case
         when (arguments ->> 'resource_group_name') is not null then ' uses azure resource manager'
         else ' uses azure resource manager'
-      end || '.' reason,
-      path || ':' || start_line
+      end || '.' reason
       ${local.tag_dimensions_sql}
       ${local.common_dimensions_sql}
     from
@@ -242,7 +249,7 @@ query "compute_vm_malware_agent_installed" {
   sql = <<-EOQ
     with all_vm as (
       select
-      *
+        *
       from
         terraform_resource
       where
@@ -259,7 +266,8 @@ query "compute_vm_malware_agent_installed" {
       select
         split_part((b.arguments ->> 'virtual_machine_id'), '.', 2) as vm_name
       from
-        all_vm as a left join vm_extensions as b on (split_part((b.arguments ->> 'virtual_machine_id'), '.', 2)) = a.name
+        all_vm as a
+        left join vm_extensions as b on (split_part((b.arguments ->> 'virtual_machine_id'), '.', 2)) = a.name
       where
         (b.arguments ->> 'publisher') = 'Microsoft.Azure.Security'
         and (b.arguments ->> 'type') = 'IaaSAntimalware'
@@ -273,8 +281,7 @@ query "compute_vm_malware_agent_installed" {
       name || case
         when d.vm_name is null then ' IaaSAntimalware extension not installed'
         else ' IaaSAntimalware extension installed'
-      end || '.' reason,
-      path || ':' || start_line
+      end || '.' reason
       ${local.tag_dimensions_sql}
       ${local.common_dimensions_sql}
     from

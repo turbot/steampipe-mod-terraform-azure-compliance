@@ -13,7 +13,7 @@ query "keyvault_vault_use_virtual_service_endpoint" {
       from
         key_vaults as a,
         jsonb_array_elements(arguments -> 'network_acls' -> 'virtual_network_subnet_ids') as id
-    ) 
+    )
     select
       type || ' ' || a.name as resource,
       case
@@ -49,12 +49,14 @@ query "keyvault_managed_hms_logging_enabled" {
       from
         terraform_resource
       where
-        type = 'azurerm_monitor_diagnostic_setting' and (arguments ->> 'target_resource_id') like '%azurerm_key_vault_managed_hardware_security_module.%'
+        type = 'azurerm_monitor_diagnostic_setting'
+        and (arguments ->> 'target_resource_id') like '%azurerm_key_vault_managed_hardware_security_module.%'
     ), hsm_key_vaults_logging as (
       select
         kv.name as kv_name
       from
-        hsm_key_vaults as kv left join  diagnostic_setting as ds on kv.name = (split_part((ds.arguments ->> 'target_resource_id'), '.', 2))
+        hsm_key_vaults as kv
+        left join  diagnostic_setting as ds on kv.name = (split_part((ds.arguments ->> 'target_resource_id'), '.', 2))
       where
         (ds.arguments ->> 'storage_account_id') is not null
         and (ds.arguments -> 'log' ->> 'category')::text = 'AuditEvent'
@@ -117,13 +119,15 @@ query "keyvault_logging_enabled" {
       from
         terraform_resource
       where
-        type = 'azurerm_monitor_diagnostic_setting' and (arguments ->> 'target_resource_id') like '%azurerm_key_vault.%'
+        type = 'azurerm_monitor_diagnostic_setting'
+        and (arguments ->> 'target_resource_id') like '%azurerm_key_vault.%'
     ), key_vaults_logging as (
       select
         kv.name as kv_name,
         ds.arguments
       from
-        key_vaults as kv left join diagnostic_setting as ds on kv.name = (split_part((ds.arguments ->> 'target_resource_id'), '.', 2))
+        key_vaults as kv
+        left join diagnostic_setting as ds on kv.name = (split_part((ds.arguments ->> 'target_resource_id'), '.', 2))
       where
         (ds.arguments ->> 'storage_account_id') is not null
         and (ds.arguments -> 'log' ->> 'category')::text = 'AuditEvent'

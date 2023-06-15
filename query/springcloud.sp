@@ -9,8 +9,7 @@ query "spring_cloud_service_network_injection_enabled" {
       name || case
         when (arguments -> 'network') is null then ' network injection disabled'
         else ' network injection enabled'
-      end || '.' reason,
-      path || ':' || start_line
+      end || '.' reason
       ${local.tag_dimensions_sql}
       ${local.common_dimensions_sql}
     from

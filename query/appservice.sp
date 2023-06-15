@@ -343,9 +343,10 @@ query "appservice_ftp_deployment_disabled" {
       terraform_resource
     where
       type = 'azurerm_function_app'
+
     union
-    
-      select
+
+    select
       type || ' ' || name as resource,
       case
         when (arguments -> 'site_config') is null then 'alarm'
@@ -678,4 +679,3 @@ query "appservice_web_app_latest_java_version" {
       type = 'azurerm_app_service';
   EOQ
 }
-

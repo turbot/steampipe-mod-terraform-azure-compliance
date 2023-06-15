@@ -109,8 +109,7 @@ query "mysql_server_encrypted_at_rest_using_cmk" {
       a.name || case
         when (s.arguments ->> 'server_id') is not null then ' encrypted with CMK'
         else ' not encrypted with CMK'
-      end || '.' reason,
-      a.path || ':' || a.start_line
+      end || '.' reason
       ${replace(local.tag_dimensions_qualifier_sql, "__QUALIFIER__", "a.")}
       ${replace(local.common_dimensions_qualifier_sql, "__QUALIFIER__", "a.")}
     from
