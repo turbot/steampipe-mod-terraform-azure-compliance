@@ -14,14 +14,14 @@ benchmark "eventhub" {
   ]
 
   tags = merge(local.eventhub_compliance_common_tags, {
-    type    = "Benchmark"
+    type = "Benchmark"
   })
 }
 
 control "eventhub_namespace_use_virtual_service_endpoint" {
   title       = "Event Hub should use a virtual network service endpoint"
   description = "This policy audits any Event Hub not configured to use a virtual network service endpoint."
-  sql         = query.eventhub_namespace_use_virtual_service_endpoint.sql
+  query       = query.eventhub_namespace_use_virtual_service_endpoint
 
   tags = merge(local.eventhub_compliance_common_tags, {
     hipaa_hitrust_v92 = "true"
@@ -31,7 +31,7 @@ control "eventhub_namespace_use_virtual_service_endpoint" {
 control "eventhub_namespace_cmk_encryption_enabled" {
   title       = "Event Hub namespaces should be encrypted"
   description = "Azure Event Hub namespaces should be encrypted with an Azure Customer Managed Key."
-  sql         = query.eventhub_namespace_cmk_encryption_enabled.sql
+  query       = query.eventhub_namespace_cmk_encryption_enabled
 
   tags = local.eventhub_compliance_common_tags
 }
