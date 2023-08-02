@@ -13,14 +13,14 @@ benchmark "logic" {
   ]
 
   tags = merge(local.logic_compliance_common_tags, {
-    type    = "Benchmark"
+    type = "Benchmark"
   })
 }
 
 control "logic_app_workflow_logging_enabled" {
   title       = "Resource logs in Logic Apps should be enabled"
   description = "Audit enabling of resource logs. This enables you to recreate activity trails to use for investigation purposes; when a security incident occurs or when your network is compromised."
-  sql         = query.logic_app_workflow_logging_enabled.sql
+  query       = query.logic_app_workflow_logging_enabled
 
   tags = merge(local.logic_compliance_common_tags, {
     hipaa_hitrust_v92    = "true"

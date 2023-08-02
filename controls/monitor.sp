@@ -15,14 +15,14 @@ benchmark "monitor" {
   ]
 
   tags = merge(local.monitor_compliance_common_tags, {
-    type    = "Benchmark"
+    type = "Benchmark"
   })
 }
 
 control "monitor_log_profile_enabled_for_all_categories" {
   title       = "Azure Monitor log profile should collect logs for categories 'write', 'delete' and 'action'"
   description = "This policy ensures that a log profile collects logs for categories 'write', 'delete' and 'action'."
-  sql         = query.monitor_log_profile_enabled_for_all_categories.sql
+  query       = query.monitor_log_profile_enabled_for_all_categories
 
   tags = merge(local.monitor_compliance_common_tags, {
     hipaa_hitrust_v92 = "true"
@@ -32,7 +32,7 @@ control "monitor_log_profile_enabled_for_all_categories" {
 control "monitor_log_profile_enabled_for_all_regions" {
   title       = "Azure Monitor should collect activity logs from all regions"
   description = "This policy audits the Azure Monitor log profile which does not export activities from all Azure supported regions including global."
-  sql         = query.monitor_log_profile_enabled_for_all_regions.sql
+  query       = query.monitor_log_profile_enabled_for_all_regions
 
   tags = merge(local.monitor_compliance_common_tags, {
     hipaa_hitrust_v92 = "true"
@@ -42,7 +42,7 @@ control "monitor_log_profile_enabled_for_all_regions" {
 control "monitor_logs_storage_container_not_public_accessible" {
   title       = "Ensure the storage container storing the activity logs is not publicly accessible"
   description = "The storage account container containing the activity log export should not be publicly accessible."
-  sql         = query.monitor_logs_storage_container_not_public_accessible.sql
+  query       = query.monitor_logs_storage_container_not_public_accessible
 
   tags = merge(local.monitor_compliance_common_tags, {
     cis         = "true"
