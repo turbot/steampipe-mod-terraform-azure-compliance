@@ -48,3 +48,35 @@ control "cosmosdb_account_encryption_at_rest_using_cmk" {
     nist_sp_800_53_rev_5 = "true"
   })
 }
+
+control "cosmodb_account_access_key_metadata_writes_disabled" {
+  title       = "Azure Cosmos DB accounts should have access key metadata writes disabled"
+  description = "Disable access key metadata writes on your Azure Cosmos DB accounts to prevent the access key from being overwritten. This prevents the access key from being overwritten by a user or application."
+  query       = query.cosmodb_account_access_key_metadata_writes_disabled
+
+  tags = local.cosmosdb_compliance_common_tags
+}
+
+control "cosmodb_account_public_network_access_disabled" {
+  title       = "Azure Cosmos DB accounts should have public network access disabled"
+  description = "Disable public network access on your Azure Cosmos DB accounts to prevent the account from being accessed from the public internet. This prevents the account from being accessed from the public internet."
+  query       = query.cosmodb_account_public_network_access_disabled
+
+  tags = local.cosmosdb_compliance_common_tags
+}
+
+control "cosmodb_account_local_authentication_disabled" {
+  title       = "Azure Cosmos DB accounts should have local authentication disabled"
+  description = "Ensure that Local Authentication is disabled on CosmosDB."
+  query       = query.cosmodb_account_local_authentication_disabled
+
+  tags = local.cosmosdb_compliance_common_tags
+}
+
+control "cosmodb_account_with_restricted_access" {
+  title       = "Azure Cosmos DB accounts should have restricted access"
+  description = "Ensure that Azure Cosmos DB accounts have restricted access."
+  query       = query.cosmodb_account_with_restricted_access
+
+  tags = local.cosmosdb_compliance_common_tags
+}

@@ -374,3 +374,24 @@ query "storage_account_uses_azure_resource_manager" {
   EOQ
 }
 
+query "storage_account_uses_latest_minimum_tls_version" {
+  sql = <<-EOQ
+    select
+      type || ' ' || name as resource,
+      case
+        when (arguments ->> 'min_tls_version') in ('TLS1_2', 'TLS1_3') then 'ok'
+        else 'alarm'
+      end status,
+      name || case
+        when (arguments ->> 'min_tls_version') in ('TLS1_2', 'TLS1_3') then ' use latest version of TLS encryption'
+        when (arguments ->> 'min_tls_version') is null then ' version of TLS encryption is not set'
+        else ' does not uses latest version of TLS encryption'
+      end || '.' reason
+      ${local.tag_dimensions_sql}
+      ${local.common_dimensions_sql}
+    from
+      terraform_resource
+    where
+      type = 'azurerm_storage_account';
+  EOQ
+}

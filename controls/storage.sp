@@ -195,3 +195,8 @@ control "storage_account_blob_containers_public_access_private" {
   })
 }
 
+control "storage_account_uses_latest_minimum_tls_version" {
+  title       = "Storage accounts should use latest minimum TLS version"
+  description = "Use the latest minimum TLS version for your storage accounts to ensure that your data is encrypted in transit."
+  query       = query.storage_account_uses_latest_minimum_tls_version
+}
