@@ -100,3 +100,170 @@ query "container_registry_use_virtual_service_endpoint" {
   EOQ
 }
 
+query "container_registry_admin_user_disabled" {
+  sql = <<-EOQ
+    select
+      type || ' ' || name as resource,
+      case
+        when (arguments ->> 'admin_enabled')::boolean then 'alarm'
+        else 'ok'
+      end status,
+      name || case
+        when (arguments ->> 'admin_enabled')::boolean then ' admin user enabled'
+        else ' admin user disabled'
+      end || '.' reason
+      ${local.tag_dimensions_sql}
+      ${local.common_dimensions_sql}
+    from
+      terraform_resource
+    where
+      type = 'azurerm_container_registry';
+  EOQ
+}
+
+query "container_registry_anonymous_pull_disabled" {
+  sql = <<-EOQ
+    select
+      type || ' ' || name as resource,
+      case
+        when (arguments ->> 'sku') in ('Standard', 'Premium') and (arguments ->> 'anonymous_pull_enabled')::boolean then 'alarm'
+        else 'ok'
+      end status,
+      name || case
+        when (arguments ->> 'sku') in ('Standard', 'Premium') and (arguments ->> 'anonymous_pull_enabled')::boolean then ' anonymous pull enabled'
+        else ' anonymous pull disabled'
+      end || '.' reason
+      ${local.tag_dimensions_sql}
+      ${local.common_dimensions_sql}
+    from
+      terraform_resource
+    where
+      type = 'azurerm_container_registry';
+  EOQ
+}
+
+query "container_registry_image_scan_enabled" {
+  sql = <<-EOQ
+    select
+      type || ' ' || name as resource,
+      case
+        when (arguments ->> 'sku') in ('Standard', 'Premium') then 'ok'
+        else 'alarm'
+      end status,
+      name || case
+        when (arguments ->> 'sku') in ('Standard', 'Premium') then ' image scan enabled'
+        else ' image scan disabled'
+      end || '.' reason
+      ${local.tag_dimensions_sql}
+      ${local.common_dimensions_sql}
+    from
+      terraform_resource
+    where
+      type = 'azurerm_container_registry';
+  EOQ
+}
+
+query "container_registry_quarantine_policy_enabled" {
+  sql = <<-EOQ
+    select
+      type || ' ' || name as resource,
+      case
+        when (arguments ->> 'sku') = 'Premium' and (arguments ->> 'quarantine_policy_enabled')::bool then 'ok'
+        else 'alarm'
+      end status,
+      name || case
+        when (arguments ->> 'sku') = 'Premium' and (arguments ->> 'quarantine_policy_enabled')::bool then ' quarantine policy enabled'
+        else ' quarantine policy disabled'
+      end || '.' reason
+      ${local.tag_dimensions_sql}
+      ${local.common_dimensions_sql}
+    from
+      terraform_resource
+    where
+      type = 'azurerm_container_registry';
+  EOQ
+}
+
+query "container_registry_retention_policy_enabled" {
+  sql = <<-EOQ
+    select
+      type || ' ' || name as resource,
+      case
+        when (arguments ->> 'sku') = 'Premium' and (arguments -> 'retention_policy' ->> 'enabled')::bool then 'ok'
+        else 'alarm'
+      end status,
+      name || case
+        when (arguments ->> 'sku') = 'Premium' and (arguments -> 'retention_policy' ->> 'enabled')::bool then ' retention policy enabled'
+        else ' retention policy disabled'
+      end || '.' reason
+      ${local.tag_dimensions_sql}
+      ${local.common_dimensions_sql}
+    from
+      terraform_resource
+    where
+      type = 'azurerm_container_registry';
+  EOQ
+}
+
+query "container_registry_geo_replication_enabled" {
+  sql = <<-EOQ
+    select
+      type || ' ' || name as resource,
+      case
+        when (arguments ->> 'sku') = 'Premium' and (arguments ->> 'georeplications') is not null then 'ok'
+        else 'alarm'
+      end status,
+      name || case
+        when (arguments ->> 'sku') = 'Premium' and (arguments ->> 'georeplications') is not null then ' geo replication enabled'
+        else ' geo replication disabled'
+      end || '.' reason
+      ${local.tag_dimensions_sql}
+      ${local.common_dimensions_sql}
+    from
+      terraform_resource
+    where
+      type = 'azurerm_container_registry';
+  EOQ
+}
+
+query "container_registry_public_network_access_disabled" {
+  sql = <<-EOQ
+    select
+      type || ' ' || name as resource,
+      case
+        when (arguments ->> 'public_network_access_enabled')::bool or (arguments ->> 'public_network_access_enabled') is null then 'alarm'
+        else 'ok'
+      end status,
+      name || case
+        when (arguments ->> 'public_network_access_enabled')::bool or (arguments ->> 'public_network_access_enabled') is null  then ' public network access enabled'
+        else ' public network access disabled'
+      end || '.' reason
+      ${local.tag_dimensions_sql}
+      ${local.common_dimensions_sql}
+    from
+      terraform_resource
+    where
+      type = 'azurerm_container_registry';
+  EOQ
+}
+
+query "container_registry_trust_policy_enabled" {
+  sql = <<-EOQ
+    select
+      type || ' ' || name as resource,
+      case
+        when (arguments -> 'trust_policy' ->> 'enabled')::boolean then 'ok'
+        else 'alarm'
+      end status,
+      name || case
+        when (arguments -> 'trust_policy' ->> 'enabled')::boolean then ' trust policy enabled'
+        else ' trust policy disabled'
+      end || '.' reason
+      ${local.tag_dimensions_sql}
+      ${local.common_dimensions_sql}
+    from
+      terraform_resource
+    where
+      type = 'azurerm_container_registry';
+  EOQ
+}
