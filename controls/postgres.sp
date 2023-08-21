@@ -9,16 +9,18 @@ benchmark "postgres" {
   description = "This benchmark provides a set of controls that detect Terraform Azure PostgreSQL resources deviating from security best practices."
 
   children = [
+    control.postgres_db_flexible_server_geo_redundant_backup_enabled,
     control.postgres_db_server_connection_throttling_on,
     control.postgres_db_server_geo_redundant_backup_enabled,
     control.postgres_db_server_log_checkpoints_on,
     control.postgres_db_server_log_connections_on,
     control.postgres_db_server_log_disconnections_on,
     control.postgres_db_server_log_retention_days_3,
+    control.postgres_db_server_threat_detection_policy_enabled,
     control.postgres_sql_server_encrypted_at_rest_using_cmk,
     control.postgres_sql_ssl_enabled,
     control.postgresql_server_infrastructure_encryption_enabled,
-    control.postgresql_server_public_network_access_disabled
+    control.postgresql_server_public_network_access_disabled,
   ]
 
   tags = merge(local.postgres_compliance_common_tags, {
@@ -141,4 +143,20 @@ control "postgres_db_server_log_retention_days_3" {
     cis_level   = "1"
     cis_type    = "automated"
   })
+}
+
+control "postgres_db_flexible_server_geo_redundant_backup_enabled" {
+  title       = "PostgreSQL flexible serves Geo-redundant backup should be enabled"
+  description = "Azure Database for PostgreSQL flexible serves allows you to choose the redundancy option for your database server. It can be set to a geo-redundant backup storage in which the data is not only stored within the region in which your server is hosted, but is also replicated to a paired region to provide recovery option in case of a region failure. Configuring geo-redundant storage for backup is only allowed during server create."
+  query       = query.postgres_db_flexible_server_geo_redundant_backup_enabled
+
+  tags = local.postgres_compliance_common_tags
+}
+
+control "postgres_db_server_threat_detection_policy_enabled" {
+  title       = " PostgreSQL Servers threat detection policy should be enabled"
+  description = "Ensure that PostgreSQL server threat detection policy is enabled. This control is non-compliant if PostgreSQL server threat detection policy is disabled."
+  query       = query.postgres_db_server_threat_detection_policy_enabled
+
+  tags = local.postgres_compliance_common_tags
 }

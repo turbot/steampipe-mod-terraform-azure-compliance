@@ -94,8 +94,8 @@ query "service_bus_namespace_latest_tls_version" {
         when (arguments ->> 'minimum_tls_version')::float < 1.2 then ' not using the latest version of TLS encryption'
         else ' using the latest version of TLS encryption'
       end || '.' reason
-      --${local.tag_dimensions_sql}
-      --${local.common_dimensions_sql}
+      ${local.tag_dimensions_sql}
+      ${local.common_dimensions_sql}
     from
       terraform_resource
     where

@@ -63,7 +63,7 @@ query "postgres_db_server_connection_throttling_on" {
       a.name || case
         when (s.arguments ->> 'server_name') is not null then ' server parameter connection_throttling on'
         else ' server parameter connection_throttling off'
-      end || '.' reason      
+      end || '.' reason
       ${replace(local.tag_dimensions_qualifier_sql, "__QUALIFIER__", "a.")}
       ${replace(local.common_dimensions_qualifier_sql, "__QUALIFIER__", "a.")}
     from
@@ -183,7 +183,7 @@ query "postgres_db_server_log_checkpoints_on" {
       a.name || case
         when (s.arguments ->> 'server_name') is not null then ' server parameter log_checkpoints on'
         else ' server parameter log_checkpoints off'
-      end || '.' reason      
+      end || '.' reason
       ${replace(local.tag_dimensions_qualifier_sql, "__QUALIFIER__", "a.")}
       ${replace(local.common_dimensions_qualifier_sql, "__QUALIFIER__", "a.")}
     from
@@ -312,3 +312,48 @@ query "postgres_sql_ssl_enabled" {
   EOQ
 }
 
+query "postgres_db_flexible_server_geo_redundant_backup_enabled" {
+  sql = <<-EOQ
+    select
+      type || ' ' || name as resource,
+      case
+        when (arguments ->> 'geo_redundant_backup_enabled') is null then 'alarm'
+        when (arguments ->> 'geo_redundant_backup_enabled')::boolean then 'ok'
+        else 'alarm'
+      end status,
+      name || case
+        when (arguments ->> 'geo_redundant_backup_enabled') is null then ' ''geo_redundant_backup_enabled'' not set'
+        when (arguments ->> 'geo_redundant_backup_enabled')::boolean then ' Geo-redundant backup enabled'
+        else ' Geo-redundant backup disabled'
+      end || '.' reason
+      ${local.tag_dimensions_sql}
+      ${local.common_dimensions_sql}
+    from
+      terraform_resource
+    where
+      type = 'azurerm_postgresql_flexible_server';
+  EOQ
+}
+
+query "postgres_db_server_threat_detection_policy_enabled" {
+  sql = <<-EOQ
+    select
+      type || ' ' || name as resource,
+      case
+        when (arguments -> 'threat_detection_policy') is null then 'alarm'
+        when (arguments -> 'threat_detection_policy' ->> 'enabled') = 'true' then 'ok'
+        else 'alarm'
+      end status,
+      name || case
+        when (arguments -> 'threat_detection_policy') is null then ' threat detection policy not set'
+        when (arguments -> 'threat_detection_policy' ->> 'enabled') = 'true' then ' threat detection policy enabled'
+        else ' threat detection policy  disabled'
+      end || '.' reason
+      ${local.tag_dimensions_sql}
+      ${local.common_dimensions_sql}
+    from
+      terraform_resource
+    where
+      type = 'azurerm_postgresql_server';
+  EOQ
+}

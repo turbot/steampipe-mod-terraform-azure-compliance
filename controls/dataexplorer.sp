@@ -11,7 +11,9 @@ benchmark "dataexplorer" {
   children = [
     control.kusto_cluster_disk_encryption_enabled,
     control.kusto_cluster_double_encryption_enabled,
-    control.kusto_cluster_encrypted_at_rest_with_cmk
+    control.kusto_cluster_encrypted_at_rest_with_cmk,
+    control.kusto_cluster_sku_with_sla,
+    control.kusto_cluster_uses_managed_identity
   ]
 
   tags = merge(local.dataexplorer_compliance_common_tags, {
@@ -49,5 +51,20 @@ control "kusto_cluster_double_encryption_enabled" {
   })
 }
 
+control "kusto_cluster_sku_with_sla" {
+  title       = "Kusto clusters should use SKU with an SLA"
+  description = "This control checks if Kusto clusters use SKU with an SLA. This control is considered non-compliant if Kusto clusters use SKUs without an SLA."
+  query       = query.kusto_cluster_sku_with_sla
 
+  tags = merge(local.dataexplorer_compliance_common_tags, {
+    fundamental_security = "true"
+  })
+}
 
+control "kusto_cluster_uses_managed_identity" {
+  title       = "Kusto clusters should use managed identities"
+  description = "Use a managed identity for enhanced authentication security."
+  query       = query.kusto_cluster_uses_managed_identity
+
+  tags = local.dataexplorer_compliance_common_tags
+}
