@@ -64,13 +64,13 @@ query "kusto_cluster_disk_encryption_enabled" {
     select
       type || ' ' || name as resource,
       case
-        when (arguments ->> 'enable_disk_encryption') is null then 'alarm'
-        when (arguments ->> 'enable_disk_encryption')::boolean then 'ok'
+        when (arguments ->> 'disk_encryption_enabled') is null then 'alarm'
+        when (arguments ->> 'disk_encryption_enabled')::boolean then 'ok'
         else 'alarm'
       end status,
       name || case
-        when (arguments ->> 'enable_disk_encryption') is null then ' ''enable_disk_encryption'' not set'
-        when (arguments ->> 'enable_disk_encryption')::boolean then ' disk encryption enabled'
+        when (arguments ->> 'disk_encryption_enabled') is null then ' ''disk_encryption_enabled'' not set'
+        when (arguments ->> 'disk_encryption_enabled')::boolean then ' disk encryption enabled'
         else ' disk encryption disabled'
       end || '.' reason
       ${local.tag_dimensions_sql}
@@ -82,3 +82,44 @@ query "kusto_cluster_disk_encryption_enabled" {
   EOQ
 }
 
+query "kusto_cluster_sku_with_sla" {
+  sql = <<-EOQ
+    select
+      type || ' ' || name as resource,
+      case
+        when (arguments -> 'sku' ->> 'name') in ('Dev(No SLA)_Standard_E2a_v4' , 'Dev(No SLA)_Standard_D11_v2') then 'alarm'
+        else 'ok'
+      end status,
+      name || case
+        when (arguments -> 'sku' ->> 'name') in ('Dev(No SLA)_Standard_E2a_v4' , 'Dev(No SLA)_Standard_D11_v2') then ' using SKU tier without SLA'
+        else ' using SKU tier with SLA'
+      end || '.' reason
+      ${local.tag_dimensions_sql}
+      ${local.common_dimensions_sql}
+    from
+      terraform_resource
+    where
+      type = 'azurerm_kusto_cluster';
+  EOQ
+}
+
+query "kusto_cluster_uses_managed_identity" {
+  sql = <<-EOQ
+    select
+      type || ' ' || name as resource,
+      case
+        when (arguments -> 'identity') is null then 'alarm'
+        else 'ok'
+      end status,
+      name || case
+        when (arguments -> 'identity') is null then ' ''identity'' is not defined'
+        else ' uses ' || (arguments -> 'identity' ->> 'type') || ' identity'
+      end || '.' reason
+      ${local.tag_dimensions_sql}
+      ${local.common_dimensions_sql}
+    from
+      terraform_resource
+    where
+      type = 'azurerm_kusto_cluster';
+  EOQ
+}
