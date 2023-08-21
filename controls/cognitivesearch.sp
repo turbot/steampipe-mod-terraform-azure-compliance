@@ -10,6 +10,8 @@ benchmark "cognitivesearch" {
 
   children = [
     control.search_service_public_network_access_disabled,
+    control.search_service_replica_count_3,
+    control.search_service_uses_managed_identity,
     control.search_service_uses_private_link
   ]
 
@@ -35,5 +37,25 @@ control "search_service_uses_private_link" {
 
   tags = merge(local.cognitivesearch_compliance_common_tags, {
     nist_sp_800_53_rev_5 = "true"
+  })
+}
+
+control "search_service_uses_managed_identity" {
+  title       = "Cognitive Search services should use managed identity"
+  description = "Cognitive Search services should use a managed identity for enhanced authentication security."
+  query       = query.search_service_uses_managed_identity
+
+  tags = merge(local.cognitivesearch_compliance_common_tags, {
+    fundamental_security = "true"
+  })
+}
+
+control "search_service_replica_count_3" {
+  title       = "Cognitive Search services should maintain SLA for index updates"
+  description = "This control checks if Cognitive Search maintains SLA for index updates."
+  query       = query.search_service_replica_count_3
+
+  tags = merge(local.cognitivesearch_compliance_common_tags, {
+    fundamental_security = "true"
   })
 }
