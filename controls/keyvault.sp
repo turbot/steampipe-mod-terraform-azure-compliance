@@ -15,6 +15,7 @@ benchmark "keyvault" {
     control.keyvault_managed_hms_logging_enabled,
     control.keyvault_managed_hms_purge_protection_enabled,
     control.keyvault_purge_protection_enabled,
+    control.keyvault_secret_content_type_set,
     control.keyvault_secret_expiration_set,
     control.keyvault_vault_public_network_access_disabled,
     control.keyvault_vault_use_virtual_service_endpoint
