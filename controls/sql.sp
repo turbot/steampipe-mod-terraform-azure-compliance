@@ -10,14 +10,19 @@ benchmark "sql" {
 
   children = [
     control.sql_database_allow_internet_access,
+    control.sql_database_log_monitoring_enabled,
     control.sql_database_long_term_geo_redundant_backup_enabled,
     control.sql_database_server_azure_defender_enabled,
     control.sql_db_active_directory_admin_configured,
     control.sql_db_public_network_access_disabled,
+    control.sql_server_admins_email_security_alert_enabled,
+    control.sql_server_all_security_alerts_enabled,
     control.sql_server_atp_enabled,
     control.sql_server_auditing_storage_account_destination_retention_90_days,
     control.sql_server_azure_ad_authentication_enabled,
     control.sql_server_azure_defender_enabled,
+    control.sql_server_email_security_alert_enabled,
+    control.sql_server_uses_latest_tls_version,
     control.sql_server_vm_azure_defender_enabled
   ]
 
@@ -136,5 +141,42 @@ control "sql_db_active_directory_admin_configured" {
   })
 }
 
+control "sql_server_email_security_alert_enabled" {
+  title       = "SQL servers should have Email Security Alert enabled"
+  description = "Enable Email Security Alert on SQL servers. It is recommended to enable Email Security Alert on SQL servers."
+  query       = query.sql_server_email_security_alert_enabled
 
+  tags = local.sql_compliance_common_tags
+}
 
+control "sql_server_admins_email_security_alert_enabled" {
+  title       = "SQL server should have Administrator Email Security Alert enabled"
+  description = "Enable Email Security Alert on SQL server admins. It is recommended to enable Email Security Alert on SQL server admins."
+  query       = query.sql_server_admins_email_security_alert_enabled
+
+  tags = local.sql_compliance_common_tags
+}
+
+control "sql_server_all_security_alerts_enabled" {
+  title       = "SQL servers should have all Security Alerts enabled"
+  description = "Enable all Security Alerts on SQL servers. It is recommended to enable all Security Alerts on SQL servers."
+  query       = query.sql_server_all_security_alerts_enabled
+
+  tags = local.sql_compliance_common_tags
+}
+
+control "sql_server_uses_latest_tls_version" {
+  title       = "SQL servers should use the latest TLS version 1.2"
+  description = "SQL servers currently allows user to set TLS version values as Disabled, 1.0, 1.1 and 1.2. It is recommended to use the latest TLS version 1.2."
+  query       = query.sql_server_uses_latest_tls_version
+
+  tags = local.sql_compliance_common_tags
+}
+
+control "sql_database_log_monitoring_enabled" {
+  title       = "SQL database should have Log Monitoring enabled"
+  description = "Enable audit Log Monitoring on SQL database. It is recommended to enable Log Monitoring on SQL database."
+  query       = query.sql_database_log_monitoring_enabled
+
+  tags = local.sql_compliance_common_tags
+}

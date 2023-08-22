@@ -116,3 +116,11 @@ control "keyvault_secret_expiration_set" {
     nist_sp_800_53_rev_5 = "true"
   })
 }
+
+control "keyvault_secret_content_type_set" {
+  title       = "Key Vault secrets should have a content type"
+  description = "Secrets should have a defined content type. Secrets that are valid forever provide a potential attacker with more time to compromise them. It is a recommended security practice to set content types on secrets."
+  query       = query.keyvault_secret_content_type_set
+
+  tags = local.keyvault_compliance_common_tags
+}

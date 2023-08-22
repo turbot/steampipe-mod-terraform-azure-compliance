@@ -253,3 +253,111 @@ query "sql_db_public_network_access_disabled" {
   EOQ
 }
 
+query "sql_server_email_security_alert_enabled" {
+  sql = <<-EOQ
+    select
+      type || ' ' || name as resource,
+      case
+        when (arguments ->> 'email_addresses') is null then 'alarm'
+        else 'ok'
+      end status,
+      name || case
+        when (arguments ->> 'email_addresses') is null then ' email security alert disabled'
+        else ' email security alert enabled'
+      end || '.' reason
+      ${local.tag_dimensions_sql}
+      ${local.common_dimensions_sql}
+    from
+      terraform_resource
+    where
+      type = 'azurerm_mssql_server_security_alert_policy';
+  EOQ
+}
+
+query "sql_server_admins_email_security_alert_enabled" {
+  sql = <<-EOQ
+    select
+      type || ' ' || name as resource,
+      case
+        when (arguments ->> 'email_account_admins')::boolean then 'ok'
+        else 'alarm'
+      end status,
+      name || case
+        when (arguments ->> 'email_account_admins')::boolean then ' account administrators email security alert enabled'
+        else ' account administrators email security alert disabled'
+      end || '.' reason
+      ${local.tag_dimensions_sql}
+      ${local.common_dimensions_sql}
+    from
+      terraform_resource
+    where
+      type = 'azurerm_mssql_server_security_alert_policy';
+  EOQ
+}
+
+query "sql_server_all_security_alerts_enabled" {
+  sql = <<-EOQ
+    select
+      type || ' ' || name as resource,
+      case
+        when (arguments ->> 'disabled_alerts') is not null then 'alarm'
+        else 'ok'
+      end status,
+      name || case
+        when (arguments ->> 'disabled_alerts') is not null then ' some security alerts disabled'
+        else ' all security alerts enabled'
+      end || '.' reason
+      ${local.tag_dimensions_sql}
+      ${local.common_dimensions_sql}
+    from
+      terraform_resource
+    where
+      type = 'azurerm_mssql_server_security_alert_policy';
+  EOQ
+}
+
+query "sql_server_uses_latest_tls_version" {
+  sql = <<-EOQ
+    select
+      type || ' ' || name as resource,
+      case
+        when (arguments ->> 'minimum_tls_version') is null then 'ok'
+        when (arguments ->> 'minimum_tls_version')::text = '1.2' then 'ok'
+        else 'alarm'
+      end status,
+      name || case
+        when (arguments ->> 'minimum_tls_version') is null then ' TLS version not defined by default uses 1.2'
+        when (arguments ->> 'minimum_tls_version')::text = '1.2' then ' TLS version 1.2'
+        else ' TLS version not 1.2'
+      end || '.' reason
+      ${local.tag_dimensions_sql}
+      ${local.common_dimensions_sql}
+    from
+      terraform_resource
+    where
+      type = 'azurerm_mssql_server';    
+  EOQ
+}
+
+query "sql_database_log_monitoring_enabled" {
+  sql = <<-EOQ
+    select
+      type || ' ' || name as resource,
+      case
+        when (arguments -> 'log_monitoring_enabled') is null then 'ok'
+        when (arguments -> 'log_monitoring_enabled')::boolean then 'ok'
+        else 'alarm'
+      end status,
+      name || case
+        when (arguments -> 'log_monitoring_enabled') is null then ' log monitoring enabled'
+        when (arguments -> 'log_monitoring_enabled')::boolean then ' log monitoring enabled'
+        else ' log monitoring disabled'
+      end || '.' reason
+      ${local.tag_dimensions_sql}
+      ${local.common_dimensions_sql}
+    from
+      terraform_resource
+    where
+      type = 'azurerm_mssql_database_extended_auditing_policy';
+  EOQ
+}
