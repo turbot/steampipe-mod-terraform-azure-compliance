@@ -53,7 +53,7 @@ control "redis_cache_min_tls_1_2" {
 
 control "redis_cache_public_network_access_disabled" {
   title       = "Redis Caches should disable public network access"
-  description = "Disabling public network access improves security by ensuring thatRedis Cache isn't exposed on the public internet. Creating private endpoints can limit exposure of Redis Cache."
+  description = "Disabling public network access improves security by ensuring that Redis Cache isn't exposed on the public internet. Creating private endpoints can limit exposure of Redis Cache."
   query       = query.redis_cache_public_network_access_disabled
 
   tags = local.redis_compliance_common_tags
