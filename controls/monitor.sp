@@ -11,6 +11,7 @@ benchmark "monitor" {
   children = [
     control.monitor_log_profile_enabled_for_all_categories,
     control.monitor_log_profile_enabled_for_all_regions,
+    control.monitor_log_profile_retention_365_days,
     control.monitor_logs_storage_container_not_public_accessible
   ]
 
