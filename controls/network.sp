@@ -11,6 +11,8 @@ benchmark "network" {
   children = [
     control.network_security_group_not_configured_gateway_subnets,
     control.network_security_group_subnet_associated,
+    control.network_security_group_udp_access_restricted,
+    control.network_security_rule_udp_access_restricted,
     control.network_watcher_flow_log_retention_period_90_days
   ]
 
@@ -46,4 +48,21 @@ control "network_watcher_flow_log_retention_period_90_days" {
   query       = query.network_watcher_flow_log_retention_period_90_days
 
   tags = local.network_compliance_common_tags
+}
+
+control "network_security_group_udp_access_restricted" {
+  title       = "Network Security Groups UDP Services are restricted from the Internet"
+  description = "Disable Internet exposed UDP ports on network security groups."
+  query       = query.network_security_group_udp_access_restricted
+
+  tags = local.network_compliance_common_tags
+}
+
+control "network_security_rule_udp_access_restricted" {
+  title       = "Network Security Rules UDP Services are restricted from the Internet"
+  description = "Disable Internet exposed UDP ports on network security Rules."
+  query       = query.network_security_rule_udp_access_restricted
+
+  tags = local.network_compliance_common_tags
+
 }

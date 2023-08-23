@@ -110,3 +110,78 @@ query "network_watcher_flow_log_retention_period_90_days" {
       type = 'azurerm_network_watcher_flow_log'
   EOQ
 }
+
+query "network_security_group_udp_access_restricted" {
+  sql = <<-EOQ
+    with nsg_udp_access as (
+      select
+       distinct name
+      from
+        terraform_resource,
+        jsonb_array_elements(
+          case jsonb_typeof(arguments -> 'security_rule')
+          when 'array' then (arguments -> 'security_rule')
+          else null end
+         ) as s
+      where
+        type = 'azurerm_network_security_group'
+        and lower(s ->> 'protocol') = 'udp'
+        and lower(s ->> 'direction') = 'inbound'
+        and lower(s ->> 'access') = 'allow'
+        and lower(s ->> 'source_address_prefix') in ('*', '0.0.0.0', '<nw>/0', '/0', 'internet', 'any')
+    )
+    select
+      type || ' ' || r.name as resource,
+      case
+        when (arguments -> 'security_rule') is null then 'alarm'
+        when s.name is not null then 'alarm'
+        when lower(arguments -> 'security_rule' ->> 'protocol') = 'udp'
+          and lower(arguments -> 'security_rule' ->> 'direction') = 'inbound'
+          and lower(arguments -> 'security_rule' ->> 'access') = 'allow'
+          and lower(arguments -> 'security_rule' ->> 'source_address_prefix') in ('*', '0.0.0.0', '<nw>/0', '/0', 'internet', 'any') then 'alarm'
+        else 'ok'
+      end as status,
+      r.name || case
+        when (arguments -> 'security_rule') is  null then ' security rule not defined'
+        when s.name is not null then ' allows UDP services from internet'
+        when lower(arguments -> 'security_rule' ->> 'protocol') = 'udp'
+          and lower(arguments -> 'security_rule' ->> 'direction') = 'inbound'
+          and lower(arguments -> 'security_rule' ->> 'access') = 'allow'
+          and lower(arguments -> 'security_rule' ->> 'source_address_prefix') in ('*', '0.0.0.0', '<nw>/0', '/0', 'internet', 'any') then ' allows UDP services from internet'
+        else ' restricts UDP services from internet'
+      end || '.' reason
+      ${local.tag_dimensions_sql}
+      ${local.common_dimensions_sql}
+    from
+      terraform_resource as r
+      left join nsg_udp_access as s on s.name = r.name
+    where
+      type = 'azurerm_network_security_group';
+  EOQ
+}
+
+query "network_security_rule_udp_access_restricted" {
+  sql = <<-EOQ
+    select
+      type || ' ' || name as resource,
+      case
+        when lower(arguments ->> 'protocol') = 'udp'
+          and lower(arguments ->> 'direction') = 'inbound'
+          and lower(arguments ->> 'access') = 'allow'
+          and lower(arguments ->> 'source_address_prefix') in ('*', '0.0.0.0', '<nw>/0', '/0', 'internet', 'any') then 'alarm'
+        else 'ok'
+      end as status,
+      name || case
+        when lower(arguments ->> 'protocol') = 'udp'
+          and lower(arguments ->> 'direction') = 'inbound'
+          and lower(arguments ->> 'access') = 'allow'
+          and lower(arguments ->> 'source_address_prefix') in ('*', '0.0.0.0', '<nw>/0', '/0', 'internet', 'any') then ' allows UDP services from internet'
+        else ' restricts UDP services from internet'
+      end || '.' reason
+      ${local.common_dimensions_sql}
+    from
+      terraform_resource
+    where
+      type = 'azurerm_network_security_rule';
+  EOQ
+}

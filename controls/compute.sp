@@ -12,6 +12,7 @@ benchmark "compute" {
     control.compute_managed_disk_set_encryption_enabled,
     control.compute_vm_allow_extension_operations_disabled,
     control.compute_vm_and_scale_set_encryption_at_host_enabled,
+    control.compute_vm_and_scale_set_ssh_key_enabled_linux,
     control.compute_vm_azure_defender_enabled,
     control.compute_vm_disable_password_authentication,
     control.compute_vm_disable_password_authentication_linux,
@@ -19,6 +20,7 @@ benchmark "compute" {
     control.compute_vm_guest_configuration_installed_linux,
     control.compute_vm_guest_configuration_installed_windows,
     control.compute_vm_malware_agent_installed,
+    control.compute_vm_scale_set_automatic_os_upgrade_enabled,
     control.compute_vm_scale_set_disable_password_authentication_linux,
     control.compute_vm_system_updates_installed,
     control.compute_vm_uses_azure_resource_manager,
@@ -159,4 +161,22 @@ control "compute_vm_scale_set_disable_password_authentication_linux" {
   query       = query.compute_vm_scale_set_disable_password_authentication_linux
 
   tags = local.compute_compliance_common_tags
+}
+
+control "compute_vm_and_scale_set_ssh_key_enabled_linux" {
+  title       = "Linux Virtual machines and scale sets should enable SSH key authentication"
+  description = "Ensure linux VM enables SSH with keys for secure communication."
+  query       = query.compute_vm_and_scale_set_ssh_key_enabled_linux
+
+  tags = local.compute_compliance_common_tags
+}
+
+control "compute_vm_scale_set_automatic_os_upgrade_enabled" {
+  title       = "Compute virtual machine scale sets should have automatic OS image patching enabled"
+  description = "This control checks whether virtual machine scale sets have automatic OS image patching enabled."
+  query       = query.compute_vm_scale_set_automatic_os_upgrade_enabled
+
+  tags = merge(local.compute_compliance_common_tags, {
+    other_checks = "true"
+  })
 }

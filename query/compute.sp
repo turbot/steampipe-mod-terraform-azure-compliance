@@ -393,3 +393,45 @@ query "compute_vm_scale_set_disable_password_authentication_linux" {
       type = 'azurerm_linux_virtual_machine_scale_set';
   EOQ
 }
+
+query "compute_vm_and_scale_set_ssh_key_enabled_linux" {
+  sql = <<-EOQ
+    select
+      type || ' ' || name as resource,
+      case
+        when (arguments -> 'admin_ssh_key') is not null then 'ok'
+        else 'alarm'
+      end status,
+      name || case
+        when (arguments -> 'admin_ssh_key') is not null then ' SSH key enabled'
+        else ' SSH key disabled'
+      end || '.' reason
+      ${local.tag_dimensions_sql}
+      ${local.common_dimensions_sql}
+    from
+      terraform_resource
+    where
+      type in ('azurerm_linux_virtual_machine_scale_set', 'azurerm_windows_virtual_machine_scale_set');
+  EOQ
+}
+
+query "compute_vm_scale_set_automatic_os_upgrade_enabled" {
+  sql = <<-EOQ
+     select
+      type || ' ' || name as resource,
+      case
+        when (arguments -> 'automatic_os_upgrade_policy' ->> 'enable_automatic_os_upgrade') = 'true' then 'ok'
+        else 'alarm'
+      end status,
+      name || case
+        when (arguments -> 'automatic_os_upgrade_policy' ->> 'enable_automatic_os_upgrade') = 'true' then ' automatic OS upgrade enabled'
+        else ' automatic OS upgrade disabled'
+      end || '.' reason
+      ${local.tag_dimensions_sql}
+      ${local.common_dimensions_sql}
+    from
+      terraform_resource
+    where
+      type in ('azurerm_linux_virtual_machine_scale_set', 'azurerm_windows_virtual_machine_scale_set');
+  EOQ
+}
