@@ -45,6 +45,6 @@ control "synapse_workspace_data_exfiltration_protection_enabled" {
   query       = query.synapse_workspace_data_exfiltration_protection_enabled
 
   tags = merge(local.synapse_compliance_common_tags, {
-    fundamental_security = "true"
+    other_checks = "true"
   })
 }

@@ -7,8 +7,8 @@ query "application_gateway_uses_https_listener" {
         else 'alarm'
       end status,
       name || case
-        when (arguments -> 'http_listener' ->> 'protocol') = 'Https' then ' uses https listener'
-        else ' does not use https listener'
+        when (arguments -> 'http_listener' ->> 'protocol') = 'Https' then ' uses HTTPS listener'
+        else ' does not use HTTPS listener'
       end || '.' reason
       ${local.tag_dimensions_sql}
       ${local.common_dimensions_sql}

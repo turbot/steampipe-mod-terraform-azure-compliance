@@ -10,7 +10,7 @@ benchmark "iothub" {
 
   children = [
     control.iot_hub_logging_enabled,
-    control.iot_hub_public_network_access_disabled
+    control.iot_hub_restrict_public_access
   ]
 
   tags = merge(local.iothub_compliance_common_tags, {
@@ -29,10 +29,10 @@ control "iot_hub_logging_enabled" {
   })
 }
 
-control "iot_hub_public_network_access_disabled" {
+control "iot_hub_restrict_public_access" {
   title       = "IoT Hubs should disable public network access"
   description = "Disabling public network access improves security by ensuring that IoT Hub isn't exposed on the public internet. Creating private endpoints can limit exposure of IoT Hub."
-  query       = query.iot_hub_public_network_access_disabled
+  query       = query.iot_hub_restrict_public_access
 
   tags = local.iothub_compliance_common_tags
 }

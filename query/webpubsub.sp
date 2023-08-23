@@ -31,8 +31,8 @@ query "web_pubsub_uses_managed_identity" {
         when (arguments -> 'identity') is null then ' ''identity'' is not defined'
         else ' uses ' || (arguments -> 'identity' ->> 'type') || ' identity'
       end || '.' reason
-      --${local.tag_dimensions_sql}
-      --${local.common_dimensions_sql}
+      ${local.tag_dimensions_sql}
+      ${local.common_dimensions_sql}
     from
       terraform_resource
     where

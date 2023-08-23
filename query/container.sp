@@ -214,8 +214,8 @@ query "container_registry_geo_replication_enabled" {
         else 'alarm'
       end status,
       name || case
-        when (arguments ->> 'sku') = 'Premium' and (arguments ->> 'georeplications') is not null then ' geo replication enabled'
-        else ' geo replication disabled'
+        when (arguments ->> 'sku') = 'Premium' and (arguments ->> 'georeplications') is not null then ' geo-replication enabled'
+        else ' geo-replication disabled'
       end || '.' reason
       ${local.tag_dimensions_sql}
       ${local.common_dimensions_sql}

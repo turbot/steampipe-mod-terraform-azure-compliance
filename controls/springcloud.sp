@@ -10,7 +10,7 @@ benchmark "springcloud" {
 
   children = [
     control.spring_cloud_api_https_only_enabled,
-    control.spring_cloud_api_public_network_access_disabled,
+    control.spring_cloud_api_restrict_public_access,
     control.spring_cloud_service_network_injection_enabled
   ]
 
@@ -29,19 +29,18 @@ control "spring_cloud_service_network_injection_enabled" {
   })
 }
 
-control "spring_cloud_api_public_network_access_disabled" {
-  title       = "Azure Spring Cloud API should not be publicly accessible"
+control "spring_cloud_api_restrict_public_access" {
+  title       = "Spring Cloud API should not be publicly accessible"
   description = "This control checks whether the Azure Spring Cloud API is publicly accessible."
-  query       = query.spring_cloud_api_public_network_access_disabled
+  query       = query.spring_cloud_api_restrict_public_access
 
   tags = local.springcloud_compliance_common_tags
 }
 
 control "spring_cloud_api_https_only_enabled" {
-  title       = "Azure Spring Cloud API should only be accessible over HTTPS"
+  title       = "Spring Cloud API should only be accessible over HTTPS"
   description = "This control checks whether the Azure Spring Cloud API is only accessible over HTTPS."
   query       = query.spring_cloud_api_https_only_enabled
 
   tags = local.springcloud_compliance_common_tags
-
 }

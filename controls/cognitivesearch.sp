@@ -46,7 +46,7 @@ control "search_service_uses_managed_identity" {
   query       = query.search_service_uses_managed_identity
 
   tags = merge(local.cognitivesearch_compliance_common_tags, {
-    fundamental_security = "true"
+    other_checks = "true"
   })
 }
 
@@ -56,6 +56,6 @@ control "search_service_replica_count_3" {
   query       = query.search_service_replica_count_3
 
   tags = merge(local.cognitivesearch_compliance_common_tags, {
-    fundamental_security = "true"
+    other_checks = "true"
   })
 }

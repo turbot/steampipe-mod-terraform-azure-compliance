@@ -25,7 +25,7 @@ benchmark "storage" {
     control.storage_account_uses_azure_resource_manager,
     control.storage_account_uses_private_link,
     control.storage_azure_defender_enabled,
-    control.storage_container_public_access_disabled
+    control.storage_container_restrict_public_access
   ]
 
   tags = merge(local.storage_compliance_common_tags, {
@@ -209,8 +209,8 @@ control "storage_account_replication_type_set" {
   query       = query.storage_account_replication_type_set
 }
 
-control "storage_container_public_access_disabled" {
+control "storage_container_restrict_public_access" {
   title       = "Storage container public access should be disabled"
   description = "This control checks whether the public access level is set to private for the storage container."
-  query       = query.storage_container_public_access_disabled
+  query       = query.storage_container_restrict_public_access
 }

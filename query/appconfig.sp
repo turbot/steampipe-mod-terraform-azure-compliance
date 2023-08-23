@@ -28,8 +28,8 @@ query "app_configuration_local_auth_disabled" {
         else 'ok'
       end status,
       name || case
-        when (arguments ->> 'local_auth_enabled') is null and (arguments ->> 'local_auth_enabled')::boolean then ' local auth enabled'
-        else ' local auth disabled'
+        when (arguments ->> 'local_auth_enabled') is null and (arguments ->> 'local_auth_enabled')::boolean then ' local authentication enabled'
+        else ' local authentication disabled'
       end || '.' reason
       ${local.tag_dimensions_sql}
       ${local.common_dimensions_sql}
@@ -40,7 +40,7 @@ query "app_configuration_local_auth_disabled" {
   EOQ
 }
 
-query "app_configuration_not_publicly_accessible" {
+query "app_configuration_restrict_public_access" {
   sql = <<-EOQ
     select
       type || ' ' || name as resource,

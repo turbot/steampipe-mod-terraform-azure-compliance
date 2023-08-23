@@ -687,8 +687,8 @@ query "appservice_web_app_always_on" {
         else 'ok'
       end status,
       name || case
-        when (arguments -> 'site_config' ->> 'always_on') = 'false' then ' alwaysOn is disabled'
-        else ' alwaysOn is enabled'
+        when (arguments -> 'site_config' ->> 'always_on') = 'false' then ' alwaysOn disabled'
+        else ' alwaysOn enabled'
       end || '.' reason
       ${local.tag_dimensions_sql}
       ${local.common_dimensions_sql}

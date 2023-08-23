@@ -150,7 +150,7 @@ control "sql_server_email_security_alert_enabled" {
 }
 
 control "sql_server_admins_email_security_alert_enabled" {
-  title       = "SQL server should have Administrator Email Security Alert enabled"
+  title       = "SQL servers should have Administrator Email Security Alert enabled"
   description = "Enable Email Security Alert on SQL server admins. It is recommended to enable Email Security Alert on SQL server admins."
   query       = query.sql_server_admins_email_security_alert_enabled
 
@@ -174,8 +174,8 @@ control "sql_server_uses_latest_tls_version" {
 }
 
 control "sql_database_log_monitoring_enabled" {
-  title       = "SQL database should have Log Monitoring enabled"
-  description = "Enable audit Log Monitoring on SQL database. It is recommended to enable Log Monitoring on SQL database."
+  title       = "SQL databases should have log monitoring enabled"
+  description = "Enable audit log monitoring on SQL database. It is recommended to enable Log Monitoring on SQL database."
   query       = query.sql_database_log_monitoring_enabled
 
   tags = local.sql_compliance_common_tags

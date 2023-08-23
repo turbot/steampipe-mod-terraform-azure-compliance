@@ -29,8 +29,8 @@ query "apimanagement_backend_uses_https" {
         else 'alarm'
       end status,
       name || case
-        when (arguments ->> 'url') like 'https%' then ' backend uses https'
-        else ' backend does not use https'
+        when (arguments ->> 'url') like 'https%' then ' backend uses HTTPS'
+        else ' backend does not use HTTPS'
       end || '.' reason
       ${local.tag_dimensions_sql}
       ${local.common_dimensions_sql}
@@ -50,8 +50,8 @@ query "apimanagement_service_client_certificate_enabled" {
         else 'alarm'
       end status,
       name || case
-        when (arguments ->> 'sku_name') like 'Consumption%' and (arguments ->> 'client_certificate_enabled')::boolean then ' client certificate is enabled'
-        else ' client certificate is disabled'
+        when (arguments ->> 'sku_name') like 'Consumption%' and (arguments ->> 'client_certificate_enabled')::boolean then ' client certificate enabled'
+        else ' client certificate disabled'
       end || '.' reason
       ${local.tag_dimensions_sql}
       ${local.common_dimensions_sql}
@@ -91,7 +91,7 @@ query "apimanagement_service_uses_latest_tls_version" {
   EOQ
 }
 
-query "apimanagement_service_public_access_disabled" {
+query "apimanagement_service_restrict_public_access" {
   sql = <<-EOQ
     select
       type || ' ' || name as resource,
@@ -100,8 +100,8 @@ query "apimanagement_service_public_access_disabled" {
         else 'ok'
       end status,
       name || case
-        when (arguments ->> 'public_network_access_enabled')::boolean or (arguments ->> 'public_network_access_enabled') is null then ' public access is enabled'
-        else ' public access is disabled'
+        when (arguments ->> 'public_network_access_enabled')::boolean or (arguments ->> 'public_network_access_enabled') is null then ' publicy accessible'
+        else ' not publicy accessible'
       end || '.' reason
       ${local.tag_dimensions_sql}
       ${local.common_dimensions_sql}

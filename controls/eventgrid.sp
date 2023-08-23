@@ -10,11 +10,11 @@ benchmark "eventgrid" {
 
   children = [
     control.eventgrid_domain_local_auth_disabled,
+    control.eventgrid_domain_restrict_public_access,
     control.eventgrid_domain_uses_managed_identity,
     control.eventgrid_topic_local_auth_disabled,
-    control.eventgrid_topic_uses_managed_identity,
-    control.eventgrid_domain_public_network_access_disabled,
-    control.eventgrid_topic_public_network_access_disabled
+    control.eventgrid_topic_restrict_public_access,
+    control.eventgrid_topic_uses_managed_identity
   ]
 
   tags = merge(local.eventgrid_compliance_common_tags, {
@@ -43,7 +43,9 @@ control "eventgrid_topic_local_auth_disabled" {
   description = "Disabling local authentication methods improves security by ensuring that Event Grid topic require Azure Active Directory identities exclusively for authentication."
   query       = query.eventgrid_topic_local_auth_disabled
 
-  tags = local.eventgrid_compliance_common_tags
+  tags = merge(local.eventgrid_compliance_common_tags, {
+    other_checks = "true"
+  })
 }
 
 control "eventgrid_topic_uses_managed_identity" {
@@ -54,18 +56,20 @@ control "eventgrid_topic_uses_managed_identity" {
   tags = local.eventgrid_compliance_common_tags
 }
 
-control "eventgrid_domain_public_network_access_disabled" {
+control "eventgrid_domain_restrict_public_access" {
   title       = "Event Grid domains should disable public network access"
   description = "Disabling public network access improves security by ensuring that your Event Grid domain is not exposed on the public internet."
-  query       = query.eventgrid_domain_public_network_access_disabled
+  query       = query.eventgrid_domain_restrict_public_access
 
-  tags = local.eventgrid_compliance_common_tags
+  tags = merge(local.eventgrid_compliance_common_tags, {
+    other_checks = "true"
+  })
 }
 
-control "eventgrid_topic_public_network_access_disabled" {
+control "eventgrid_topic_restrict_public_access" {
   title       = "Event Grid topics should disable public network access"
   description = "Disabling public network access improves security by ensuring that your Event Grid topic is not exposed on the public internet."
-  query       = query.eventgrid_topic_public_network_access_disabled
+  query       = query.eventgrid_topic_restrict_public_access
 
   tags = local.eventgrid_compliance_common_tags
 }

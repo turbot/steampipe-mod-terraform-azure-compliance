@@ -181,8 +181,8 @@ control "securitycenter_contact_number_configured" {
 }
 
 control "securitycenter_uses_standard_pricing_tier" {
-  title = "Security Center should use the Standard pricing tier"
-  description = "The Standard pricing tier provides advanced security capabilities, including threat detection for Azure and hybrid workloads, just-in-time (JIT) virtual machine (VM) access, and access and application controls."
+  title = "Security Center should use the standard pricing tier"
+  description = "The standard pricing tier provides advanced security capabilities, including threat detection for Azure and hybrid workloads, just-in-time (JIT) virtual machine (VM) access, and access and application controls."
   query = query.securitycenter_uses_standard_pricing_tier
 
   tags = local.securitycenter_compliance_common_tags

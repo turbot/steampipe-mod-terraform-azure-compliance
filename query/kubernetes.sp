@@ -344,24 +344,3 @@ query "kubernetes_cluster_node_pool_type_scale_set" {
       type = 'azurerm_kubernetes_cluster';
   EOQ
 }
-
-query "kubernetes_cluster_addon_azure_policy_enabled" {
-  sql = <<-EOQ
-    select
-      type || ' ' || name as resource,
-      case
-        when (arguments ->> 'azure_policy_enabled') = 'true' then 'ok'
-        else 'alarm'
-      end status,
-      name || case
-        when (arguments ->> 'azure_policy_enabled') = 'true' then ' addon azure policy enabled'
-        else ' addon azure policy disabled'
-      end || '.' reason
-      ${local.tag_dimensions_sql}
-      ${local.common_dimensions_sql}
-    from
-      terraform_resource
-    where
-      type = 'azurerm_kubernetes_cluster';
-  EOQ
-}

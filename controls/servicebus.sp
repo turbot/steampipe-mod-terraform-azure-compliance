@@ -13,7 +13,7 @@ benchmark "servicebus" {
     control.service_bus_namespace_infrastructure_encryption_enabled,
     control.service_bus_namespace_latest_tls_version,
     control.service_bus_namespace_local_auth_disabled,
-    control.service_bus_namespace_public_network_access_disabled,
+    control.service_bus_namespace_restrict_public_access,
     control.service_bus_namespace_uses_managed_identity
   ]
 
@@ -24,7 +24,7 @@ benchmark "servicebus" {
 
 control "service_bus_namespace_encrypted_with_cmk" {
   title       = "Service Bus namespaces should use a customer-managed key for encryption"
-  description = "Azure Service Bus supports the option of encrypting data at rest with either Microsoft-managed keys (default) or customer-managed keys. Choosing to encrypt data using customer-managed keys enables you to assign, rotate, disable, and revoke access to the keys that Service Bus will use to encrypt data in your namespace."
+  description = "Service Bus supports the option of encrypting data at rest with either Microsoft-managed keys (default) or customer-managed keys. Choosing to encrypt data using customer-managed keys enables you to assign, rotate, disable, and revoke access to the keys that Service Bus will use to encrypt data in your namespace."
   query       = query.service_bus_namespace_encrypted_with_cmk
 
   tags = local.servicebus_compliance_common_tags
@@ -62,10 +62,10 @@ control "service_bus_namespace_latest_tls_version" {
   tags = local.servicebus_compliance_common_tags
 }
 
-control "service_bus_namespace_public_network_access_disabled" {
-  title       = "Service bus namespaces should disable public network access"
+control "service_bus_namespace_restrict_public_access" {
+  title       = "Service bus namespaces should restrict public access"
   description = "Disabling public network access improves security by ensuring that your Service bus namespace is not exposed on the public internet."
-  query       = query.service_bus_namespace_public_network_access_disabled
+  query       = query.service_bus_namespace_restrict_public_access
 
   tags = local.servicebus_compliance_common_tags
 }

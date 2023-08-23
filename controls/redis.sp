@@ -12,7 +12,7 @@ benchmark "redis" {
     control.azure_redis_cache_in_virtual_network,
     control.azure_redis_cache_ssl_enabled,
     control.redis_cache_min_tls_1_2,
-    control.redis_cache_public_network_access_disabled,
+    control.redis_cache_restrict_public_access,
   ]
 
   tags = merge(local.redis_compliance_common_tags, {
@@ -47,14 +47,14 @@ control "redis_cache_min_tls_1_2" {
   query       = query.redis_cache_min_tls_1_2
 
   tags = merge(local.redis_compliance_common_tags, {
-    fundamental_security = "true"
+    other_checks = "true"
   })
 }
 
-control "redis_cache_public_network_access_disabled" {
-  title       = "Redis Caches should disable public network access"
+control "redis_cache_restrict_public_access" {
+  title       = "Redis Caches should restrict public access"
   description = "Disabling public network access improves security by ensuring that Redis Cache isn't exposed on the public internet. Creating private endpoints can limit exposure of Redis Cache."
-  query       = query.redis_cache_public_network_access_disabled
+  query       = query.redis_cache_restrict_public_access
 
   tags = local.redis_compliance_common_tags
 }

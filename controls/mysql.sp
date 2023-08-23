@@ -12,10 +12,10 @@ benchmark "mysql" {
     control.mysql_db_server_geo_redundant_backup_enabled,
     control.mysql_server_encrypted_at_rest_using_cmk,
     control.mysql_server_infrastructure_encryption_enabled,
-    control.mysql_server_public_network_access_disabled,
-    control.mysql_ssl_enabled,
     control.mysql_server_min_tls_1_2,
+    control.mysql_server_public_network_access_disabled,
     control.mysql_server_threat_detection_enabled,
+    control.mysql_ssl_enabled
   ]
 
   tags = merge(local.mysql_compliance_common_tags, {
@@ -81,7 +81,7 @@ control "mysql_server_min_tls_1_2" {
   query       = query.mysql_server_min_tls_1_2
 
   tags = merge(local.mysql_compliance_common_tags, {
-    fundamental_security = "true"
+    other_checks = "true"
   })
 }
 

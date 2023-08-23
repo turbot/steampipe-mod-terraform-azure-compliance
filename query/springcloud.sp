@@ -19,7 +19,7 @@ query "spring_cloud_service_network_injection_enabled" {
   EOQ
 }
 
-query "spring_cloud_api_public_network_access_disabled" {
+query "spring_cloud_api_restrict_public_access" {
   sql = <<-EOQ
     select
       type || ' ' || name as resource,
@@ -28,8 +28,8 @@ query "spring_cloud_api_public_network_access_disabled" {
         else 'ok'
       end status,
       name || case
-        when (arguments ->> 'public_network_access_enabled')::boolean then ' public network access enabled'
-        else ' public network access disabled'
+        when (arguments ->> 'public_network_access_enabled')::boolean then ' publicly accessible'
+        else ' not publicly accessible'
       end || '.' reason
       ${local.tag_dimensions_sql}
       ${local.common_dimensions_sql}
@@ -49,8 +49,8 @@ query "spring_cloud_api_https_only_enabled" {
         else 'alarm'
       end status,
       name || case
-        when (arguments ->> 'https_only_enabled')::boolean then ' https only enabled'
-        else ' https only disabled'
+        when (arguments ->> 'https_only_enabled')::boolean then ' HTTPS only enabled'
+        else ' HTTPS only disabled'
       end || '.' reason
       ${local.tag_dimensions_sql}
       ${local.common_dimensions_sql}

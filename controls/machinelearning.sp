@@ -12,7 +12,7 @@ benchmark "machinelearning" {
     control.machine_learning_compute_cluster_local_auth_disabled,
     control.machine_learning_compute_cluster_minimum_node_zero,
     control.machine_learning_workspace_encrypted_with_cmk,
-    control.machine_learning_workspace_public_network_access_disabled
+    control.machine_learning_workspace_restrict_public_access
   ]
 
   tags = merge(local.machinelearning_compliance_common_tags, {
@@ -46,10 +46,10 @@ control "machine_learning_compute_cluster_minimum_node_zero" {
   tags = local.machinelearning_compliance_common_tags
 }
 
-control "machine_learning_workspace_public_network_access_disabled" {
-  title       = "Machine Learning workspaces should disable public network access"
+control "machine_learning_workspace_restrict_public_access" {
+  title       = "Machine Learning workspaces should restrict public access"
   description = "Disabling public network access improves security by ensuring that Machine Learning workspace isn't exposed on the public internet. Creating private endpoints can limit exposure of Machine Learning workspace."
-  query       = query.machine_learning_workspace_public_network_access_disabled
+  query       = query.machine_learning_workspace_restrict_public_access
 
   tags = local.machinelearning_compliance_common_tags
 }

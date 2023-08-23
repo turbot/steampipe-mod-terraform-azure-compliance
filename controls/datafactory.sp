@@ -10,7 +10,7 @@ benchmark "datafactory" {
 
   children = [
     control.data_factory_encrypted_with_cmk,
-    control.data_factory_public_network_access_disabled,
+    control.data_factory_restrict_public_access,
     control.data_factory_uses_git_repository
   ]
 
@@ -29,12 +29,14 @@ control "data_factory_encrypted_with_cmk" {
   })
 }
 
-control "data_factory_public_network_access_disabled" {
+control "data_factory_restrict_public_access" {
   title       = "Data factories should have public network access disabled"
   description = "Disable public network access on your Data factory to prevent the account from being accessed from the public internet. This prevents the account from being accessed from the public internet."
-  query       = query.data_factory_public_network_access_disabled
+  query       = query.data_factory_restrict_public_access
 
-  tags = local.datafactory_compliance_common_tags
+  tags = merge(local.datafactory_compliance_common_tags, {
+    other_checks = "true"
+  })
 }
 
 control "data_factory_uses_git_repository" {
@@ -43,6 +45,6 @@ control "data_factory_uses_git_repository" {
   query       = query.data_factory_uses_git_repository
 
   tags = merge(local.datafactory_compliance_common_tags, {
-    fundamental_security = "true"
+    other_checks = "true"
   })
 }

@@ -49,8 +49,8 @@ query "search_service_uses_managed_identity" {
         else 'alarm'
       end status,
       name || case
-        when (arguments -> 'identity' ->> 'type')::text = 'SystemAssigned' then ' use managed identity'
-        else ' not use managed identity'
+        when (arguments -> 'identity' ->> 'type')::text = 'SystemAssigned' then ' uses managed identity'
+        else ' not uses managed identity'
       end || '.' reason
       ${local.tag_dimensions_sql}
       ${local.common_dimensions_sql}

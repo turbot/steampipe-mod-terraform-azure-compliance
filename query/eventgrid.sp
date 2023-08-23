@@ -82,7 +82,7 @@ query "eventgrid_topic_uses_managed_identity" {
   EOQ
 }
 
-query "eventgrid_domain_public_network_access_disabled" {
+query "eventgrid_domain_restrict_public_access" {
   sql = <<-EOQ
     select
       type || ' ' || name as resource,
@@ -91,8 +91,8 @@ query "eventgrid_domain_public_network_access_disabled" {
         else 'alarm'
       end status,
       name || case
-        when (arguments ->> 'public_network_access_enabled') = 'false' then ' public network access disabled'
-        else ' public network access enabled'
+        when (arguments ->> 'public_network_access_enabled') = 'false' then ' not publicly accessible'
+        else ' publicly accessible'
       end || '.' reason
       ${local.tag_dimensions_sql}
       ${local.common_dimensions_sql}
@@ -103,7 +103,7 @@ query "eventgrid_domain_public_network_access_disabled" {
   EOQ
 }
 
-query "eventgrid_topic_public_network_access_disabled" {
+query "eventgrid_topic_restrict_public_access" {
   sql = <<-EOQ
     select
       type || ' ' || name as resource,
@@ -112,8 +112,8 @@ query "eventgrid_topic_public_network_access_disabled" {
         else 'alarm'
       end status,
       name || case
-        when (arguments ->> 'public_network_access_enabled') = 'false' then ' public network access disabled'
-        else ' public network access enabled'
+        when (arguments ->> 'public_network_access_enabled') = 'false' then ' not publicly accessible'
+        else ' publicly accessible'
       end || '.' reason
       ${local.tag_dimensions_sql}
       ${local.common_dimensions_sql}

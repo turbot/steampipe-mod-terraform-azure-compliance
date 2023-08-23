@@ -66,7 +66,7 @@ control "container_registry_admin_user_disabled" {
   query       = query.container_registry_admin_user_disabled
 
   tags = merge(local.containerregistry_compliance_common_tags, {
-    fundamental_security = "true"
+    other_checks = "true"
   })
 }
 
@@ -92,7 +92,7 @@ control "container_registry_quarantine_policy_enabled" {
   query       = query.container_registry_quarantine_policy_enabled
 
   tags = merge(local.containerregistry_compliance_common_tags, {
-    fundamental_security = "true"
+    other_checks = "true"
   })
 }
 
@@ -102,7 +102,7 @@ control "container_registry_retention_policy_enabled" {
   query       = query.container_registry_retention_policy_enabled
 
   tags = merge(local.containerregistry_compliance_common_tags, {
-    fundamental_security = "true"
+    other_checks = "true"
   })
 }
 
@@ -112,7 +112,7 @@ control "container_registry_geo_replication_enabled" {
   query       = query.container_registry_geo_replication_enabled
 
   tags = merge(local.containerregistry_compliance_common_tags, {
-    fundamental_security = "true"
+    other_checks = "true"
   })
 }
 
@@ -122,7 +122,7 @@ control "container_registry_public_network_access_disabled" {
   query       = query.container_registry_public_network_access_disabled
 
   tags = merge(local.containerregistry_compliance_common_tags, {
-    fundamental_security = "true"
+    other_checks = "true"
   })
 }
 
@@ -132,6 +132,6 @@ control "container_registry_trust_policy_enabled" {
   query       = query.container_registry_trust_policy_enabled
 
   tags = merge(local.containerregistry_compliance_common_tags, {
-    fundamental_security = "true"
+    other_checks = "true"
   })
 }

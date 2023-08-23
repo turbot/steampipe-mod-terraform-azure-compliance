@@ -19,7 +19,7 @@ benchmark "application_gateway" {
 }
 
 control "application_gateway_uses_https_listener" {
-  title       = "Application Gateway uses HTTPS Listener"
+  title       = "Application Gateway should use HTTPS Listener"
   description = "This control checks whether Application Gateway uses HTTPS Listener."
   query       = query.application_gateway_uses_https_listener
 
