@@ -19,6 +19,7 @@ benchmark "compute" {
     control.compute_vm_guest_configuration_installed_windows,
     control.compute_vm_guest_configuration_installed,
     control.compute_vm_malware_agent_installed,
+    control.compute_vm_scale_set_disable_password_authentication_linux,
     control.compute_vm_system_updates_installed,
     control.compute_vm_uses_azure_resource_manager,
     control.network_interface_ip_forwarding_disabled
@@ -148,6 +149,14 @@ control "compute_vm_disable_password_authentication_linux" {
   title       = "Linux virtual machines should disable password authentication"
   description = "Linux virtual machines should disable password authentication to prevent brute-force attacks."
   query       = query.compute_vm_disable_password_authentication_linux
+
+  tags = local.compute_compliance_common_tags
+}
+
+control "compute_vm_scale_set_disable_password_authentication_linux" {
+  title       = "Virtual machines scale sets should disable password authentication"
+  description = "Virtual machines scale sets should disable password authentication to prevent brute-force attacks."
+  query       = query.compute_vm_scale_set_disable_password_authentication_linux
 
   tags = local.compute_compliance_common_tags
 }
