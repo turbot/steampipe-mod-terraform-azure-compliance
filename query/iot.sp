@@ -19,7 +19,7 @@ query "iot_hub_logging_enabled" {
   EOQ
 }
 
-query "iot_hub_public_network_access_disabled" {
+query "iot_hub_restrict_public_access" {
   sql = <<-EOQ
     select
       type || ' ' || name as resource,

@@ -19,7 +19,7 @@ query "spring_cloud_service_network_injection_enabled" {
   EOQ
 }
 
-query "spring_cloud_api_public_network_access_disabled" {
+query "spring_cloud_api_restrict_public_access" {
   sql = <<-EOQ
     select
       type || ' ' || name as resource,

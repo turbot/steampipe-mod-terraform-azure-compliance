@@ -11,7 +11,6 @@ benchmark "kubernetes" {
   children = [
     control.kubernetes_azure_defender_enabled,
     control.kubernetes_cluster_add_on_azure_policy_enabled,
-    control.kubernetes_cluster_addon_azure_policy_enabled,
     control.kubernetes_cluster_authorized_ip_range_defined,
     control.kubernetes_cluster_key_vault_secret_rotation_enabled,
     control.kubernetes_cluster_local_admin_disabled,
@@ -25,7 +24,7 @@ benchmark "kubernetes" {
     control.kubernetes_cluster_sku_standard,
     control.kubernetes_cluster_temp_disks_and_agent_node_pool_cache_encrypted_at_host,
     control.kubernetes_cluster_upgrade_channel,
-    control.kubernetes_instance_rbac_enabled,
+    control.kubernetes_instance_rbac_enabled
   ]
 
   tags = merge(local.kubernetes_compliance_common_tags, {
@@ -95,28 +94,28 @@ control "kubernetes_cluster_temp_disks_and_agent_node_pool_cache_encrypted_at_ho
 }
 
 control "kubernetes_cluster_restrict_public_access" {
-  title       = "Kubernetes cluster should restrict public access"
+  title       = "Kubernetes clusters should restrict public access"
   description = "Ensure that Kubernetes cluster enables private clusters to restrict public access."
   query       = query.kubernetes_cluster_restrict_public_access
 
   tags = merge(local.kubernetes_compliance_common_tags, {
-    fundamental_security = "true"
+    other_checks = "true"
   })
 }
 
 control "kubernetes_cluster_sku_standard" {
   title       = "Kubernetes clusters should use standard SKU"
-  description = "Ensure that Kubernetes clusters uses standard SKU tier for production workloads. This control is non-compliant if Kubernetes cluster does not use standard SKU."
+  description = "Ensure that Kubernetes cluster uses standard SKU tier for production workloads. This control is non-compliant if Kubernetes cluster does not use standard SKU."
   query       = query.kubernetes_cluster_sku_standard
 
   tags = merge(local.kubernetes_compliance_common_tags, {
-    fundamental_security = "true"
+    other_checks = "true"
   })
 }
 
 control "kubernetes_cluster_local_admin_disabled" {
   title       = "Kubernetes clusters local admin should be disabled"
-  description = "Ensure that Kubernetes local admin is disabled. This control is non-compliant if Kubernetes local admin is enabled."
+  description = "Ensure that Kubernetes cluster local admin is disabled. This control is non-compliant if Kubernetes cluster local admin is enabled."
   query       = query.kubernetes_cluster_local_admin_disabled
 
   tags = local.kubernetes_compliance_common_tags
@@ -128,17 +127,17 @@ control "kubernetes_cluster_logging_enabled" {
   query       = query.kubernetes_cluster_logging_enabled
 
   tags = merge(local.kubernetes_compliance_common_tags, {
-    fundamental_security = "true"
+    other_checks = "true"
   })
 }
 
 control "kubernetes_cluster_max_pod_50" {
   title       = "Kubernetes clusters should use a minimum number of 50 pods"
-  description = "This control checks if Kubernetes clusters is using a minimum number of 50 pods."
+  description = "This control checks if Kubernetes cluster is using a minimum number of 50 pods."
   query       = query.kubernetes_cluster_max_pod_50
 
   tags = merge(local.kubernetes_compliance_common_tags, {
-    fundamental_security = "true"
+    other_checks = "true"
   })
 }
 
@@ -148,17 +147,17 @@ control "kubernetes_cluster_network_policy_enabled" {
   query       = query.kubernetes_cluster_network_policy_enabled
 
   tags = merge(local.kubernetes_compliance_common_tags, {
-    fundamental_security = "true"
+    other_checks = "true"
   })
 }
 
 control "kubernetes_cluster_node_restrict_public_access" {
-  title       = "Kubernetes cluster nodes should prohibit public access"
-  description = "Ensure Kubernetes cluster nodes do not have public IP addresses. This control is non-compliant if Kubernetes cluster nodes have a public IP address assigned."
+  title       = "Kubernetes cluster nodes should restrict public access"
+  description = "Ensure Kubernetes cluster node do not have public IP addresses. This control is non-compliant if Kubernetes cluster node have a public IP address assigned."
   query       = query.kubernetes_cluster_node_restrict_public_access
 
   tags = merge(local.kubernetes_compliance_common_tags, {
-    fundamental_security = "true"
+    other_checks = "true"
   })
 }
 
@@ -168,7 +167,7 @@ control "kubernetes_cluster_key_vault_secret_rotation_enabled" {
   query       = query.kubernetes_cluster_key_vault_secret_rotation_enabled
 
   tags = merge(local.kubernetes_compliance_common_tags, {
-    fundamental_security = "true"
+    other_checks = "true"
   })
 }
 
@@ -178,24 +177,14 @@ control "kubernetes_cluster_upgrade_channel" {
   query       = query.kubernetes_cluster_upgrade_channel
 
   tags = merge(local.kubernetes_compliance_common_tags, {
-    fundamental_security = "true"
+    other_checks = "true"
   })
 }
 
 control "kubernetes_cluster_node_pool_type_scale_set" {
-  title       = "Kubernetes clusters should use scale sets types nodes"
-  description = "Ensure Kubernetes clusters uses scale sets types nodes. This control is non-compliant if Kubernetes clusters does not use scale sets types nodes."
+  title       = "Kubernetes clusters should use scale sets type nodes"
+  description = "Ensure Kubernetes clusters uses scale sets type nodes. This control is non-compliant if Kubernetes clusters does not use scale sets type nodes."
   query       = query.kubernetes_cluster_node_pool_type_scale_set
 
   tags = local.kubernetes_compliance_common_tags
-}
-
-control "kubernetes_cluster_addon_azure_policy_enabled" {
-  title       = "Kubernetes cluster addon Azure policy should be enabled"
-  description = "Ensure that Kubernetes cluster uses Azure Policies Add-on."
-  query       = query.kubernetes_cluster_addon_azure_policy_enabled
-
-  tags = merge(local.kubernetes_compliance_common_tags, {
-    fundamental_security = "true"
-  })
 }

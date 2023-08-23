@@ -64,7 +64,7 @@ query "redis_cache_min_tls_1_2" {
   EOQ
 }
 
-query "redis_cache_public_network_access_disabled" {
+query "redis_cache_restrict_public_access" {
   sql = <<-EOQ
     select
       type || ' ' || name as resource,

@@ -58,7 +58,7 @@ query "machine_learning_compute_cluster_minimum_node_zero" {
   EOQ
 }
 
-query "machine_learning_workspace_public_network_access_disabled" {
+query "machine_learning_workspace_restrict_public_access" {
   sql = <<-EOQ
     select
       type || ' ' || name as resource,

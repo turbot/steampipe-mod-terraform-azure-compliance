@@ -46,6 +46,6 @@ control "mariadb_server_ssl_enabled" {
   query       = query.mariadb_server_ssl_enabled
 
   tags = merge(local.mariadb_compliance_common_tags, {
-    fundamental_security = "true"
+    other_checks = "true"
   })
 }

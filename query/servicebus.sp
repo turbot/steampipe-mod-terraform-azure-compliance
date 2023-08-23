@@ -103,7 +103,7 @@ query "service_bus_namespace_latest_tls_version" {
   EOQ
 }
 
-query "service_bus_namespace_public_network_access_disabled" {
+query "service_bus_namespace_restrict_public_access" {
   sql = <<-EOQ
     select
       type || ' ' || name as resource,

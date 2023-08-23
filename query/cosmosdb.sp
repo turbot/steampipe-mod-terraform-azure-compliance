@@ -123,7 +123,7 @@ query "cosmodb_account_local_authentication_disabled" {
         else 'alarm'
       end status,
       name || case
-        when (arguments ->> 'kind') is not null and (arguments ->> 'kind') <> 'GlobalDocumentDB' then ' not GlobalDocumentDB' 
+        when (arguments ->> 'kind') is not null and (arguments ->> 'kind') <> 'GlobalDocumentDB' then ' not GlobalDocumentDB'
         when (arguments ->> 'local_authentication_disabled')::boolean then  ' local authentication disabled'
         else ' local authentication enabled'
       end || '.' reason
@@ -136,7 +136,7 @@ query "cosmodb_account_local_authentication_disabled" {
   EOQ
 }
 
-query "cosmodb_account_with_restricted_access" {
+query "cosmodb_account_restrict_public_access" {
   sql = <<-EOQ
     select
       type || ' ' || name as resource,

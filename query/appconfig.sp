@@ -40,7 +40,7 @@ query "app_configuration_local_auth_disabled" {
   EOQ
 }
 
-query "app_configuration_not_publicly_accessible" {
+query "app_configuration_restrict_public_access" {
   sql = <<-EOQ
     select
       type || ' ' || name as resource,

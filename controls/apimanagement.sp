@@ -11,7 +11,7 @@ benchmark "apimanagement" {
   children = [
     control.apimanagement_backend_uses_https,
     control.apimanagement_service_client_certificate_enabled,
-    control.apimanagement_service_public_access_disabled,
+    control.apimanagement_service_restrict_public_access,
     control.apimanagement_service_uses_latest_tls_version,
     control.apimanagement_service_with_virtual_network
   ]
@@ -33,7 +33,7 @@ control "apimanagement_service_with_virtual_network" {
 }
 
 control "apimanagement_backend_uses_https" {
-  title       = "API Management backend should use HTTPS"
+  title       = "API Management backends should use HTTPS"
   description = "This control checks that the backend of the API Management service is configured to use HTTPS."
   query       = query.apimanagement_backend_uses_https
 
@@ -41,27 +41,27 @@ control "apimanagement_backend_uses_https" {
 }
 
 control "apimanagement_service_client_certificate_enabled" {
-  title       = "API Management client certificate should be enabled"
+  title       = "API Management services client certificate should be enabled"
   description = "Ensure API Management client certificate is enabled. This control is non-compliant if API Management client certificate is disabled."
   query       = query.apimanagement_service_client_certificate_enabled
 
   tags = merge(local.apimanagement_compliance_common_tags, {
-    fundamental_security = "true"
+    other_checks = "true"
   })
 }
 
 control "apimanagement_service_uses_latest_tls_version" {
-  title       = "API Management service should use at least TLS 1.2 version"
+  title       = "API Management services should use at least TLS 1.2 version"
   description = "This control checks that the API Management service uses at least TLS 1.2 version. This control is non-compliant if API Management service uses older TLS version."
   query       = query.apimanagement_service_uses_latest_tls_version
 
   tags = local.apimanagement_compliance_common_tags
 }
 
-control "apimanagement_service_public_access_disabled" {
-  title       = "API Management service should not be publicly accessible"
+control "apimanagement_service_restrict_public_access" {
+  title       = "API Management services should restrict public network access"
   description = "This control checks that the API Management service is not publicly accessible. This control is non-compliant if API Management service is publicly accessible."
-  query       = query.apimanagement_service_public_access_disabled
+  query       = query.apimanagement_service_restrict_public_access
 
   tags = local.apimanagement_compliance_common_tags
 }

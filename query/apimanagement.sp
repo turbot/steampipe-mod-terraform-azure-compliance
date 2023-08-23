@@ -91,7 +91,7 @@ query "apimanagement_service_uses_latest_tls_version" {
   EOQ
 }
 
-query "apimanagement_service_public_access_disabled" {
+query "apimanagement_service_restrict_public_access" {
   sql = <<-EOQ
     select
       type || ' ' || name as resource,

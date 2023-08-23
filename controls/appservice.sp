@@ -361,59 +361,57 @@ control "appservice_web_app_always_on" {
   query       = query.appservice_web_app_always_on
 
   tags = merge(local.appservice_compliance_common_tags, {
-    fundamental_security = "true"
+    other_checks = "true"
   })
 }
 
 control "appservice_web_app_detailed_error_messages_enabled" {
   title       = "Web apps detailed error messages should be enabled"
   description = "This control ensures that a web app detailed error message is enabled."
-  query       = query.appservice_web_app_always_on
+  query       = query.appservice_web_app_detailed_error_messages_enabled
 
   tags = merge(local.appservice_compliance_common_tags, {
-    fundamental_security = "true"
+    other_checks = "true"
   })
 }
 
-
 control "appservice_web_app_latest_dotnet_framework_version" {
-  title       = "Web app should use the latest 'Net Framework' version"
+  title       = "Web apps should use the latest 'Net Framework' version"
   description = "Periodically, newer versions are released for Net Framework software either due to security flaws or to include additional functionality. Using the latest Net Framework for web apps is recommended in order to take advantage of security fixes, if any, and/or new functionalities of the latest version."
   query       = query.appservice_web_app_latest_dotnet_framework_version
 
   tags = merge(local.appservice_compliance_common_tags, {
-    fundamental_security = "true"
+    other_checks = "true"
   })
 }
 
 control "appservice_web_app_failed_request_tracing_enabled" {
-  title       = "Web app failed request tracing should be enabled"
+  title       = "Web apps failed request tracing should be enabled"
   description = "Ensure that Web app enables failed request tracing. This control is non-compliant if Web app failed request tracing is disabled."
   query       = query.appservice_web_app_failed_request_tracing_enabled
 
   tags = merge(local.appservice_compliance_common_tags, {
-    fundamental_security = "true"
+    other_checks = "true"
   })
 }
 
 control "appservice_web_app_http_logs_enabled" {
-  title       = "Web app HTTP logs should be enabled"
+  title       = "Web apps HTTP logs should be enabled"
   description = "Ensure that Web app HTTP logs is enabled. This control is non-compliant if Web app HTTP logs is disabled."
   query       = query.appservice_web_app_http_logs_enabled
 
   tags = merge(local.appservice_compliance_common_tags, {
-    fundamental_security = "true"
+    other_checks = "true"
   })
 }
 
 control "appservice_web_app_worker_more_than_one" {
-  title       = "Web app should have more than one worker"
+  title       = "Web apps should have more than one worker"
   description = "It is recommended to have more than one worker for failover. This control is non-compliant if Web apps have one or less than one worker."
   query       = query.appservice_web_app_worker_more_than_one
 
   tags = merge(local.appservice_compliance_common_tags, {
-    fundamental_security = "true"
-    other_checks         = "true"
+    other_checks = "true"
   })
 }
 
@@ -423,24 +421,22 @@ control "appservice_web_app_health_check_enabled" {
   query       = query.appservice_web_app_health_check_enabled
 
   tags = merge(local.appservice_compliance_common_tags, {
-    fundamental_security = "true"
-    other_checks         = "true"
+    other_checks = "true"
   })
 }
 
 control "appservice_plan_minimum_sku" {
-  title       = "Appservice plan should not use free, shared or basic SKU"
+  title       = "App Service plans should not use free, shared or basic SKU"
   description = "The Free, Shared, and Basic plans are suitable for constrained testing and development purposes. This control is considered non-compliant when free, shared, or basic SKUs are utilized."
   query       = query.appservice_plan_minimum_sku
 
   tags = merge(local.appservice_compliance_common_tags, {
-    fundamental_security = "true"
-    other_checks         = "true"
+    other_checks = "true"
   })
 }
 
 control "appservice_web_app_slot_remote_debugging_disabled" {
-  title       = "Appservice slot remote debugging should be disabled"
+  title       = "Web app slots remote debugging should be disabled"
   description = "Remote debugging requires inbound ports to be opened on a web application. Remote debugging should be turned off."
   sql         = query.appservice_web_app_slot_remote_debugging_disabled.sql
 
@@ -448,17 +444,17 @@ control "appservice_web_app_slot_remote_debugging_disabled" {
 }
 
 control "appservice_web_app_slot_use_https" {
-  title       = "Web app slot should only be accessible over HTTPS"
+  title       = "Web app slots should only be accessible over HTTPS"
   description = "Use of HTTPS ensures server/service authentication and protects data in transit from network layer eavesdropping attacks."
   query       = query.appservice_web_app_slot_use_https
 
   tags = merge(local.appservice_compliance_common_tags, {
-    fundamental_security = "true"
+    other_checks = "true"
   })
 }
 
 control "appservice_web_app_slot_latest_tls_version" {
-  title       = "Web app slot should use the latest TLS version"
+  title       = "Web app slots should use the latest TLS version"
   description = "Periodically, newer versions are released for TLS either due to security flaws, include additional functionality, and enhance speed. Upgrade to the latest TLS version for Function apps to take advantage of security fixes, if any, and/or new functionalities of the latest version."
   query       = query.appservice_web_app_slot_latest_tls_version
 
@@ -466,7 +462,7 @@ control "appservice_web_app_slot_latest_tls_version" {
 }
 
 control "appservice_web_app_uses_azure_file" {
-  title       = "Web app should use Azure files"
+  title       = "Web apps should use Azure files"
   description = "Ensure that the application services are configured to utilize Azure Files."
   query       = query.appservice_web_app_uses_azure_file
 

@@ -1,4 +1,4 @@
-query "databricks_workspace_public_network_access_disabled" {
+query "databricks_workspace_restrict_public_access" {
   sql = <<-EOQ
     select
       type || ' ' || name as resource,

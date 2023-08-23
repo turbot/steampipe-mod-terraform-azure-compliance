@@ -418,7 +418,7 @@ query "storage_account_replication_type_set" {
   EOQ
 }
 
-query "storage_container_public_access_disabled" {
+query "storage_container_restrict_public_access" {
   sql = <<-EOQ
     select
       type || ' ' || name as resource,

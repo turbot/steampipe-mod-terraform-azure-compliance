@@ -57,7 +57,7 @@ control "kusto_cluster_sku_with_sla" {
   query       = query.kusto_cluster_sku_with_sla
 
   tags = merge(local.dataexplorer_compliance_common_tags, {
-    fundamental_security = "true"
+    other_checks = "true"
   })
 }
 
