@@ -1,5 +1,5 @@
 query "signalr_services_uses_paid_sku" {
-    sql = <<-EOQ
+  sql = <<-EOQ
     select
       type || ' ' || name as resource,
       case
