@@ -64,3 +64,24 @@ query "monitor_log_profile_enabled_for_all_categories" {
   EOQ
 }
 
+query "monitor_log_profile_retention_365_days" {
+  sql = <<-EOQ
+    select
+      type || ' ' || name as resource,
+      case
+        when (arguments -> 'retention_policy' ->> 'enabled')::boolean and (arguments -> 'retention_policy' ->> 'days')::int < 365 then 'alarm'
+        when (arguments -> 'retention_policy' ->> 'enabled')::boolean and (arguments -> 'retention_policy' ->> 'days')::int >= 365 then 'ok'
+        else 'alarm'
+      end as status,
+      case
+        when (arguments -> 'retention_policy' ->> 'enabled')::boolean and (arguments -> 'retention_policy' ->> 'days')::int < 365 then ' retention policy enabled but set to ' || (arguments -> 'retention_policy' ->> 'days') || ' days.'
+        when (arguments -> 'retention_policy' ->> 'enabled')::boolean and (arguments -> 'retention_policy' ->> 'days')::int >= 365 then ' retention policy enabled and set to ' || (arguments -> 'retention_policy' ->> 'days') || ' days.'
+        else ' retention policy disabled.'
+      end || '.' reason
+      ${local.common_dimensions_sql}
+    from
+      terraform_resource
+    where
+      type = 'azurerm_monitor_log_profile';
+  EOQ
+}
