@@ -1,4 +1,4 @@
-query "firewal_has_firewall_policy_set" {
+query "firewall_has_firewall_policy_set" {
   sql = <<-EOQ
     select
       type || ' ' || name as resource,
@@ -19,7 +19,7 @@ query "firewal_has_firewall_policy_set" {
   EOQ 
 }
 
-query "firewal_threat_intel_mode_set_to_deny" {
+query "firewall_threat_intel_mode_set_to_deny" {
   sql = <<-EOQ
     select
       type || ' ' || name as resource,
@@ -37,5 +37,26 @@ query "firewal_threat_intel_mode_set_to_deny" {
       terraform_resource
     where
       type = 'azurerm_firewall';
+  EOQ 
+}
+
+query "firewall_policy_intrusion_detection_mode_set_to_deny" {
+  sql = <<-EOQ
+    select
+      type || ' ' || name as resource,
+      case
+        when (arguments -> 'intrusion_detection' ->> 'mode') = 'Deny' then 'ok'
+        else 'alarm'
+      end status,
+      name || case
+        when (arguments -> 'intrusion_detection' ->> 'mode') = 'Deny' then ' intrusion detection mode is set to deny'
+        else ' intrusion detection mode is not set to deny'
+      end || '.' reason
+      ${local.tag_dimensions_sql}
+      ${local.common_dimensions_sql}
+    from
+      terraform_resource
+    where
+      type = 'azurerm_firewall_policy';
   EOQ 
 }
