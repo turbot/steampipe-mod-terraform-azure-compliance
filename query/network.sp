@@ -1,24 +1,3 @@
-query "application_gateway_waf_enabled" {
-  sql = <<-EOQ
-    select
-      type || ' ' || name as resource,
-      case
-        when (arguments -> 'waf_configuration') is not null then 'ok'
-        else 'alarm'
-      end status,
-      name || case
-        when (arguments -> 'waf_configuration') is not null then ' WAF enabled'
-        else ' WAF disabled'
-      end || '.' reason
-      ${local.tag_dimensions_sql}
-      ${local.common_dimensions_sql}
-    from
-      terraform_resource
-    where
-      type = 'azurerm_application_gateway';
-  EOQ
-}
-
 query "network_security_group_subnet_associated" {
   sql = <<-EOQ
     with all_subnet as (
@@ -110,3 +89,24 @@ query "network_security_group_not_configured_gateway_subnets" {
   EOQ
 }
 
+query "network_watcher_flow_log_retention_period_90_days" {
+  sql = <<-EOQ
+    select
+      type || ' ' || name as resource,
+      case
+        when (arguments -> 'retention_policy' ->> 'enabled') = 'false' then 'alarm'
+        when (arguments -> 'retention_policy' ->> 'enabled') = 'true' and (arguments -> 'retention_policy' ->> 'days')::int >= 90 then 'ok'
+        else 'alarm'
+      end as status,
+      name || case
+        when (arguments -> 'retention_policy' ->> 'enabled') = 'false' then ' retention policy disabled'
+        else ' retention set to ' || (arguments -> 'retention_policy' ->> 'days') || ' day(s)'
+      end || '.' reason
+      ${local.tag_dimensions_sql}
+      ${local.common_dimensions_sql}
+    from
+      terraform_resource
+    where
+      type = 'azurerm_network_watcher_flow_log'
+  EOQ
+}
