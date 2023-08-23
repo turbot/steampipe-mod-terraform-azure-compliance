@@ -28,7 +28,7 @@ control "app_configuration_encryption_enabled" {
   query       = query.app_configuration_encryption_enabled
 
   tags = merge(local.appconfiguration_compliance_common_tags, {
-    fundamental_security = "true"
+    other_checks = "true"
   })
 }
 
