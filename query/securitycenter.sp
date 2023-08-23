@@ -247,8 +247,8 @@ query "securitycenter_contact_number_configured" {
         else 'alarm'
       end status,
       name || case
-        when (arguments ->> 'phone') is not null then ' contact number is configured'
-        else ' contact number is not configured'
+        when (arguments ->> 'phone') is not null then ' contact number configured'
+        else ' contact number not configured'
       end || '.' reason
       ${local.common_dimensions_sql}
     from
@@ -268,7 +268,7 @@ query "securitycenter_uses_standard_pricing_tier" {
       end status,
       name || case
         when (arguments ->> 'tier') = 'Standard' then ' uses standard pricing tier'
-        else ' does not use standard pricing tier'
+        else ' not uses standard pricing tier'
       end || '.' reason
       ${local.common_dimensions_sql}
     from

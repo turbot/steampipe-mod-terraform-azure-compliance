@@ -21,7 +21,7 @@ query "data_factory_encrypted_with_cmk" {
   EOQ
 }
 
-query "data_factory_public_network_access_disabled" {
+query "data_factory_restrict_public_access" {
   sql = <<-EOQ
     select
       type || ' ' || name as resource,
@@ -30,8 +30,8 @@ query "data_factory_public_network_access_disabled" {
         else 'alarm'
       end status,
       name || case
-        when (arguments ->> 'public_network_enabled') = 'false' then ' public network access disabled'
-        else ' public network access enabled'
+        when (arguments ->> 'public_network_enabled') = 'false' then ' not publicly accessible'
+        else ' publicly accessible'
       end || '.' reason
       ${local.tag_dimensions_sql}
       ${local.common_dimensions_sql}
@@ -53,11 +53,11 @@ query "data_factory_uses_git_repository" {
       end status,
       name || case
         when ((arguments -> 'github_configuration') is not null)
-          or ((arguments -> 'vsts_configuration') is not null)  then ' uses git repository'
+          or ((arguments -> 'vsts_configuration') is not null) then ' uses git repository'
         else ' not uses git repository'
       end || '.' reason
-      --${local.tag_dimensions_sql}
-      --${local.common_dimensions_sql}
+      ${local.tag_dimensions_sql}
+      ${local.common_dimensions_sql}
     from
       terraform_resource
     where

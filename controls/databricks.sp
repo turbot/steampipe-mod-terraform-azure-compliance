@@ -18,7 +18,7 @@ benchmark "databricks" {
 }
 
 control "databricks_workspace_restrict_public_access" {
-  title       = "Databricks should disable public network access"
+  title       = "Databricks should disable restric public network access"
   description = "Disabling public network access improves security by ensuring that your Databricks is not exposed on the public internet. Creating private endpoints can limit exposure of your Databricks."
   query       = query.databricks_workspace_restrict_public_access
 

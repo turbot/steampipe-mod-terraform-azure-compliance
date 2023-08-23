@@ -427,8 +427,8 @@ query "storage_container_restrict_public_access" {
         else 'alarm'
       end status,
       name || case
-        when (arguments ->> 'container_access_type') = 'private' or (arguments ->> 'container_access_type') is null then ' public access to container disabled'
-        else ' public access to container not disabled'
+        when (arguments ->> 'container_access_type') = 'private' or (arguments ->> 'container_access_type') is null then ' not publicly accessible'
+        else ' publicly accessible'
       end || '.' reason
       ${local.tag_dimensions_sql}
       ${local.common_dimensions_sql}

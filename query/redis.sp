@@ -73,8 +73,8 @@ query "redis_cache_restrict_public_access" {
         else 'alarm'
       end status,
       name || case
-        when (arguments ->> 'public_network_access_enabled') = 'false' then ' public network access disabled'
-        else ' public network access enabled'
+        when (arguments ->> 'public_network_access_enabled') = 'false' then ' not publicly accessible'
+        else ' publicly accessible'
       end || '.' reason
       ${local.tag_dimensions_sql}
       ${local.common_dimensions_sql}

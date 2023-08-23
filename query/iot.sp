@@ -30,8 +30,8 @@ query "iot_hub_restrict_public_access" {
       end status,
       name || case
         when (arguments -> 'public_network_access_enabled') is null then ' public network access not defined'
-        when (arguments ->> 'public_network_access_enabled') = 'true' then ' public network access enabled'
-        else ' public network access disabled'
+        when (arguments ->> 'public_network_access_enabled') = 'true' then ' publicly accessible'
+        else ' not publicly accessible'
       end || '.' reason
       ${local.tag_dimensions_sql}
       ${local.common_dimensions_sql}
