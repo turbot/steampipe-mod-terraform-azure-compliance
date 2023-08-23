@@ -23,9 +23,10 @@ benchmark "storage" {
     control.storage_account_trusted_microsoft_services_enabled,
     control.storage_account_use_virtual_service_endpoint,
     control.storage_account_uses_azure_resource_manager,
+    control.storage_account_uses_latest_minimum_tls_version,
     control.storage_account_uses_private_link,
     control.storage_azure_defender_enabled,
-    control.storage_container_restrict_public_access
+    control.storage_container_restrict_public_access,
   ]
 
   tags = merge(local.storage_compliance_common_tags, {
