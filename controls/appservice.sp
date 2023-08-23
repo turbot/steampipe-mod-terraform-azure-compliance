@@ -13,6 +13,7 @@ benchmark "appservice" {
     control.appservice_azure_defender_enabled,
     control.appservice_environment_internal_encryption_enabled,
     control.appservice_ftp_deployment_disabled,
+    control.appservice_function_app_builtin_logging_enabled,
     control.appservice_function_app_client_certificates_on,
     control.appservice_function_app_cors_no_star,
     control.appservice_function_app_ftps_enabled,
@@ -465,6 +466,14 @@ control "appservice_web_app_uses_azure_file" {
   title       = "Web apps should use Azure files"
   description = "Ensure that the application services are configured to utilize Azure Files."
   query       = query.appservice_web_app_uses_azure_file
+
+  tags = local.appservice_compliance_common_tags
+}
+
+control "appservice_function_app_builtin_logging_enabled" {
+  title       = "Function Apps builtin logging should be enabled"
+  description = "Ensure that builtin logging is enabled for Function Apps."
+  query       = query.appservice_function_app_builtin_logging_enabled
 
   tags = local.appservice_compliance_common_tags
 }

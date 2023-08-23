@@ -930,3 +930,24 @@ query "appservice_web_app_uses_azure_file" {
       type in ('azurerm_app_service', 'azurerm_linux_web_app', 'azurerm_windows_web_app');
   EOQ
 }
+
+query "appservice_function_app_builtin_logging_enabled" {
+  sql = <<-EOQ
+    select
+      type || ' ' || name as resource,
+      case
+        when (arguments ->> 'enable_builtin_logging') = 'false' then 'alarm'
+        else 'ok'
+      end status,
+      name || case
+        when (arguments ->> 'enable_builtin_logging') = 'false' then ' builtin logging disabled'
+        else ' builtin logging enabled'
+      end || '.' reason
+      ${local.tag_dimensions_sql}
+      ${local.common_dimensions_sql}
+    from
+      terraform_resource
+    where
+      type in ('azurerm_function_app', 'azurerm_function_app_slot');
+  EOQ
+}

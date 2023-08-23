@@ -372,3 +372,24 @@ query "compute_vm_disable_password_authentication" {
       type = 'azurerm_virtual_machine';
   EOQ
 }
+
+query "compute_vm_scale_set_disable_password_authentication_linux" {
+  sql = <<-EOQ
+    select
+      type || ' ' || name as resource,
+      case
+        when (arguments ->> 'disable_password_authentication') = 'false' then 'alarm'
+        else 'ok'
+      end status,
+      name || case
+        when (arguments ->> 'disable_password_authentication') = 'false' then ' password authentication enabled'
+        else ' password authentication disabled'
+      end || '.' reason
+      ${local.tag_dimensions_sql}
+      ${local.common_dimensions_sql}
+    from
+      terraform_resource
+    where
+      type = 'azurerm_linux_virtual_machine_scale_set';
+  EOQ
+}
