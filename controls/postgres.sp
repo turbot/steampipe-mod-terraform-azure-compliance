@@ -20,7 +20,7 @@ benchmark "postgres" {
     control.postgres_sql_server_encrypted_at_rest_using_cmk,
     control.postgres_sql_ssl_enabled,
     control.postgresql_server_infrastructure_encryption_enabled,
-    control.postgresql_server_public_network_access_disabled,
+    control.postgresql_server_public_network_access_disabled
   ]
 
   tags = merge(local.postgres_compliance_common_tags, {

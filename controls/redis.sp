@@ -12,7 +12,7 @@ benchmark "redis" {
     control.azure_redis_cache_in_virtual_network,
     control.azure_redis_cache_ssl_enabled,
     control.redis_cache_min_tls_1_2,
-    control.redis_cache_restrict_public_access,
+    control.redis_cache_restrict_public_access
   ]
 
   tags = merge(local.redis_compliance_common_tags, {

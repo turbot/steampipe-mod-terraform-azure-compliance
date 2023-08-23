@@ -26,7 +26,7 @@ benchmark "storage" {
     control.storage_account_uses_latest_minimum_tls_version,
     control.storage_account_uses_private_link,
     control.storage_azure_defender_enabled,
-    control.storage_container_restrict_public_access,
+    control.storage_container_restrict_public_access
   ]
 
   tags = merge(local.storage_compliance_common_tags, {
