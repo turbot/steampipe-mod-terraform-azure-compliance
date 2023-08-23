@@ -118,3 +118,48 @@ query "mysql_server_encrypted_at_rest_using_cmk" {
   EOQ
 }
 
+query "mysql_server_min_tls_1_2" {
+  sql = <<-EOQ
+    select
+      type || ' ' || name as resource,
+      case
+        when ((arguments -> 'ssl_minimal_tls_version_enforced') is null)
+          or ((arguments ->> 'ssl_minimal_tls_version_enforced') = 'TLS1_2') then 'ok'
+        else 'alarm'
+      end status,
+      name || case
+        when ((arguments -> 'ssl_minimal_tls_version_enforced') is null)
+        or ((arguments ->> 'ssl_minimal_tls_version_enforced') = 'TLS1_2') then ' not using the latest version of TLS encryption'
+        else ' using the latest version of TLS encryption'
+      end || '.' reason
+      ${local.tag_dimensions_sql}
+      ${local.common_dimensions_sql}
+    from
+      terraform_resource
+    where
+      type = 'azurerm_mysql_server';
+  EOQ
+}
+
+query "mysql_server_threat_detection_enabled" {
+  sql = <<-EOQ
+    select
+      type || ' ' || name as resource,
+      case
+        when (arguments -> 'threat_detection_policy') is null then 'alarm'
+        when (arguments -> 'threat_detection_policy' ->> 'enabled') = 'true' then 'ok'
+        else 'alarm'
+      end status,
+      name || case
+        when (arguments -> 'threat_detection_policy') is null then ' threat detection policy not defined'
+        when (arguments -> 'threat_detection_policy' ->> 'enabled') = 'true' then ' threat detection policy enabled'
+        else ' threat detection policy disabled'
+      end || '.' reason
+      ${local.tag_dimensions_sql}
+      ${local.common_dimensions_sql}
+    from
+      terraform_resource
+    where
+      type = 'azurerm_mysql_server';
+  EOQ
+}
