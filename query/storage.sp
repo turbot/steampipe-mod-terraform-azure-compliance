@@ -395,3 +395,46 @@ query "storage_account_uses_latest_minimum_tls_version" {
       type = 'azurerm_storage_account';
   EOQ
 }
+
+query "storage_account_replication_type_set" {
+  sql = <<-EOQ
+    select
+      type || ' ' || name as resource,
+      case
+        when (arguments ->> 'account_replication_type') in ('GRS', 'RAGRS', 'GZRS', 'RAGZRS') then 'ok'
+        else 'alarm'
+      end status,
+      name || case
+        when (arguments ->> 'account_replication_type') in ('GRS', 'RAGRS', 'GZRS', 'RAGZRS') then ' replication type set'
+        when (arguments ->> 'account_replication_type') is null then ' replication type not set'
+        else ' replication type not set correctly'
+      end || '.' reason
+      ${local.tag_dimensions_sql}
+      ${local.common_dimensions_sql}
+    from
+      terraform_resource
+    where
+        type = 'azurerm_storage_account';
+  EOQ
+}
+
+query "storage_container_public_access_disabled" {
+  sql = <<-EOQ
+    select
+      type || ' ' || name as resource,
+      case
+        when (arguments ->> 'container_access_type') = 'private' or (arguments ->> 'container_access_type') is null then 'ok'
+        else 'alarm'
+      end status,
+      name || case
+        when (arguments ->> 'container_access_type') = 'private' or (arguments ->> 'container_access_type') is null then ' public access to container disabled'
+        else ' public access to container not disabled'
+      end || '.' reason
+      ${local.tag_dimensions_sql}
+      ${local.common_dimensions_sql}
+    from
+      terraform_resource
+    where
+        type = 'azurerm_storage_container';
+  EOQ
+}
