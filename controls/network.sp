@@ -9,11 +9,13 @@ benchmark "network" {
   description = "This benchmark provides a set of controls that detect Terraform Azure Virtual Network resources deviating from security best practices."
 
   children = [
+    control.network_security_group_http_access_restricted,
     control.network_security_group_not_configured_gateway_subnets,
     control.network_security_group_rdp_access_restricted,
     control.network_security_group_ssh_access_restricted,
     control.network_security_group_subnet_associated,
     control.network_security_group_udp_access_restricted,
+    control.network_security_rule_http_access_restricted,
     control.network_security_rule_rdp_access_restricted,
     control.network_security_rule_ssh_access_restricted,
     control.network_security_rule_udp_access_restricted,
@@ -102,3 +104,18 @@ control "network_security_group_ssh_access_restricted" {
   tags = local.network_compliance_common_tags
 }
 
+control "network_security_rule_http_access_restricted" {
+  title       = "Network Security Rules HTTP Services are restricted from the Internet"
+  description = "Disable Internet exposed HTTP ports on network security rules."
+  query       = query.network_security_rule_http_access_restricted
+
+  tags = local.network_compliance_common_tags
+}
+
+control "network_security_group_http_access_restricted" {
+  title       = "Network Security Groups HTTP Services are restricted from the Internet"
+  description = "Disable Internet exposed HTTP ports on network security groups."
+  query       = query.network_security_group_http_access_restricted
+
+  tags = local.network_compliance_common_tags
+}

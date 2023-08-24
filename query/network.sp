@@ -403,3 +403,112 @@ query "network_security_group_ssh_access_restricted" {
       type = 'azurerm_network_security_group';
   EOQ
 }
+
+query "network_security_rule_http_access_restricted" {
+  sql = <<-EOQ
+    with nsg_rule as (
+      select
+        distinct name
+      from
+        terraform_resource,
+        jsonb_array_elements_text(
+          case
+            when ((arguments -> 'destination_port_ranges') != 'null') and jsonb_array_length(arguments -> 'destination_port_ranges') > 0 then (arguments -> 'destination_port_ranges')
+            else jsonb_build_array(arguments -> 'destination_port_range')
+          end ) as dport,
+        jsonb_array_elements_text(
+          case
+            when ((arguments -> 'source_address_prefixes') != 'null') and jsonb_array_length(arguments -> 'source_address_prefixes') > 0 then (arguments -> 'source_address_prefixes')
+            else jsonb_build_array(arguments -> 'source_address_prefix')
+          end) as sip
+      where
+        type = 'azurerm_network_security_rule'
+        and lower(arguments ->> 'access') = 'allow'
+        and lower(arguments ->> 'direction') = 'inbound'
+        and (lower(arguments ->> 'protocol') ilike 'TCP' or lower(arguments ->> 'protocol') = '*')
+        and lower(sip) in ('*', '0.0.0.0', '0.0.0.0/0', 'internet', 'any', '<nw>/0', '/0')
+        and (
+          dport in ('80', '*')
+          or (
+            dport like '%-%'
+            and split_part(dport, '-', 1) :: integer <= 80
+            and split_part(dport, '-', 2) :: integer >= 80
+          )
+        )
+    )
+    select
+      type || ' ' || r.name as resource,
+      case
+        when rule.name is null then 'ok'
+        else 'alarm'
+      end as status,
+      r.name || case
+        when rule.name is null then ' restricts HTTP access from internet'
+        else ' allows HTTP access from internet'
+      end || '.' reason
+      ${local.common_dimensions_sql}
+    from
+      terraform_resource as r
+      left join nsg_rule as rule on rule.name = r.name
+    where
+      type = 'azurerm_network_security_rule';
+  EOQ
+}
+
+query "network_security_group_http_access_restricted" {
+  sql = <<-EOQ
+    with nsg_group as (
+      select
+        distinct name
+      from
+        terraform_resource,
+        jsonb_array_elements(
+          case jsonb_typeof(arguments -> 'security_rule')
+            when 'array' then (arguments -> 'security_rule')
+            when 'object' then jsonb_build_array(arguments -> 'security_rule')
+            else null end
+          ) sg,
+        jsonb_array_elements_text(
+          case
+            when ((sg -> 'destination_port_ranges') != 'null') and jsonb_array_length(sg -> 'destination_port_ranges') > 0 then (sg -> 'destination_port_ranges')
+            else jsonb_build_array(sg -> 'destination_port_range')
+          end ) as dport,
+        jsonb_array_elements_text(
+          case
+            when ((sg -> 'source_address_prefixes') != 'null') and jsonb_array_length(sg -> 'source_address_prefixes') > 0 then (sg -> 'source_address_prefixes')
+            else jsonb_build_array(sg -> 'source_address_prefix')
+          end) as sip
+      where
+        type = 'azurerm_network_security_group'
+        and lower(sg ->> 'access') = 'allow'
+        and lower(sg ->> 'direction') = 'inbound'
+        and (lower(sg ->> 'protocol') ilike 'TCP' or lower(sg ->> 'protocol') = '*')
+        and lower(sip) in ('*', '0.0.0.0', '0.0.0.0/0', 'internet', 'any', '<nw>/0', '/0')
+        and (
+          dport in ('80', '*')
+          or (
+            dport like '%-%'
+            and split_part(dport, '-', 1) :: integer <= 80
+            and split_part(dport, '-', 2) :: integer >= 80
+          )
+        )
+    )
+    select
+      type || ' ' || r.name as resource,
+      case
+        when g.name is null then 'ok'
+        else 'alarm'
+      end as status,
+      r.name || case
+        when g.name is null then ' restricts HTTP access from internet'
+        else ' allows HTTP access from internet'
+      end || '.' reason
+      ${local.tag_dimensions_sql}
+      ${local.common_dimensions_sql}
+    from
+      terraform_resource as r
+      left join nsg_group as g on g.name = r.name
+    where
+      type = 'azurerm_network_security_group';
+  EOQ
+}
