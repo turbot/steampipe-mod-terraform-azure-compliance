@@ -60,7 +60,7 @@ control "network_security_group_udp_access_restricted" {
 
 control "network_security_rule_udp_access_restricted" {
   title       = "Network Security Rules UDP Services are restricted from the Internet"
-  description = "Disable Internet exposed UDP ports on network security Rules."
+  description = "Disable Internet exposed UDP ports on network security rules."
   query       = query.network_security_rule_udp_access_restricted
 
   tags = local.network_compliance_common_tags

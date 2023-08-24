@@ -47,14 +47,12 @@ query "data_factory_uses_git_repository" {
     select
       type || ' ' || name as resource,
       case
-        when ((arguments -> 'github_configuration') is not null)
-          or ((arguments -> 'vsts_configuration') is not null) then 'ok'
+        when ((arguments -> 'github_configuration') is not null) or ((arguments -> 'vsts_configuration') is not null) then 'ok'
         else 'alarm'
       end status,
       name || case
-        when ((arguments -> 'github_configuration') is not null)
-          or ((arguments -> 'vsts_configuration') is not null) then ' uses git repository'
-        else ' not uses git repository'
+        when ((arguments -> 'github_configuration') is not null) or ((arguments -> 'vsts_configuration') is not null) then ' uses git repository'
+        else ' not use git repository'
       end || '.' reason
       ${local.tag_dimensions_sql}
       ${local.common_dimensions_sql}

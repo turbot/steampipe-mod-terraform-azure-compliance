@@ -268,7 +268,7 @@ query "securitycenter_uses_standard_pricing_tier" {
       end status,
       name || case
         when (arguments ->> 'tier') = 'Standard' then ' uses standard pricing tier'
-        else ' not uses standard pricing tier'
+        else ' not use standard pricing tier'
       end || '.' reason
       ${local.common_dimensions_sql}
     from

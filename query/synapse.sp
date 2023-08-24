@@ -67,8 +67,8 @@ query "synapse_workspace_data_exfiltration_protection_enabled" {
         else 'alarm'
       end status,
       name || case
-        when (arguments -> 'data_exfiltration_protection_enabled') is null then ' ''data_exfiltration_protection_enabled'' not defined'
-        when (arguments -> 'data_exfiltration_protection_enabled' ) = 'true' then ' data exfiltration protection enabled'
+        when (arguments -> 'data_exfiltration_protection_enabled') is null then ' data exfiltration protection not defined'
+        when (arguments ->> 'data_exfiltration_protection_enabled' ) = 'true' then ' data exfiltration protection enabled'
         else ' data exfiltration protection disabled'
       end || '.' reason
       ${local.tag_dimensions_sql}

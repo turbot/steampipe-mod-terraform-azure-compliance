@@ -695,7 +695,7 @@ query "appservice_web_app_always_on" {
     from
       terraform_resource
     where
-      type in ( 'azurerm_linux_web_app', 'azurerm_windows_web_app');
+      type in ('azurerm_linux_web_app', 'azurerm_windows_web_app');
   EOQ
 }
 
@@ -732,7 +732,7 @@ query "appservice_web_app_latest_dotnet_framework_version" {
       name || case
         when (arguments -> 'site_config' ->> 'dotnet_framework_version') is null then ' not using dotnet framework'
         when (arguments -> 'site_config' ->> 'dotnet_framework_version') = 'v6.0' then ' using latest dotnet framework version'
-        else ' not using latest dotnet framework'
+        else ' not using latest dotnet framework version'
       end || '.' reason
       ${local.tag_dimensions_sql}
       ${local.common_dimensions_sql}
@@ -769,7 +769,7 @@ query "appservice_web_app_http_logs_enabled" {
     select
       type || ' ' || name as resource,
       case
-        when ((arguments -> 'logs' -> 'http_logs') is not null) or ((arguments -> 'logs' -> 'dynamic' -> 'http_logs') is not null)  then 'ok'
+        when ((arguments -> 'logs' -> 'http_logs') is not null) or ((arguments -> 'logs' -> 'dynamic' -> 'http_logs') is not null) then 'ok'
         else 'alarm'
       end status,
       name || case
@@ -877,8 +877,8 @@ query "appservice_web_app_slot_use_https" {
         else 'alarm'
       end status,
       name || case
-        when (arguments ->> 'https_only') ='true' then ' https-only accessible enabled'
-        else ' https-only accessible disabled'
+        when (arguments ->> 'https_only') ='true' then ' accessible over HTTPS'
+        else ' not accessible over HTTPS'
       end || '.' reason
       ${local.tag_dimensions_sql}
       ${local.common_dimensions_sql}

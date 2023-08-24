@@ -154,7 +154,7 @@ control "postgres_db_flexible_server_geo_redundant_backup_enabled" {
 }
 
 control "postgres_db_server_threat_detection_policy_enabled" {
-  title       = " PostgreSQL Servers threat detection policy should be enabled"
+  title       = "PostgreSQL Servers threat detection policy should be enabled"
   description = "Ensure that PostgreSQL server threat detection policy is enabled. This control is non-compliant if PostgreSQL server threat detection policy is disabled."
   query       = query.postgres_db_server_threat_detection_policy_enabled
 

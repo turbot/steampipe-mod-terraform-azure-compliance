@@ -405,7 +405,7 @@ query "storage_account_replication_type_set" {
         else 'alarm'
       end status,
       name || case
-        when (arguments ->> 'account_replication_type') in ('GRS', 'RAGRS', 'GZRS', 'RAGZRS') then ' replication type set'
+        when (arguments ->> 'account_replication_type') in ('GRS', 'RAGRS', 'GZRS', 'RAGZRS') then ' replication type set correctly'
         when (arguments ->> 'account_replication_type') is null then ' replication type not set'
         else ' replication type not set correctly'
       end || '.' reason
@@ -414,7 +414,7 @@ query "storage_account_replication_type_set" {
     from
       terraform_resource
     where
-        type = 'azurerm_storage_account';
+      type = 'azurerm_storage_account';
   EOQ
 }
 
@@ -435,6 +435,6 @@ query "storage_container_restrict_public_access" {
     from
       terraform_resource
     where
-        type = 'azurerm_storage_container';
+      type = 'azurerm_storage_container';
   EOQ
 }

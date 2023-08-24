@@ -53,7 +53,7 @@ query "mariadb_server_ssl_enabled" {
         else 'alarm'
       end status,
       name || case
-        when (arguments -> 'ssl_enforcement_enabled') = 'true' then ' SSL connection enabled'
+        when (arguments ->> 'ssl_enforcement_enabled') = 'true' then ' SSL connection enabled'
         else ' SSL connection disabled'
       end || '.' reason
       ${local.tag_dimensions_sql}

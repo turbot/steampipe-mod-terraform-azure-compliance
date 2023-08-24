@@ -48,7 +48,7 @@ query "machine_learning_compute_cluster_minimum_node_zero" {
         when (arguments -> 'scale_settings' ->> 'min_node_count')::int = 0 then 'ok'
         else 'alarm'
       end status,
-      name ||  ' minimum node count set to ' || (arguments -> 'scale_settings' ->> 'min_node_count') || '.' reason
+      name || ' minimum node count set to ' || (arguments -> 'scale_settings' ->> 'min_node_count') || '.' reason
       ${local.tag_dimensions_sql}
       ${local.common_dimensions_sql}
     from

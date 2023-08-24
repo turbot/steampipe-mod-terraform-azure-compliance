@@ -4,7 +4,7 @@ locals {
   })
 }
 
-benchmark "application_gateway" {
+benchmark "applicationgateway" {
   title       = "Application Gateway"
   description = "This benchmark provides a set of controls that detect Terraform Azure Application Gateway resources deviating from security best practices."
 

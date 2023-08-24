@@ -323,8 +323,8 @@ query "postgres_db_flexible_server_geo_redundant_backup_enabled" {
       end status,
       name || case
         when (arguments ->> 'geo_redundant_backup_enabled') is null then ' ''geo_redundant_backup_enabled'' not set'
-        when (arguments ->> 'geo_redundant_backup_enabled')::boolean then ' Geo-redundant backup enabled'
-        else ' Geo-redundant backup disabled'
+        when (arguments ->> 'geo_redundant_backup_enabled')::boolean then ' geo-redundant backup enabled'
+        else ' geo-redundant backup disabled'
       end || '.' reason
       ${local.tag_dimensions_sql}
       ${local.common_dimensions_sql}
@@ -347,7 +347,7 @@ query "postgres_db_server_threat_detection_policy_enabled" {
       name || case
         when (arguments -> 'threat_detection_policy') is null then ' threat detection policy not set'
         when (arguments -> 'threat_detection_policy' ->> 'enabled') = 'true' then ' threat detection policy enabled'
-        else ' threat detection policy  disabled'
+        else ' threat detection policy disabled'
       end || '.' reason
       ${local.tag_dimensions_sql}
       ${local.common_dimensions_sql}

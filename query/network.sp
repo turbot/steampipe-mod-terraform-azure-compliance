@@ -107,7 +107,7 @@ query "network_watcher_flow_log_retention_period_90_days" {
     from
       terraform_resource
     where
-      type = 'azurerm_network_watcher_flow_log'
+      type = 'azurerm_network_watcher_flow_log';
   EOQ
 }
 

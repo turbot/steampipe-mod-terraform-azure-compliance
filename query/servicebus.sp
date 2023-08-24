@@ -50,7 +50,7 @@ query "service_bus_namespace_uses_managed_identity" {
       end status,
       name || case
         when (arguments -> 'identity' ->> 'type') = 'SystemAssigned' then ' uses managed identity'
-        else ' not uses managed identity'
+        else ' not use managed identity'
       end || '.' reason
       ${local.tag_dimensions_sql}
       ${local.common_dimensions_sql}

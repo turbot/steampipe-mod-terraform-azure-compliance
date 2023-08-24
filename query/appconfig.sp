@@ -24,11 +24,11 @@ query "app_configuration_local_auth_disabled" {
     select
       type || ' ' || name as resource,
       case
-        when (arguments ->> 'local_auth_enabled') is null and (arguments ->> 'local_auth_enabled')::boolean then 'alarm'
+        when (arguments ->> 'local_auth_enabled') is null or (arguments ->> 'local_auth_enabled')::boolean then 'alarm'
         else 'ok'
       end status,
       name || case
-        when (arguments ->> 'local_auth_enabled') is null and (arguments ->> 'local_auth_enabled')::boolean then ' local authentication enabled'
+        when (arguments ->> 'local_auth_enabled') is null or (arguments ->> 'local_auth_enabled')::boolean then ' local authentication enabled'
         else ' local authentication disabled'
       end || '.' reason
       ${local.tag_dimensions_sql}
@@ -91,8 +91,8 @@ query "app_configuration_sku_standard" {
         else 'alarm'
       end status,
       name || case
-        when (arguments ->> 'sku') = 'standard' then ' sku is Standard'
-        else ' sku is not Standard'
+        when (arguments ->> 'sku') = 'standard' then ' use Standard SKU'
+        else ' does not use Standard SKU'
       end || '.' reason
       ${local.tag_dimensions_sql}
       ${local.common_dimensions_sql}

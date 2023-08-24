@@ -28,7 +28,7 @@ query "web_pubsub_uses_managed_identity" {
         else 'ok'
       end status,
       name || case
-        when (arguments -> 'identity') is null then ' ''identity'' is not defined'
+        when (arguments -> 'identity') is null then ' identity is not defined'
         else ' uses ' || (arguments -> 'identity' ->> 'type') || ' identity'
       end || '.' reason
       ${local.tag_dimensions_sql}

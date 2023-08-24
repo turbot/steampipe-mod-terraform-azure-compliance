@@ -7,8 +7,8 @@ query "iam_no_custom_subscription_owner_roles_created" {
         else 'ok'
       end status,
       name || case
-        when (arguments -> 'permissions' -> 'actions') @> '["*"]' then ' There are custom owner roles.'
-        else ' There are no custom owner roles.'
+        when (arguments -> 'permissions' -> 'actions') @> '["*"]' then 'has custom owner roles'
+        else ' does not have custom owner roles'
       end || '.' reason
       ${local.common_dimensions_sql}
     from

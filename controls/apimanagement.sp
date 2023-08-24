@@ -34,7 +34,7 @@ control "apimanagement_service_with_virtual_network" {
 
 control "apimanagement_backend_uses_https" {
   title       = "API Management backends should use HTTPS"
-  description = "This control checks that the backend of the API Management service is configured to use HTTPS."
+  description = "This control checks that the API Management backend is configured to use HTTPS."
   query       = query.apimanagement_backend_uses_https
 
   tags = local.apimanagement_compliance_common_tags

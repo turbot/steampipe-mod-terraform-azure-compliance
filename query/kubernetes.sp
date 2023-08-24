@@ -51,7 +51,7 @@ query "kubernetes_cluster_authorized_ip_range_defined" {
       end status,
       name || case
         when (arguments ->> 'private_cluster_enabled') = 'true' then ' is private cluster'
-        when (jsonb_array_length(arguments -> 'api_server_authorized_ip_ranges') > 0) or  (jsonb_array_length(arguments -> 'api_server_access_profile' -> 'authorized_ip_ranges') > 0 ) then ' authorized IP ranges defined'
+        when (jsonb_array_length(arguments -> 'api_server_authorized_ip_ranges') > 0) or (jsonb_array_length(arguments -> 'api_server_access_profile' -> 'authorized_ip_ranges') > 0 ) then ' authorized IP ranges defined'
         else ' authorized IP ranges not defined'
       end || '.' reason
       ${local.tag_dimensions_sql}
@@ -160,7 +160,7 @@ query "kubernetes_cluster_sku_standard" {
       end status,
       name || case
         when (arguments ->> 'sku_tier') = 'Standard' then ' uses standard SKU tier'
-        else ' uses free SKU tier.'
+        else ' uses free SKU tier'
       end || '.' reason
       ${local.tag_dimensions_sql}
       ${local.common_dimensions_sql}

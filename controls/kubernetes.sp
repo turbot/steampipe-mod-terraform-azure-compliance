@@ -163,7 +163,7 @@ control "kubernetes_cluster_node_restrict_public_access" {
 
 control "kubernetes_cluster_key_vault_secret_rotation_enabled" {
   title       = "Kubernetes clusters key vault secret rotation should be enabled"
-  description = "This control checks if key vault secret rotation should is enabled for Kubernetes cluster."
+  description = "This control checks if key vault secret rotation is enabled for Kubernetes cluster."
   query       = query.kubernetes_cluster_key_vault_secret_rotation_enabled
 
   tags = merge(local.kubernetes_compliance_common_tags, {
@@ -183,7 +183,7 @@ control "kubernetes_cluster_upgrade_channel" {
 
 control "kubernetes_cluster_node_pool_type_scale_set" {
   title       = "Kubernetes clusters should use scale sets type nodes"
-  description = "Ensure Kubernetes clusters uses scale sets type nodes. This control is non-compliant if Kubernetes clusters does not use scale sets type nodes."
+  description = "Ensure Kubernetes clusters uses scale sets type nodes. This control is non-compliant if Kubernetes clusters do not use scale sets type nodes."
   query       = query.kubernetes_cluster_node_pool_type_scale_set
 
   tags = local.kubernetes_compliance_common_tags

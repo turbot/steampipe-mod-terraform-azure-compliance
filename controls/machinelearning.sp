@@ -40,7 +40,7 @@ control "machine_learning_compute_cluster_local_auth_disabled" {
 
 control "machine_learning_compute_cluster_minimum_node_zero" {
   title       = "Machine Learning Compute Clusters minimum node count should be set to zero"
-  description = "This control checks whether Machine Learning Compute Cluster minimum node count is  set to zero. This control is non-complaint if Machine Learning Compute Cluster minimum node count is not set to zero."
+  description = "This control checks whether Machine Learning Compute Cluster minimum node count is set to zero. This control is non-complaint if Machine Learning Compute Cluster minimum node count is not set to zero."
   query       = query.machine_learning_compute_cluster_minimum_node_zero
 
   tags = local.machinelearning_compliance_common_tags

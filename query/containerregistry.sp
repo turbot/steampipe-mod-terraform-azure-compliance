@@ -30,8 +30,8 @@ query "container_registry_azure_defender_enabled" {
         else 'info'
       end status,
       name || case
-        when (arguments ->> 'resource_type') = 'ContainerRegistry' and (arguments ->> 'tier') = 'Standard' then ' Azure Defender on for ContainerRegistry'
-        else ' Azure Defender off for ContainerRegistry'
+        when (arguments ->> 'resource_type') = 'ContainerRegistry' and (arguments ->> 'tier') = 'Standard' then ' Azure Defender on for Container Registry'
+        else ' Azure Defender off for Container Registry'
       end || '.' reason
       ${local.common_dimensions_sql}
     from
@@ -52,7 +52,7 @@ query "container_registry_restrict_public_access" {
       end status,
       name || case
         when (arguments -> 'network_rule_set') is null then ' ''network_rule_set'' not defined'
-        when (arguments -> 'network_rule_set' ->> 'default_action')::text = 'Deny' then ' publicly not accessible'
+        when (arguments -> 'network_rule_set' ->> 'default_action')::text = 'Deny' then ' not publicly accessible'
         else ' publicly accessible'
       end || '.' reason
       ${local.tag_dimensions_sql}

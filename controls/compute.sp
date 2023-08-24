@@ -156,8 +156,8 @@ control "compute_vm_disable_password_authentication_linux" {
 }
 
 control "compute_vm_scale_set_disable_password_authentication_linux" {
-  title       = "Virtual machines scale sets should disable password authentication"
-  description = "Virtual machines scale sets should disable password authentication to prevent brute-force attacks."
+  title       = "Linux virtual machines scale sets should disable password authentication"
+  description = "Linux virtual machines scale sets should disable password authentication to prevent brute-force attacks."
   query       = query.compute_vm_scale_set_disable_password_authentication_linux
 
   tags = local.compute_compliance_common_tags

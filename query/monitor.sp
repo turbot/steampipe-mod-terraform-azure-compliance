@@ -74,9 +74,9 @@ query "monitor_log_profile_retention_365_days" {
         else 'alarm'
       end as status,
       case
-        when (arguments -> 'retention_policy' ->> 'enabled')::boolean and (arguments -> 'retention_policy' ->> 'days')::int < 365 then ' retention policy enabled but set to ' || (arguments -> 'retention_policy' ->> 'days') || ' days.'
+        when (arguments -> 'retention_policy' ->> 'enabled')::boolean and (arguments -> 'retention_policy' ->> 'days')::int < 365 then ' retention policy enabled but set to ' || (arguments -> 'retention_policy' ->> 'days') || ' days'
         when (arguments -> 'retention_policy' ->> 'enabled')::boolean and (arguments -> 'retention_policy' ->> 'days')::int >= 365 then ' retention policy enabled and set to ' || (arguments -> 'retention_policy' ->> 'days') || ' days.'
-        else ' retention policy disabled.'
+        else ' retention policy disabled'
       end || '.' reason
       ${local.common_dimensions_sql}
     from
