@@ -260,3 +260,23 @@ query "keyvault_secret_expiration_set" {
   EOQ
 }
 
+query "keyvault_secret_content_type_set" {
+  sql = <<-EOQ
+    select
+      type || ' ' || name as resource,
+      case
+        when (arguments ->> 'content_type') is null then 'alarm'
+        else 'ok'
+      end status,
+      name || case
+        when (arguments ->> 'content_type') is null then ' content type not set'
+        else ' content type is set'
+      end || '.' reason
+      ${local.tag_dimensions_sql}
+      ${local.common_dimensions_sql}
+    from
+      terraform_resource
+    where
+      type = 'azurerm_key_vault_secret';
+  EOQ
+}

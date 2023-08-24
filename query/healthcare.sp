@@ -1,4 +1,4 @@
-query "healthcare_fhir_public_network_access_enabled" {
+query "healthcare_fhir_public_network_access_disabled" {
   sql = <<-EOQ
     select
       type || ' ' || name as resource,

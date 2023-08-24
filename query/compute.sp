@@ -289,3 +289,149 @@ query "compute_vm_malware_agent_installed" {
   EOQ
 }
 
+query "compute_managed_disk_set_encryption_enabled" {
+  sql = <<-EOQ
+    select
+      type || ' ' || name as resource,
+      case
+        when (arguments -> 'disk_encryption_set_id') is not null then 'ok'
+        else 'alarm'
+      end status,
+      name || case
+        when (arguments -> 'disk_encryption_set_id') is not null then ' encryption enabled'
+        else ' encryption disabled'
+      end || '.' reason
+      ${local.tag_dimensions_sql}
+      ${local.common_dimensions_sql}
+    from
+      terraform_resource
+    where
+      type = 'azurerm_managed_disk';
+  EOQ
+}
+
+query "compute_vm_allow_extension_operations_disabled" {
+  sql = <<-EOQ
+    select
+      type || ' ' || name as resource,
+      case
+        when (arguments ->> 'allow_extension_operations')::boolean or (arguments ->> 'allow_extension_operations') is null then 'alarm'
+        else 'ok'
+      end status,
+      name || case
+        when (arguments ->> 'allow_extension_operations')::boolean or (arguments ->> 'allow_extension_operations') is null then ' allow extension operations'
+        else ' disallow extension operations'
+      end || '.' reason
+      ${local.tag_dimensions_sql}
+      ${local.common_dimensions_sql}
+    from
+      terraform_resource
+    where
+      type in ('azurerm_linux_virtual_machine', 'azurerm_windows_virtual_machine');
+  EOQ
+}
+
+query "compute_vm_disable_password_authentication_linux" {
+  sql = <<-EOQ
+    select
+      type || ' ' || name as resource,
+      case
+        when (arguments ->> 'disable_password_authentication')::boolean then 'ok'
+        else 'alarm'
+      end status,
+      name || case
+        when (arguments ->> 'disable_password_authentication')::boolean then ' disable password authentication'
+        else ' enable password authentication'
+      end || '.' reason
+      ${local.tag_dimensions_sql}
+      ${local.common_dimensions_sql}
+    from
+      terraform_resource
+    where
+      type = 'azurerm_linux_virtual_machine';
+  EOQ
+}
+
+query "compute_vm_disable_password_authentication" {
+  sql = <<-EOQ
+    select
+      type || ' ' || name as resource,
+      case
+        when (arguments -> 'os_profile_linux_config' ->> 'disable_password_authentication')::boolean then 'ok'
+        else 'alarm'
+      end status,
+      name || case
+        when (arguments -> 'os_profile_linux_config' ->> 'disable_password_authentication')::boolean then ' disable password authentication'
+        else ' enable password authentication'
+      end || '.' reason
+      ${local.tag_dimensions_sql}
+      ${local.common_dimensions_sql}
+    from
+      terraform_resource
+    where
+      type = 'azurerm_virtual_machine';
+  EOQ
+}
+
+query "compute_vm_scale_set_disable_password_authentication_linux" {
+  sql = <<-EOQ
+    select
+      type || ' ' || name as resource,
+      case
+        when (arguments ->> 'disable_password_authentication') = 'false' then 'alarm'
+        else 'ok'
+      end status,
+      name || case
+        when (arguments ->> 'disable_password_authentication') = 'false' then ' password authentication enabled'
+        else ' password authentication disabled'
+      end || '.' reason
+      ${local.tag_dimensions_sql}
+      ${local.common_dimensions_sql}
+    from
+      terraform_resource
+    where
+      type = 'azurerm_linux_virtual_machine_scale_set';
+  EOQ
+}
+
+query "compute_vm_and_scale_set_ssh_key_enabled_linux" {
+  sql = <<-EOQ
+    select
+      type || ' ' || name as resource,
+      case
+        when (arguments -> 'admin_ssh_key') is not null then 'ok'
+        else 'alarm'
+      end status,
+      name || case
+        when (arguments -> 'admin_ssh_key') is not null then ' SSH key enabled'
+        else ' SSH key disabled'
+      end || '.' reason
+      ${local.tag_dimensions_sql}
+      ${local.common_dimensions_sql}
+    from
+      terraform_resource
+    where
+      type in ('azurerm_linux_virtual_machine_scale_set', 'azurerm_windows_virtual_machine_scale_set');
+  EOQ
+}
+
+query "compute_vm_scale_set_automatic_os_upgrade_enabled" {
+  sql = <<-EOQ
+     select
+      type || ' ' || name as resource,
+      case
+        when (arguments -> 'automatic_os_upgrade_policy' ->> 'enable_automatic_os_upgrade') = 'true' then 'ok'
+        else 'alarm'
+      end status,
+      name || case
+        when (arguments -> 'automatic_os_upgrade_policy' ->> 'enable_automatic_os_upgrade') = 'true' then ' automatic OS upgrade enabled'
+        else ' automatic OS upgrade disabled'
+      end || '.' reason
+      ${local.tag_dimensions_sql}
+      ${local.common_dimensions_sql}
+    from
+      terraform_resource
+    where
+      type in ('azurerm_linux_virtual_machine_scale_set', 'azurerm_windows_virtual_machine_scale_set');
+  EOQ
+}
