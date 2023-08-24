@@ -118,7 +118,7 @@ query "postgres_db_server_geo_redundant_backup_enabled" {
   EOQ
 }
 
-query "postgres_sql_server_encrypted_at_rest_using_cmk" {
+query "postgresql_server_encrypted_at_rest_using_cmk" {
   sql = <<-EOQ
     with postgresql_server as (
       select
@@ -289,7 +289,7 @@ query "postgres_db_server_log_disconnections_on" {
   EOQ
 }
 
-query "postgres_sql_ssl_enabled" {
+query "postgresql_ssl_enabled" {
   sql = <<-EOQ
     select
       type || ' ' || name as resource,
