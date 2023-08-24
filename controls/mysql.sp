@@ -12,7 +12,9 @@ benchmark "mysql" {
     control.mysql_db_server_geo_redundant_backup_enabled,
     control.mysql_server_encrypted_at_rest_using_cmk,
     control.mysql_server_infrastructure_encryption_enabled,
+    control.mysql_server_min_tls_1_2,
     control.mysql_server_public_network_access_disabled,
+    control.mysql_server_threat_detection_enabled,
     control.mysql_ssl_enabled
   ]
 
@@ -71,4 +73,22 @@ control "mysql_server_encrypted_at_rest_using_cmk" {
   tags = merge(local.mysql_compliance_common_tags, {
     nist_sp_800_53_rev_5 = "true"
   })
+}
+
+control "mysql_server_min_tls_1_2" {
+  title       = "Ensure 'TLS Version' is set to 'TLSV1.2' for MySQL flexible Database Server"
+  description = "Ensure TLS version on MySQL flexible servers is set to the default value."
+  query       = query.mysql_server_min_tls_1_2
+
+  tags = merge(local.mysql_compliance_common_tags, {
+    other_checks = "true"
+  })
+}
+
+control "mysql_server_threat_detection_enabled" {
+  title       = "MySQL servers should have threat detection enabled"
+  description = "Ensure MySQL server threat detection policy enabled."
+  query       = query.mysql_server_threat_detection_enabled
+
+  tags = local.mysql_compliance_common_tags
 }

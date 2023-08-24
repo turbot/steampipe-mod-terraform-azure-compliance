@@ -9,6 +9,7 @@ benchmark "synapse" {
   description = "This benchmark provides a set of controls that detect Terraform Azure Synapse resources deviating from security best practices."
 
   children = [
+    control.synapse_workspace_data_exfiltration_protection_enabled,
     control.synapse_workspace_encryption_at_rest_using_cmk,
     control.synapse_workspace_private_link_used
   ]
@@ -35,5 +36,15 @@ control "synapse_workspace_encryption_at_rest_using_cmk" {
 
   tags = merge(local.synapse_compliance_common_tags, {
     nist_sp_800_53_rev_5 = "true"
+  })
+}
+
+control "synapse_workspace_data_exfiltration_protection_enabled" {
+  title       = "Synapse workspaces should have data exfiltration protection enabled"
+  description = "This control checks whether Synapse workspace has data exfiltration protection enabled."
+  query       = query.synapse_workspace_data_exfiltration_protection_enabled
+
+  tags = merge(local.synapse_compliance_common_tags, {
+    other_checks = "true"
   })
 }

@@ -1,0 +1,64 @@
+query "cdn_endpoint_http_disabled" {
+  sql = <<-EOQ
+    select
+      type || ' ' || name as resource,
+      case
+        when (arguments -> 'is_http_allowed') = 'false' then 'ok'
+        else 'alarm'
+      end status,
+      name || case
+        when (arguments -> 'is_http_allowed') = 'false' then ' HTTP not allowed'
+        else ' HTTP allowed'
+      end || '.' reason
+      ${local.tag_dimensions_sql}
+      ${local.common_dimensions_sql}
+    from
+      terraform_resource
+    where
+      type = 'azurerm_cdn_endpoint';
+  EOQ
+}
+
+query "cdn_endpoint_https_enabled" {
+  sql = <<-EOQ
+    select
+      type || ' ' || name as resource,
+      case
+        when (arguments -> 'is_https_allowed') = 'false' then 'alarm'
+        else 'ok'
+      end status,
+      name || case
+        when (arguments -> 'is_https_allowed') = 'false' then ' HTTPS not allowed'
+        else ' HTTPS allowed'
+      end || '.' reason
+      ${local.tag_dimensions_sql}
+      ${local.common_dimensions_sql}
+    from
+      terraform_resource
+    where
+      type = 'azurerm_cdn_endpoint';
+  EOQ
+}
+
+query "cdn_endpoint_custom_domain_uses_latest_tls_version" {
+  sql = <<-EOQ
+    select
+      type || ' ' || name as resource,
+      case
+        when (arguments -> 'cdn_managed_https' ->> 'tls_version') in ('None', 'TLS10') then 'alarm'
+        when (arguments -> 'user_managed_https' ->> 'tls_version') in ('None', 'TLS10') then 'alarm'
+        else 'ok'
+      end status,
+      name || case
+        when (arguments -> 'cdn_managed_https' ->> 'tls_version') in ('None', 'TLS10') then ' not using the latest version of TLS encryption'
+        when (arguments -> 'user_managed_https' ->> 'tls_version') in ('None', 'TLS10') then ' not using the latest version of TLS encryption'
+        else ' using the latest version of TLS encryption'
+      end || '.' reason
+      ${local.tag_dimensions_sql}
+      ${local.common_dimensions_sql}
+    from
+      terraform_resource
+    where
+      type = 'azurerm_cdn_endpoint_custom_domain';
+  EOQ
+}

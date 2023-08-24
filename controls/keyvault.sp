@@ -15,6 +15,7 @@ benchmark "keyvault" {
     control.keyvault_managed_hms_logging_enabled,
     control.keyvault_managed_hms_purge_protection_enabled,
     control.keyvault_purge_protection_enabled,
+    control.keyvault_secret_content_type_set,
     control.keyvault_secret_expiration_set,
     control.keyvault_vault_public_network_access_disabled,
     control.keyvault_vault_use_virtual_service_endpoint
@@ -115,4 +116,12 @@ control "keyvault_secret_expiration_set" {
   tags = merge(local.keyvault_compliance_common_tags, {
     nist_sp_800_53_rev_5 = "true"
   })
+}
+
+control "keyvault_secret_content_type_set" {
+  title       = "Key Vault secrets should have a content type"
+  description = "Secrets should have a defined content type. Secrets that are valid forever provide a potential attacker with more time to compromise them. It is a recommended security practice to set content types on secrets."
+  query       = query.keyvault_secret_content_type_set
+
+  tags = local.keyvault_compliance_common_tags
 }

@@ -3,13 +3,11 @@ query "appservice_web_app_remote_debugging_disabled" {
     select
       type || ' ' || name as resource,
       case
-        when (arguments -> 'site_config') is null then 'alarm'
-        when (arguments -> 'site_config' -> 'remote_debugging_enabled')::boolean then 'ok'
+        when (arguments -> 'site_config' ->> 'remote_debugging_enabled') = 'true' then 'alarm'
         else 'ok'
       end status,
       name || case
-        when (arguments -> 'site_config') is null then ' ''site_config'' not defined'
-        when (arguments -> 'site_config' -> 'remote_debugging_enabled')::boolean then ' remote debugging enabled'
+        when (arguments -> 'site_config' ->> 'remote_debugging_enabled') = 'true' then ' remote debugging enabled'
         else ' remote debugging disabled'
       end || '.' reason
       ${local.tag_dimensions_sql}
@@ -17,7 +15,7 @@ query "appservice_web_app_remote_debugging_disabled" {
     from
       terraform_resource
     where
-      type = 'azurerm_app_service';
+      type in ('azurerm_app_service', 'azurerm_linux_web_app', 'azurerm_windows_web_app');
   EOQ
 }
 
@@ -677,5 +675,279 @@ query "appservice_web_app_latest_java_version" {
       terraform_resource
     where
       type = 'azurerm_app_service';
+  EOQ
+}
+
+query "appservice_web_app_always_on" {
+  sql = <<-EOQ
+    select
+      type || ' ' || name as resource,
+      case
+        when (arguments -> 'site_config' ->> 'always_on') = 'false' then 'alarm'
+        else 'ok'
+      end status,
+      name || case
+        when (arguments -> 'site_config' ->> 'always_on') = 'false' then ' alwaysOn disabled'
+        else ' alwaysOn enabled'
+      end || '.' reason
+      ${local.tag_dimensions_sql}
+      ${local.common_dimensions_sql}
+    from
+      terraform_resource
+    where
+      type in ('azurerm_linux_web_app', 'azurerm_windows_web_app');
+  EOQ
+}
+
+query "appservice_web_app_detailed_error_messages_enabled" {
+  sql = <<-EOQ
+    select
+      type || ' ' || name as resource,
+      case
+        when ((arguments -> 'logs' ->> 'detailed_error_messages_enabled') = 'true') or ((arguments -> 'logs' ->> 'detailed_error_messages') = 'true') then 'ok'
+        else 'alarm'
+      end status,
+      name || case
+        when ((arguments -> 'logs' ->> 'detailed_error_messages_enabled') = 'true') or ((arguments -> 'logs' ->> 'detailed_error_messages') = 'true') then ' detailed error messages enabled'
+        else ' detailed error messages disabled'
+      end || '.' reason
+      ${local.tag_dimensions_sql}
+      ${local.common_dimensions_sql}
+    from
+      terraform_resource
+    where
+      type in ('azurerm_app_service', 'azurerm_linux_web_app', 'azurerm_windows_web_app');
+  EOQ
+}
+
+query "appservice_web_app_latest_dotnet_framework_version" {
+  sql = <<-EOQ
+    select
+      type || ' ' || name as resource,
+      case
+        when (arguments -> 'site_config' ->> 'dotnet_framework_version') is null then 'skip'
+        when (arguments -> 'site_config' ->> 'dotnet_framework_version') = 'v6.0' then 'ok'
+        else 'alarm'
+      end status,
+      name || case
+        when (arguments -> 'site_config' ->> 'dotnet_framework_version') is null then ' not using dotnet framework'
+        when (arguments -> 'site_config' ->> 'dotnet_framework_version') = 'v6.0' then ' using latest dotnet framework version'
+        else ' not using latest dotnet framework version'
+      end || '.' reason
+      ${local.tag_dimensions_sql}
+      ${local.common_dimensions_sql}
+    from
+      terraform_resource
+    where
+      type = 'azurerm_app_service';
+  EOQ
+}
+
+query "appservice_web_app_failed_request_tracing_enabled" {
+  sql = <<-EOQ
+    select
+      type || ' ' || name as resource,
+      case
+        when ((arguments -> 'logs' ->> 'failed_request_tracing') = 'true') or ((arguments -> 'logs' ->> 'failed_request_tracing_enabled') = 'true') then 'ok'
+        else 'alarm'
+      end status,
+      name || case
+        when ((arguments -> 'logs' ->> 'failed_request_tracing') = 'true') or ((arguments -> 'logs' ->> 'failed_request_tracing_enabled') = 'true') then ' failed request tracing enabled'
+        else ' failed request tracing disabled'
+      end || '.' reason
+      ${local.tag_dimensions_sql}
+      ${local.common_dimensions_sql}
+    from
+      terraform_resource
+    where
+      type in ('azurerm_app_service', 'azurerm_linux_web_app', 'azurerm_windows_web_app');
+  EOQ
+}
+
+query "appservice_web_app_http_logs_enabled" {
+  sql = <<-EOQ
+    select
+      type || ' ' || name as resource,
+      case
+        when ((arguments -> 'logs' -> 'http_logs') is not null) or ((arguments -> 'logs' -> 'dynamic' -> 'http_logs') is not null) then 'ok'
+        else 'alarm'
+      end status,
+      name || case
+        when ((arguments -> 'logs' -> 'http_logs') is not null) or ((arguments -> 'logs' -> 'dynamic' -> 'http_logs') is not null) then ' HTTP logs enabled'
+        else ' HTTP logs disabled'
+      end || '.' reason
+      ${local.tag_dimensions_sql}
+      ${local.common_dimensions_sql}
+    from
+      terraform_resource
+    where
+      type in ('azurerm_app_service', 'azurerm_linux_web_app', 'azurerm_windows_web_app');
+  EOQ
+}
+
+query "appservice_web_app_worker_more_than_one" {
+  sql = <<-EOQ
+    select
+      type || ' ' || name as resource,
+      case
+        when (arguments ->> 'worker_count')::int >= 2 then 'ok'
+        when (arguments ->> 'worker_count')::int < 2 then 'alarm'
+        else 'alarm'
+      end status,
+      name || case
+        when (arguments ->> 'worker_count')::int >= 2 then ' has ' || (arguments ->> 'worker_count') || ' number of workers'
+        when (arguments ->> 'worker_count')::int < 2 then ' has ' || (arguments ->> 'worker_count') || ' number of workers'
+        else ' worker count is not set'
+      end || '.' reason
+      ${local.tag_dimensions_sql}
+      ${local.common_dimensions_sql}
+    from
+      terraform_resource
+    where
+      type = 'azurerm_service_plan';
+  EOQ
+}
+
+query "appservice_web_app_health_check_enabled" {
+  sql = <<-EOQ
+    select
+      type || ' ' || name as resource,
+      case
+        when (arguments -> 'site_config' -> 'health_check_path') is not null then 'ok'
+        else 'alarm'
+      end status,
+      name || case
+        when (arguments -> 'site_config' -> 'health_check_path') is not null then ' health check enabled'
+        else ' health check disabled'
+      end || '.' reason
+      ${local.tag_dimensions_sql}
+      ${local.common_dimensions_sql}
+    from
+      terraform_resource
+    where
+      type in ('azurerm_app_service', 'azurerm_linux_web_app', 'azurerm_windows_web_app');
+  EOQ
+}
+
+query "appservice_plan_minimum_sku" {
+  sql = <<-EOQ
+    select
+      type || ' ' || name as resource,
+      case
+        when (arguments ->>'sku_name') in ('F1', 'D1', 'B1', 'B2', 'B3') then 'alarm'
+        else 'ok'
+      end status,
+      name || ' is of ' || (arguments ->>'sku_name') || ' SKU family.' as  reason
+      ${local.tag_dimensions_sql}
+      ${local.common_dimensions_sql}
+    from
+      terraform_resource
+    where
+      type = 'azurerm_service_plan';
+  EOQ
+}
+
+query "appservice_web_app_slot_remote_debugging_disabled" {
+  sql = <<-EOQ
+    select
+      type || ' ' || name as resource,
+      case
+        when (arguments -> 'site_config' ->> 'remote_debugging_enabled') = 'true' then 'alarm'
+        else 'ok'
+      end status,
+      name || case
+        when (arguments -> 'site_config' ->> 'remote_debugging_enabled') = 'true' then ' remote debugging enabled'
+        else ' remote debugging disabled'
+      end || '.' reason
+      ${local.tag_dimensions_sql}
+      ${local.common_dimensions_sql}
+    from
+      terraform_resource
+    where
+      type = 'azurerm_app_service_slot';
+  EOQ
+}
+
+query "appservice_web_app_slot_use_https" {
+  sql = <<-EOQ
+    select
+      type || ' ' || name as resource,
+      case
+        when (arguments ->> 'https_only') = 'true' then 'ok'
+        else 'alarm'
+      end status,
+      name || case
+        when (arguments ->> 'https_only') ='true' then ' accessible over HTTPS'
+        else ' not accessible over HTTPS'
+      end || '.' reason
+      ${local.tag_dimensions_sql}
+      ${local.common_dimensions_sql}
+    from
+      terraform_resource
+    where
+      type = 'azurerm_app_service_slot';
+  EOQ
+}
+
+query "appservice_web_app_slot_latest_tls_version" {
+  sql = <<-EOQ
+    select
+      type || ' ' || name as resource,
+      case
+        when (arguments -> 'site_config' ->> 'min_tls_version')::float < 1.2 then 'alarm'
+        else 'ok'
+      end status,
+      name || case
+        when (arguments -> 'site_config' ->> 'min_tls_version')::float < 1.2 then ' not using the latest version of TLS encryption'
+        else ' using the latest version of TLS encryption'
+      end || '.' reason
+      ${local.tag_dimensions_sql}
+      ${local.common_dimensions_sql}
+    from
+      terraform_resource
+    where
+      type = 'azurerm_app_service_slot';
+  EOQ
+}
+
+query "appservice_web_app_uses_azure_file" {
+  sql = <<-EOQ
+    select
+      type || ' ' || name as resource,
+      case
+        when (arguments -> 'storage_account' ->> 'type') = 'AzureFiles' then 'ok'
+        else 'alarm'
+      end status,
+      name || case
+        when (arguments -> 'storage_account' ->> 'type') = 'AzureFiles' then ' uses Azure files'
+        else ' not uses Azure files'
+      end || '.' reason
+      ${local.tag_dimensions_sql}
+      ${local.common_dimensions_sql}
+    from
+      terraform_resource
+    where
+      type in ('azurerm_app_service', 'azurerm_linux_web_app', 'azurerm_windows_web_app');
+  EOQ
+}
+
+query "appservice_function_app_builtin_logging_enabled" {
+  sql = <<-EOQ
+    select
+      type || ' ' || name as resource,
+      case
+        when (arguments ->> 'enable_builtin_logging') = 'false' then 'alarm'
+        else 'ok'
+      end status,
+      name || case
+        when (arguments ->> 'enable_builtin_logging') = 'false' then ' builtin logging disabled'
+        else ' builtin logging enabled'
+      end || '.' reason
+      ${local.tag_dimensions_sql}
+      ${local.common_dimensions_sql}
+    from
+      terraform_resource
+    where
+      type in ('azurerm_function_app', 'azurerm_function_app_slot');
   EOQ
 }

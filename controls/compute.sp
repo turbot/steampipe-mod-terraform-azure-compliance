@@ -9,12 +9,19 @@ benchmark "compute" {
   description = "This benchmark provides a set of controls that detect Terraform Azure Compute resources deviating from security best practices."
 
   children = [
+    control.compute_managed_disk_set_encryption_enabled,
+    control.compute_vm_allow_extension_operations_disabled,
     control.compute_vm_and_scale_set_encryption_at_host_enabled,
+    control.compute_vm_and_scale_set_ssh_key_enabled_linux,
     control.compute_vm_azure_defender_enabled,
+    control.compute_vm_disable_password_authentication,
+    control.compute_vm_disable_password_authentication_linux,
+    control.compute_vm_guest_configuration_installed,
     control.compute_vm_guest_configuration_installed_linux,
     control.compute_vm_guest_configuration_installed_windows,
-    control.compute_vm_guest_configuration_installed,
     control.compute_vm_malware_agent_installed,
+    control.compute_vm_scale_set_automatic_os_upgrade_enabled,
+    control.compute_vm_scale_set_disable_password_authentication_linux,
     control.compute_vm_system_updates_installed,
     control.compute_vm_uses_azure_resource_manager,
     control.network_interface_ip_forwarding_disabled
@@ -113,5 +120,63 @@ control "compute_vm_and_scale_set_encryption_at_host_enabled" {
 
   tags = merge(local.compute_compliance_common_tags, {
     nist_sp_800_53_rev_5 = "true"
+  })
+}
+
+control "compute_managed_disk_set_encryption_enabled" {
+  title       = "Managed disks should be encrypted"
+  description = "Managed disks should be encrypted to protect data at rest. Encryption at rest is enabled by default for all new managed disks."
+  query       = query.compute_managed_disk_set_encryption_enabled
+
+  tags = local.compute_compliance_common_tags
+}
+
+control "compute_vm_allow_extension_operations_disabled" {
+  title       = "Virtual machines should not allow extension operations"
+  description = "Virtual machines should not allow extension operations to prevent unauthorized users from adding extensions to virtual machines."
+  query       = query.compute_vm_allow_extension_operations_disabled
+
+  tags = local.compute_compliance_common_tags
+}
+
+control "compute_vm_disable_password_authentication" {
+  title       = "Virtual machines should disable password authentication"
+  description = "Virtual machines should disable password authentication to prevent brute-force attacks."
+  query       = query.compute_vm_disable_password_authentication
+
+  tags = local.compute_compliance_common_tags
+}
+
+control "compute_vm_disable_password_authentication_linux" {
+  title       = "Linux virtual machines should disable password authentication"
+  description = "Linux virtual machines should disable password authentication to prevent brute-force attacks."
+  query       = query.compute_vm_disable_password_authentication_linux
+
+  tags = local.compute_compliance_common_tags
+}
+
+control "compute_vm_scale_set_disable_password_authentication_linux" {
+  title       = "Linux virtual machines scale sets should disable password authentication"
+  description = "Linux virtual machines scale sets should disable password authentication to prevent brute-force attacks."
+  query       = query.compute_vm_scale_set_disable_password_authentication_linux
+
+  tags = local.compute_compliance_common_tags
+}
+
+control "compute_vm_and_scale_set_ssh_key_enabled_linux" {
+  title       = "Linux Virtual machines and scale sets should enable SSH key authentication"
+  description = "Ensure linux VM enables SSH with keys for secure communication."
+  query       = query.compute_vm_and_scale_set_ssh_key_enabled_linux
+
+  tags = local.compute_compliance_common_tags
+}
+
+control "compute_vm_scale_set_automatic_os_upgrade_enabled" {
+  title       = "Compute virtual machine scale sets should have automatic OS image patching enabled"
+  description = "This control checks whether virtual machine scale sets have automatic OS image patching enabled."
+  query       = query.compute_vm_scale_set_automatic_os_upgrade_enabled
+
+  tags = merge(local.compute_compliance_common_tags, {
+    other_checks = "true"
   })
 }

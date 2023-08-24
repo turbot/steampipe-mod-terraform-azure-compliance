@@ -44,3 +44,24 @@ query "mariadb_server_public_network_access_disabled" {
   EOQ
 }
 
+query "mariadb_server_ssl_enabled" {
+  sql = <<-EOQ
+    select
+      type || ' ' || name as resource,
+      case
+        when (arguments ->> 'ssl_enforcement_enabled') = 'true' then 'ok'
+        else 'alarm'
+      end status,
+      name || case
+        when (arguments ->> 'ssl_enforcement_enabled') = 'true' then ' SSL connection enabled'
+        else ' SSL connection disabled'
+      end || '.' reason
+      ${local.tag_dimensions_sql}
+      ${local.common_dimensions_sql}
+    from
+      terraform_resource
+    where
+      type = 'azurerm_mariadb_server';
+  EOQ
+}
+

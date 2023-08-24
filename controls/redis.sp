@@ -10,7 +10,9 @@ benchmark "redis" {
 
   children = [
     control.azure_redis_cache_in_virtual_network,
-    control.azure_redis_cache_ssl_enabled
+    control.azure_redis_cache_ssl_enabled,
+    control.redis_cache_min_tls_1_2,
+    control.redis_cache_restrict_public_access
   ]
 
   tags = merge(local.redis_compliance_common_tags, {
@@ -38,3 +40,22 @@ control "azure_redis_cache_in_virtual_network" {
     nist_sp_800_53_rev_5 = "true"
   })
 }
+
+control "redis_cache_min_tls_1_2" {
+  title       = "Redis Caches 'Minimum TLS version' should be set to 'Version 1.2'"
+  description = "This control checks whether 'Minimum TLS version' is set to 1.2. TLS 1.0 is a legacy version and has known vulnerabilities. This minimum TLS version can be configured to later protocols such as TLS 1.2."
+  query       = query.redis_cache_min_tls_1_2
+
+  tags = merge(local.redis_compliance_common_tags, {
+    other_checks = "true"
+  })
+}
+
+control "redis_cache_restrict_public_access" {
+  title       = "Redis Caches should restrict public access"
+  description = "Disabling public network access improves security by ensuring that Redis Cache isn't exposed on the public internet. Creating private endpoints can limit exposure of Redis Cache."
+  query       = query.redis_cache_restrict_public_access
+
+  tags = local.redis_compliance_common_tags
+}
+

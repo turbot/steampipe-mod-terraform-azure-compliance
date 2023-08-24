@@ -9,6 +9,10 @@ benchmark "cosmosdb" {
   description = "This benchmark provides a set of controls that detect Terraform Azure Cosmos DB resources deviating from security best practices."
 
   children = [
+    control.cosmodb_account_access_key_metadata_writes_disabled,
+    control.cosmodb_account_local_authentication_disabled,
+    control.cosmodb_account_public_network_access_disabled,
+    control.cosmodb_account_restrict_public_access,
     control.cosmosdb_account_encryption_at_rest_using_cmk,
     control.cosmosdb_account_with_firewall_rules,
     control.cosmosdb_use_virtual_service_endpoint
@@ -47,4 +51,36 @@ control "cosmosdb_account_encryption_at_rest_using_cmk" {
   tags = merge(local.cosmosdb_compliance_common_tags, {
     nist_sp_800_53_rev_5 = "true"
   })
+}
+
+control "cosmodb_account_access_key_metadata_writes_disabled" {
+  title       = "Cosmos DB accounts should have access key metadata writes disabled"
+  description = "Disable access key metadata writes on your Azure Cosmos DB accounts to prevent the access key from being overwritten. This prevents the access key from being overwritten by a user or application."
+  query       = query.cosmodb_account_access_key_metadata_writes_disabled
+
+  tags = local.cosmosdb_compliance_common_tags
+}
+
+control "cosmodb_account_public_network_access_disabled" {
+  title       = "Cosmos DB accounts should have public network access disabled"
+  description = "Disable public network access on your Azure Cosmos DB accounts to prevent the account from being accessed from the public internet. This prevents the account from being accessed from the public internet."
+  query       = query.cosmodb_account_public_network_access_disabled
+
+  tags = local.cosmosdb_compliance_common_tags
+}
+
+control "cosmodb_account_local_authentication_disabled" {
+  title       = "Cosmos DB accounts should have local authentication disabled"
+  description = "Ensure that local authentication is disabled on CosmosDB accounts."
+  query       = query.cosmodb_account_local_authentication_disabled
+
+  tags = local.cosmosdb_compliance_common_tags
+}
+
+control "cosmodb_account_restrict_public_access" {
+  title       = "Cosmos DB accounts should have restricted access"
+  description = "Ensure that Azure Cosmos DB accounts have restricted access."
+  query       = query.cosmodb_account_restrict_public_access
+
+  tags = local.cosmosdb_compliance_common_tags
 }

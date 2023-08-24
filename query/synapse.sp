@@ -57,3 +57,26 @@ query "synapse_workspace_private_link_used" {
   EOQ
 }
 
+query "synapse_workspace_data_exfiltration_protection_enabled" {
+  sql = <<-EOQ
+    select
+      type || ' ' || name as resource,
+      case
+        when (arguments -> 'data_exfiltration_protection_enabled') is null then 'alarm'
+        when (arguments ->> 'data_exfiltration_protection_enabled') = 'true' then 'ok'
+        else 'alarm'
+      end status,
+      name || case
+        when (arguments -> 'data_exfiltration_protection_enabled') is null then ' data exfiltration protection not defined'
+        when (arguments ->> 'data_exfiltration_protection_enabled' ) = 'true' then ' data exfiltration protection enabled'
+        else ' data exfiltration protection disabled'
+      end || '.' reason
+      ${local.tag_dimensions_sql}
+      ${local.common_dimensions_sql}
+    from
+      terraform_resource
+    where
+      type = 'azurerm_synapse_workspace';
+  EOQ
+}
+

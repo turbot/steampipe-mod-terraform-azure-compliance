@@ -10,7 +10,8 @@ benchmark "mariadb" {
 
   children = [
     control.mariadb_server_geo_redundant_backup_enabled,
-    control.mariadb_server_public_network_access_disabled
+    control.mariadb_server_public_network_access_disabled,
+    control.mariadb_server_ssl_enabled
   ]
 
   tags = merge(local.mariadb_compliance_common_tags, {
@@ -36,5 +37,15 @@ control "mariadb_server_public_network_access_disabled" {
 
   tags = merge(local.mariadb_compliance_common_tags, {
     nist_sp_800_53_rev_5 = "true"
+  })
+}
+
+control "mariadb_server_ssl_enabled" {
+  title       = "MariaDB servers should have 'Enforce SSL connection' set to 'ENABLED'"
+  description = "This control checks whether MariaDB servers SSL enforcement is enabled. This control is non-compliant if SSL enforcement is disabled."
+  query       = query.mariadb_server_ssl_enabled
+
+  tags = merge(local.mariadb_compliance_common_tags, {
+    other_checks = "true"
   })
 }

@@ -374,3 +374,67 @@ query "storage_account_uses_azure_resource_manager" {
   EOQ
 }
 
+query "storage_account_uses_latest_minimum_tls_version" {
+  sql = <<-EOQ
+    select
+      type || ' ' || name as resource,
+      case
+        when (arguments ->> 'min_tls_version') in ('TLS1_2', 'TLS1_3') then 'ok'
+        else 'alarm'
+      end status,
+      name || case
+        when (arguments ->> 'min_tls_version') in ('TLS1_2', 'TLS1_3') then ' use latest version of TLS encryption'
+        when (arguments ->> 'min_tls_version') is null then ' version of TLS encryption is not set'
+        else ' does not uses latest version of TLS encryption'
+      end || '.' reason
+      ${local.tag_dimensions_sql}
+      ${local.common_dimensions_sql}
+    from
+      terraform_resource
+    where
+      type = 'azurerm_storage_account';
+  EOQ
+}
+
+query "storage_account_replication_type_set" {
+  sql = <<-EOQ
+    select
+      type || ' ' || name as resource,
+      case
+        when (arguments ->> 'account_replication_type') in ('GRS', 'RAGRS', 'GZRS', 'RAGZRS') then 'ok'
+        else 'alarm'
+      end status,
+      name || case
+        when (arguments ->> 'account_replication_type') in ('GRS', 'RAGRS', 'GZRS', 'RAGZRS') then ' replication type set correctly'
+        when (arguments ->> 'account_replication_type') is null then ' replication type not set'
+        else ' replication type not set correctly'
+      end || '.' reason
+      ${local.tag_dimensions_sql}
+      ${local.common_dimensions_sql}
+    from
+      terraform_resource
+    where
+      type = 'azurerm_storage_account';
+  EOQ
+}
+
+query "storage_container_restrict_public_access" {
+  sql = <<-EOQ
+    select
+      type || ' ' || name as resource,
+      case
+        when (arguments ->> 'container_access_type') = 'private' or (arguments ->> 'container_access_type') is null then 'ok'
+        else 'alarm'
+      end status,
+      name || case
+        when (arguments ->> 'container_access_type') = 'private' or (arguments ->> 'container_access_type') is null then ' not publicly accessible'
+        else ' publicly accessible'
+      end || '.' reason
+      ${local.tag_dimensions_sql}
+      ${local.common_dimensions_sql}
+    from
+      terraform_resource
+    where
+      type = 'azurerm_storage_container';
+  EOQ
+}

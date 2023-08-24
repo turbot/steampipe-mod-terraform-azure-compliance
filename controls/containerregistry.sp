@@ -9,9 +9,17 @@ benchmark "containerregistry" {
   description = "This benchmark provides a set of controls that detect Terraform Azure Container Registry resources deviating from security best practices."
 
   children = [
+    control.container_registry_admin_user_disabled,
+    control.container_registry_anonymous_pull_disabled,
     control.container_registry_azure_defender_enabled,
     control.container_registry_encrypted_with_cmk,
+    control.container_registry_geo_replication_enabled,
+    control.container_registry_image_scan_enabled,
+    control.container_registry_public_network_access_disabled,
+    control.container_registry_quarantine_policy_enabled,
     control.container_registry_restrict_public_access,
+    control.container_registry_retention_policy_enabled,
+    control.container_registry_trust_policy_enabled,
     control.container_registry_use_virtual_service_endpoint
   ]
 
@@ -57,5 +65,81 @@ control "container_registry_encrypted_with_cmk" {
 
   tags = merge(local.containerregistry_compliance_common_tags, {
     nist_sp_800_53_rev_5 = "true"
+  })
+}
+
+control "container_registry_admin_user_disabled" {
+  title       = "Container registries admin user should be disabled"
+  description = "Ensure container registry admin user is disabled. This control is non-compliant if admin user is enabled."
+  query       = query.container_registry_admin_user_disabled
+
+  tags = merge(local.containerregistry_compliance_common_tags, {
+    other_checks = "true"
+  })
+}
+
+control "container_registry_anonymous_pull_disabled" {
+  title       = "Container registries anonymous pull should be disabled"
+  description = "This control checks whether anonymous pull is disabled. This control is non-compliant if anonymous pull is enabled."
+  query       = query.container_registry_anonymous_pull_disabled
+
+  tags = local.containerregistry_compliance_common_tags
+}
+
+control "container_registry_image_scan_enabled" {
+  title       = "Container registries image scan should be enabled"
+  description = "This control checks whether image scan is enabled. This control is non-compliant if image scan is disabled."
+  query       = query.container_registry_image_scan_enabled
+
+  tags = local.containerregistry_compliance_common_tags
+}
+
+control "container_registry_quarantine_policy_enabled" {
+  title       = "Container registries quarantine policy should be enabled"
+  description = "Ensure container registry quarantine policy is enabled. This control is non-compliant if quarantine policy is disabled."
+  query       = query.container_registry_quarantine_policy_enabled
+
+  tags = merge(local.containerregistry_compliance_common_tags, {
+    other_checks = "true"
+  })
+}
+
+control "container_registry_retention_policy_enabled" {
+  title       = "Container registries retention policy should be enabled"
+  description = "Ensure container registry retention policy is enabled. This control is non-compliant if retention policy is disabled."
+  query       = query.container_registry_retention_policy_enabled
+
+  tags = merge(local.containerregistry_compliance_common_tags, {
+    other_checks = "true"
+  })
+}
+
+control "container_registry_geo_replication_enabled" {
+  title       = "Container registries should be geo-replicated"
+  description = "Ensure that container registries are geo-replicated to align with multi-region container deployments."
+  query       = query.container_registry_geo_replication_enabled
+
+  tags = merge(local.containerregistry_compliance_common_tags, {
+    other_checks = "true"
+  })
+}
+
+control "container_registry_public_network_access_disabled" {
+  title       = "Container registries public network access should be disabled"
+  description = "Ensure that container registries public network access is disabled."
+  query       = query.container_registry_public_network_access_disabled
+
+  tags = merge(local.containerregistry_compliance_common_tags, {
+    other_checks = "true"
+  })
+}
+
+control "container_registry_trust_policy_enabled" {
+  title       = "Container registries trust policy should be enabled"
+  description = "Ensure container registry trust policy is enabled. This control is non-compliant if trust policy is disabled."
+  query       = query.container_registry_trust_policy_enabled
+
+  tags = merge(local.containerregistry_compliance_common_tags, {
+    other_checks = "true"
   })
 }

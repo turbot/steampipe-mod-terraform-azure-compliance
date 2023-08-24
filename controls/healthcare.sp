@@ -10,7 +10,7 @@ benchmark "healthcare" {
 
   children = [
     control.healthcare_fhir_azure_api_encrypted_at_rest_with_cmk,
-    control.healthcare_fhir_public_network_access_enabled
+    control.healthcare_fhir_public_network_access_disabled
   ]
 
   tags = merge(local.healthcare_compliance_common_tags, {
@@ -18,10 +18,10 @@ benchmark "healthcare" {
   })
 }
 
-control "healthcare_fhir_public_network_access_enabled" {
+control "healthcare_fhir_public_network_access_disabled" {
   title       = "Azure API for FHIR should disable public network access"
   description = "Disabling public network access improves security by ensuring that Healthcare API isn't exposed on the public internet. Creating private endpoints can limit exposure of Healthcare APIs."
-  query       = query.healthcare_fhir_public_network_access_enabled
+  query       = query.healthcare_fhir_public_network_access_disabled
 
   tags = local.healthcare_compliance_common_tags
 }

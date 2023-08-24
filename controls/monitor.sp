@@ -11,6 +11,7 @@ benchmark "monitor" {
   children = [
     control.monitor_log_profile_enabled_for_all_categories,
     control.monitor_log_profile_enabled_for_all_regions,
+    control.monitor_log_profile_retention_365_days,
     control.monitor_logs_storage_container_not_public_accessible
   ]
 
@@ -50,4 +51,12 @@ control "monitor_logs_storage_container_not_public_accessible" {
     cis_level   = "1"
     cis_type    = "automated"
   })
+}
+
+control "monitor_log_profile_retention_365_days" {
+  title       = "Monitor log profiles should have retention set to 365 days or greater"
+  description = "This control is non-compliant if Monitor log profile retention is set to less than 365 days."
+  query       = query.monitor_log_profile_retention_365_days
+
+  tags = local.monitor_compliance_common_tags
 }

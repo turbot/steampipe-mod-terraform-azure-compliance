@@ -17,13 +17,16 @@ benchmark "storage" {
     control.storage_account_encryption_scopes_encrypted_at_rest_with_cmk,
     control.storage_account_infrastructure_encryption_enabled,
     control.storage_account_queue_services_logging_enabled,
+    control.storage_account_replication_type_set,
     control.storage_account_restrict_network_access,
     control.storage_account_secure_transfer_required_enabled,
     control.storage_account_trusted_microsoft_services_enabled,
     control.storage_account_use_virtual_service_endpoint,
     control.storage_account_uses_azure_resource_manager,
+    control.storage_account_uses_latest_minimum_tls_version,
     control.storage_account_uses_private_link,
-    control.storage_azure_defender_enabled
+    control.storage_azure_defender_enabled,
+    control.storage_container_restrict_public_access
   ]
 
   tags = merge(local.storage_compliance_common_tags, {
@@ -195,3 +198,20 @@ control "storage_account_blob_containers_public_access_private" {
   })
 }
 
+control "storage_account_uses_latest_minimum_tls_version" {
+  title       = "Storage accounts should use latest minimum TLS version"
+  description = "Use the latest minimum TLS version for your storage accounts to ensure that your data is encrypted in transit."
+  query       = query.storage_account_uses_latest_minimum_tls_version
+}
+
+control "storage_account_replication_type_set" {
+  title       = "Storage accounts should have replication type set"
+  description = "This control checks whether the replication type is set to GRS or RAGRS or GZRS or RAGZRS for the storage account."
+  query       = query.storage_account_replication_type_set
+}
+
+control "storage_container_restrict_public_access" {
+  title       = "Storage container public access should be disabled"
+  description = "This control checks whether the public access level is set to private for the storage container."
+  query       = query.storage_container_restrict_public_access
+}

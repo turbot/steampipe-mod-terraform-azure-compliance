@@ -21,3 +21,44 @@ query "data_factory_encrypted_with_cmk" {
   EOQ
 }
 
+query "data_factory_restrict_public_access" {
+  sql = <<-EOQ
+    select
+      type || ' ' || name as resource,
+      case
+        when (arguments ->> 'public_network_enabled') = 'false' then 'ok'
+        else 'alarm'
+      end status,
+      name || case
+        when (arguments ->> 'public_network_enabled') = 'false' then ' not publicly accessible'
+        else ' publicly accessible'
+      end || '.' reason
+      ${local.tag_dimensions_sql}
+      ${local.common_dimensions_sql}
+    from
+      terraform_resource
+    where
+      type = 'azurerm_data_factory';
+  EOQ
+}
+
+query "data_factory_uses_git_repository" {
+  sql = <<-EOQ
+    select
+      type || ' ' || name as resource,
+      case
+        when ((arguments -> 'github_configuration') is not null) or ((arguments -> 'vsts_configuration') is not null) then 'ok'
+        else 'alarm'
+      end status,
+      name || case
+        when ((arguments -> 'github_configuration') is not null) or ((arguments -> 'vsts_configuration') is not null) then ' uses git repository'
+        else ' not use git repository'
+      end || '.' reason
+      ${local.tag_dimensions_sql}
+      ${local.common_dimensions_sql}
+    from
+      terraform_resource
+    where
+      type = 'azurerm_data_factory';
+  EOQ
+}

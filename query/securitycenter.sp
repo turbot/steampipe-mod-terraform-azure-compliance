@@ -238,3 +238,42 @@ query "securitycenter_automatic_provisioning_monitoring_agent_on" {
   EOQ
 }
 
+query "securitycenter_contact_number_configured" {
+  sql = <<-EOQ
+    select
+      type || ' ' || name as resource,
+      case
+        when (arguments ->> 'phone') is not null then 'ok'
+        else 'alarm'
+      end status,
+      name || case
+        when (arguments ->> 'phone') is not null then ' contact number configured'
+        else ' contact number not configured'
+      end || '.' reason
+      ${local.common_dimensions_sql}
+    from
+      terraform_resource
+    where
+      type = 'azurerm_security_center_contact';
+  EOQ
+}
+
+query "securitycenter_uses_standard_pricing_tier" {
+  sql = <<-EOQ
+    select
+      type || ' ' || name as resource,
+      case
+        when (arguments ->> 'tier') = 'Standard' then 'ok'
+        else 'alarm'
+      end status,
+      name || case
+        when (arguments ->> 'tier') = 'Standard' then ' uses standard pricing tier'
+        else ' not use standard pricing tier'
+      end || '.' reason
+      ${local.common_dimensions_sql}
+    from
+      terraform_resource
+    where
+      type = 'azurerm_security_center_subscription_pricing';
+  EOQ
+}

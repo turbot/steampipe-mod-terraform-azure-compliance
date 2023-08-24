@@ -9,16 +9,18 @@ benchmark "postgres" {
   description = "This benchmark provides a set of controls that detect Terraform Azure PostgreSQL resources deviating from security best practices."
 
   children = [
+    control.postgres_db_flexible_server_geo_redundant_backup_enabled,
     control.postgres_db_server_connection_throttling_on,
     control.postgres_db_server_geo_redundant_backup_enabled,
     control.postgres_db_server_log_checkpoints_on,
     control.postgres_db_server_log_connections_on,
     control.postgres_db_server_log_disconnections_on,
     control.postgres_db_server_log_retention_days_3,
-    control.postgres_sql_server_encrypted_at_rest_using_cmk,
-    control.postgres_sql_ssl_enabled,
+    control.postgres_db_server_threat_detection_policy_enabled,
+    control.postgresql_server_encrypted_at_rest_using_cmk,
     control.postgresql_server_infrastructure_encryption_enabled,
-    control.postgresql_server_public_network_access_disabled
+    control.postgresql_server_public_network_access_disabled,
+    control.postgresql_ssl_enabled
   ]
 
   tags = merge(local.postgres_compliance_common_tags, {
@@ -37,10 +39,10 @@ control "postgres_db_server_geo_redundant_backup_enabled" {
   })
 }
 
-control "postgres_sql_ssl_enabled" {
+control "postgresql_ssl_enabled" {
   title       = "Enforce SSL connection should be enabled for PostgreSQL database servers"
   description = "Azure Database for PostgreSQL supports connecting your Azure Database for PostgreSQL server to client applications using Secure Sockets Layer (SSL). Enforcing SSL connections between your database server and your client applications helps protect against 'man in the middle' attacks by encrypting the data stream between the server and your application. This configuration enforces that SSL is always enabled for accessing your database server"
-  query       = query.postgres_sql_ssl_enabled
+  query       = query.postgresql_ssl_enabled
 
   tags = merge(local.postgres_compliance_common_tags, {
     hipaa_hitrust_v92    = "true"
@@ -68,10 +70,10 @@ control "postgresql_server_infrastructure_encryption_enabled" {
   })
 }
 
-control "postgres_sql_server_encrypted_at_rest_using_cmk" {
+control "postgresql_server_encrypted_at_rest_using_cmk" {
   title       = "PostgreSQL servers should use customer-managed keys to encrypt data at rest"
   description = "Use customer-managed keys to manage the encryption at rest of your PostgreSQL servers. By default, the data is encrypted at rest with service-managed keys, but customer-managed keys are commonly required to meet regulatory compliance standards. Customer-managed keys enable the data to be encrypted with an Azure Key Vault key created and owned by you. You have full control and responsibility for the key lifecycle, including rotation and management."
-  query       = query.postgres_sql_server_encrypted_at_rest_using_cmk
+  query       = query.postgresql_server_encrypted_at_rest_using_cmk
 
   tags = merge(local.postgres_compliance_common_tags, {
     nist_sp_800_53_rev_5 = "true"
@@ -141,4 +143,20 @@ control "postgres_db_server_log_retention_days_3" {
     cis_level   = "1"
     cis_type    = "automated"
   })
+}
+
+control "postgres_db_flexible_server_geo_redundant_backup_enabled" {
+  title       = "PostgreSQL flexible serves Geo-redundant backup should be enabled"
+  description = "Azure Database for PostgreSQL flexible serves allows you to choose the redundancy option for your database server. It can be set to a geo-redundant backup storage in which the data is not only stored within the region in which your server is hosted, but is also replicated to a paired region to provide recovery option in case of a region failure. Configuring geo-redundant storage for backup is only allowed during server create."
+  query       = query.postgres_db_flexible_server_geo_redundant_backup_enabled
+
+  tags = local.postgres_compliance_common_tags
+}
+
+control "postgres_db_server_threat_detection_policy_enabled" {
+  title       = "PostgreSQL Servers threat detection policy should be enabled"
+  description = "Ensure that PostgreSQL server threat detection policy is enabled. This control is non-compliant if PostgreSQL server threat detection policy is disabled."
+  query       = query.postgres_db_server_threat_detection_policy_enabled
+
+  tags = local.postgres_compliance_common_tags
 }
