@@ -10,8 +10,12 @@ benchmark "network" {
 
   children = [
     control.network_security_group_not_configured_gateway_subnets,
+    control.network_security_group_rdp_access_restricted,
+    control.network_security_group_ssh_access_restricted,
     control.network_security_group_subnet_associated,
     control.network_security_group_udp_access_restricted,
+    control.network_security_rule_rdp_access_restricted,
+    control.network_security_rule_ssh_access_restricted,
     control.network_security_rule_udp_access_restricted,
     control.network_watcher_flow_log_retention_period_90_days
   ]
@@ -64,5 +68,37 @@ control "network_security_rule_udp_access_restricted" {
   query       = query.network_security_rule_udp_access_restricted
 
   tags = local.network_compliance_common_tags
-
 }
+
+control "network_security_rule_rdp_access_restricted" {
+  title       = "Network Security Rules RDP Services are restricted from the Internet"
+  description = "Disable Internet exposed RDP ports on network security rules."
+  query       = query.network_security_rule_rdp_access_restricted
+
+  tags = local.network_compliance_common_tags
+}
+
+control "network_security_group_rdp_access_restricted" {
+  title       = "Network Security Groups RDP Services are restricted from the Internet"
+  description = "Disable Internet exposed RDP ports on network security groups."
+  query       = query.network_security_group_rdp_access_restricted
+
+  tags = local.network_compliance_common_tags
+}
+
+control "network_security_rule_ssh_access_restricted" {
+  title       = "Network Security Rules SSH Services are restricted from the Internet"
+  description = "Disable Internet exposed RDP ports on network security rules."
+  query       = query.network_security_rule_ssh_access_restricted
+
+  tags = local.network_compliance_common_tags
+}
+
+control "network_security_group_ssh_access_restricted" {
+  title       = "Network Security Groups SSH Services are restricted from the Internet"
+  description = "Disable Internet exposed RDP ports on network security groups."
+  query       = query.network_security_group_ssh_access_restricted
+
+  tags = local.network_compliance_common_tags
+}
+
