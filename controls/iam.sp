@@ -18,7 +18,7 @@ benchmark "iam" {
 }
 
 control "iam_no_custom_subscription_owner_roles_created" {
-  title       = "Ensure That No Custom Subscription Administrator Roles Exist"
+  title       = "Custom subscription administrator roles should not exist"
   description = "The principle of least privilege should be followed and only necessary privileges should be assigned instead of allowing full administrative access."
   query       = query.iam_no_custom_subscription_owner_roles_created
 

@@ -1,6 +1,6 @@
 locals {
   webpubsub_compliance_common_tags = merge(local.terraform_azure_compliance_common_tags, {
-    service = "Azure/webpubsub"
+    service = "Azure/WebPubSub"
   })
 }
 

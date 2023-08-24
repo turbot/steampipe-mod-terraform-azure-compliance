@@ -62,5 +62,3 @@ query "cdn_endpoint_custom_domain_uses_latest_tls_version" {
       type = 'azurerm_cdn_endpoint_custom_domain';
   EOQ
 }
-
-
