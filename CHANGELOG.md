@@ -1,3 +1,45 @@
+## v0.7 [2023-08-24]
+
+_What's new?_
+
+- Added 64 new controls across the benchmarks for the following services: ([#32](https://github.com/turbot/steampipe-mod-terraform-azure-compliance/pull/32))
+  - `APIManagement`
+  - `AppConfiguration`
+  - `ApplicationGateway`
+  - `AppService`
+  - `ContentDeliveryNetwork`
+  - `CognitiveSearch`
+  - `Compute`
+  - `ContainerInstance`
+  - `ContainerRegistry`
+  - `CosmosDB`
+  - `Databricks`
+  - `DataExplorer`
+  - `DataFactory`
+  - `EventGrid`
+  - `Firewall`
+  - `HealthcareAPIs`
+  - `IAM`
+  - `IoTHub`
+  - `KeyVault`
+  - `KubernetesService`
+  - `MachineLearning`
+  - `MariaDB`
+  - `Monitor`
+  - `MySQL`
+  - `Network`
+  - `PostgreSQL`
+  - `Redis`
+  - `SecurityCenter`
+  - `ServiceBus`
+  - `SignalR`
+  - `SpringCloud`
+  - `SQL`
+  - `Storage`
+  - `SynapseAnalytics`
+  - `WebPubSub`
+
+
 ## v0.6 [2023-06-15]
 
 _What's new?_
