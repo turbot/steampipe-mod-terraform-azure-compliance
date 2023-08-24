@@ -2,7 +2,7 @@
 
 _What's new?_
 
-- Added 64 new controls across the benchmarks for the following services: ([#32](https://github.com/turbot/steampipe-mod-terraform-azure-compliance/pull/32))
+- Added 118 new controls across the benchmarks for the following services: ([#32](https://github.com/turbot/steampipe-mod-terraform-azure-compliance/pull/32))
   - `APIManagement`
   - `AppConfiguration`
   - `ApplicationGateway`
@@ -38,7 +38,6 @@ _What's new?_
   - `Storage`
   - `SynapseAnalytics`
   - `WebPubSub`
-
 
 ## v0.6 [2023-06-15]
 
