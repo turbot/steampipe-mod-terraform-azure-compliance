@@ -1,7 +1,7 @@
 query "apimanagement_service_with_virtual_network" {
   sql = <<-EOQ
     select
-      type || ' ' || address as resource,
+      address as resource,
       case
         when (attributes_std -> 'virtual_network_type') is null then 'alarm'
         when (attributes_std ->> 'virtual_network_type')::text <> 'None' then 'ok'
@@ -23,7 +23,7 @@ query "apimanagement_service_with_virtual_network" {
 query "apimanagement_backend_uses_https" {
   sql = <<-EOQ
     select
-      type || ' ' || address as resource,
+      address as resource,
       case
         when (attributes_std ->> 'url') like 'https%' then 'ok'
         else 'alarm'
@@ -44,7 +44,7 @@ query "apimanagement_backend_uses_https" {
 query "apimanagement_service_client_certificate_enabled" {
   sql = <<-EOQ
     select
-      type || ' ' || address as resource,
+      address as resource,
       case
         when (attributes_std ->> 'sku_name') like 'Consumption%' and (attributes_std ->> 'client_certificate_enabled')::boolean then 'ok'
         else 'alarm'
@@ -65,7 +65,7 @@ query "apimanagement_service_client_certificate_enabled" {
 query "apimanagement_service_uses_latest_tls_version" {
   sql = <<-EOQ
     select
-      type || ' ' || address as resource,
+      address as resource,
       case
         when (attributes_std -> 'security' ->> 'enable_back_end_ssl30')::boolean then 'alarm'
         when (attributes_std -> 'security' ->> 'enable_backend_tls10')::boolean then 'alarm'
@@ -94,7 +94,7 @@ query "apimanagement_service_uses_latest_tls_version" {
 query "apimanagement_service_restrict_public_access" {
   sql = <<-EOQ
     select
-      type || ' ' || address as resource,
+      address as resource,
       case
         when (attributes_std ->> 'public_network_access_enabled')::boolean or (attributes_std ->> 'public_network_access_enabled') is null then 'alarm'
         else 'ok'
