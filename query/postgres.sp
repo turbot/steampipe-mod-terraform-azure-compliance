@@ -18,20 +18,20 @@ query "postgres_db_server_log_retention_days_3" {
         and (attributes_std ->> 'value')::int > 3
     )
     select
-      address as resource,
+      a.address as resource,
       case
-        when (s.arguments ->> 'server_name') is not null then 'ok'
+        when (s.attributes_std ->> 'server_name') is not null then 'ok'
         else 'alarm'
       end as status,
       split_part(a.address, '.', 2) || case
-        when (s.arguments ->> 'server_name') is not null then ' log files are retained for more than 3 days'
+        when (s.attributes_std ->> 'server_name') is not null then ' log files are retained for more than 3 days'
         else ' og files are retained for 3 days or lesser'
       end || '.' reason
       ${replace(local.tag_dimensions_qualifier_sql, "__QUALIFIER__", "a.")}
       ${replace(local.common_dimensions_qualifier_sql, "__QUALIFIER__", "a.")}
     from
       postgresql_server as a
-      left join log_disconnections_configuration as s on a.name = ( split_part((s.arguments ->> 'server_name'), '.', 2));
+      left join log_disconnections_configuration as s on a.name = ( split_part((s.attributes_std ->> 'server_name'), '.', 2));
   EOQ
 }
 
@@ -55,20 +55,20 @@ query "postgres_db_server_connection_throttling_on" {
         and (attributes_std ->> 'value') = 'on'
     )
     select
-      address as resource,
+      a.address as resource,
       case
-        when (s.arguments ->> 'server_name') is not null then 'ok'
+        when (s.attributes_std ->> 'server_name') is not null then 'ok'
         else 'alarm'
       end as status,
       split_part(a.address, '.', 2) || case
-        when (s.arguments ->> 'server_name') is not null then ' server parameter connection_throttling on'
+        when (s.attributes_std ->> 'server_name') is not null then ' server parameter connection_throttling on'
         else ' server parameter connection_throttling off'
       end || '.' reason
       ${replace(local.tag_dimensions_qualifier_sql, "__QUALIFIER__", "a.")}
       ${replace(local.common_dimensions_qualifier_sql, "__QUALIFIER__", "a.")}
     from
       postgresql_server as a
-      left join connection_throttling_configuration as s on a.name = ( split_part((s.arguments ->> 'server_name'), '.', 2));
+      left join connection_throttling_configuration as s on a.name = ( split_part((s.attributes_std ->> 'server_name'), '.', 2));
   EOQ
 }
 
@@ -138,20 +138,20 @@ query "postgresql_server_encrypted_at_rest_using_cmk" {
         and (attributes_std -> 'key_vault_key_id') is not null
     )
     select
-      address as resource,
+      a.address as resource,
       case
-        when (s.arguments ->> 'server_id') is not null then 'ok'
+        when (s.attributes_std ->> 'server_id') is not null then 'ok'
         else 'alarm'
       end as status,
       split_part(a.address, '.', 2) || case
-        when (s.arguments ->> 'server_id') is not null then ' encrypted with CMK'
+        when (s.attributes_std ->> 'server_id') is not null then ' encrypted with CMK'
         else ' not encrypted with CMK'
       end || '.' reason
       ${replace(local.tag_dimensions_qualifier_sql, "__QUALIFIER__", "a.")}
       ${replace(local.common_dimensions_qualifier_sql, "__QUALIFIER__", "a.")}
     from
       postgresql_server as a
-      left join server_keys as s on a.pg_id = ( s.arguments ->> 'server_id');
+      left join server_keys as s on a.pg_id = ( s.attributes_std ->> 'server_id');
   EOQ
 }
 
@@ -175,20 +175,20 @@ query "postgres_db_server_log_checkpoints_on" {
         and (attributes_std ->> 'value') = 'on'
     )
     select
-      address as resource,
+      a.address as resource,
       case
-        when (s.arguments ->> 'server_name') is not null then 'ok'
+        when (s.attributes_std ->> 'server_name') is not null then 'ok'
         else 'alarm'
       end as status,
       split_part(a.address, '.', 2) || case
-        when (s.arguments ->> 'server_name') is not null then ' server parameter log_checkpoints on'
+        when (s.attributes_std ->> 'server_name') is not null then ' server parameter log_checkpoints on'
         else ' server parameter log_checkpoints off'
       end || '.' reason
       ${replace(local.tag_dimensions_qualifier_sql, "__QUALIFIER__", "a.")}
       ${replace(local.common_dimensions_qualifier_sql, "__QUALIFIER__", "a.")}
     from
       postgresql_server as a
-      left join log_checkpoints_configuration as s on a.name = (split_part((s.arguments ->> 'server_name'), '.', 2));
+      left join log_checkpoints_configuration as s on a.name = (split_part((s.attributes_std ->> 'server_name'), '.', 2));
   EOQ
 }
 
@@ -212,20 +212,20 @@ query "postgres_db_server_log_connections_on" {
         and (attributes_std ->> 'value') = 'on'
     )
     select
-      address as resource,
+      a.address as resource,
       case
-        when (s.arguments ->> 'server_name') is not null then 'ok'
+        when (s.attributes_std ->> 'server_name') is not null then 'ok'
         else 'alarm'
       end as status,
       split_part(a.address, '.', 2) || case
-        when (s.arguments ->> 'server_name') is not null then ' server parameter log_connections on'
+        when (s.attributes_std ->> 'server_name') is not null then ' server parameter log_connections on'
         else ' server parameter log_connections off'
       end || '.' reason
       ${replace(local.tag_dimensions_qualifier_sql, "__QUALIFIER__", "a.")}
       ${replace(local.common_dimensions_qualifier_sql, "__QUALIFIER__", "a.")}
     from
       postgresql_server as a
-      left join log_connections_configuration as s on a.name = (split_part((s.arguments ->> 'server_name'), '.', 2));
+      left join log_connections_configuration as s on a.name = (split_part((s.attributes_std ->> 'server_name'), '.', 2));
   EOQ
 }
 
@@ -272,20 +272,20 @@ query "postgres_db_server_log_disconnections_on" {
         and (attributes_std ->> 'value') = 'on'
     )
     select
-      address as resource,
+      a.address as resource,
       case
-        when (s.arguments ->> 'server_name') is not null then 'ok'
+        when (s.attributes_std ->> 'server_name') is not null then 'ok'
         else 'alarm'
       end as status,
       split_part(a.address, '.', 2) || case
-        when (s.arguments ->> 'server_name') is not null then ' server parameter log_disconnections on'
+        when (s.attributes_std ->> 'server_name') is not null then ' server parameter log_disconnections on'
         else ' server parameter log_disconnections off'
       end || '.' reason
       ${replace(local.tag_dimensions_qualifier_sql, "__QUALIFIER__", "a.")}
       ${replace(local.common_dimensions_qualifier_sql, "__QUALIFIER__", "a.")}
     from
       postgresql_server as a
-      left join log_disconnections_configuration as s on a.name = (split_part((s.arguments ->> 'server_name'), '.', 2));
+      left join log_disconnections_configuration as s on a.name = (split_part((s.attributes_std ->> 'server_name'), '.', 2));
   EOQ
 }
 

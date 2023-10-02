@@ -101,20 +101,20 @@ query "mysql_server_encrypted_at_rest_using_cmk" {
         and (attributes_std -> 'key_vault_key_id') is not null
     )
     select
-      address as resource,
+      a.address as resource,
       case
-        when (s.arguments ->> 'server_id') is not null then 'ok'
+        when (s.attributes_std ->> 'server_id') is not null then 'ok'
         else 'alarm'
       end as status,
       split_part(a.address, '.', 2) || case
-        when (s.arguments ->> 'server_id') is not null then ' encrypted with CMK'
+        when (s.attributes_std ->> 'server_id') is not null then ' encrypted with CMK'
         else ' not encrypted with CMK'
       end || '.' reason
       ${replace(local.tag_dimensions_qualifier_sql, "__QUALIFIER__", "a.")}
       ${replace(local.common_dimensions_qualifier_sql, "__QUALIFIER__", "a.")}
     from
       mysql_server as a
-      left join server_keys as s on a.name = (split_part((s.arguments ->> 'server_id'), '.', 2));
+      left join server_keys as s on a.name = (split_part((s.attributes_std ->> 'server_id'), '.', 2));
   EOQ
 }
 

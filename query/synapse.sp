@@ -53,7 +53,7 @@ query "synapse_workspace_private_link_used" {
       ${replace(local.common_dimensions_qualifier_sql, "__QUALIFIER__", "a.")}
     from
       synapse_workspaces as a
-      left join synapse_workspace_private_link as s on a.sw_id = ( s.arguments ->> 'synapse_workspace_id');
+      left join synapse_workspace_private_link as s on a.sw_id = (s.attributes_std ->> 'synapse_workspace_id');
   EOQ
 }
 

@@ -75,28 +75,28 @@ query "container_registry_use_virtual_service_endpoint" {
         type = 'azurerm_container_registry'
     ), container_registry_subnet as (
       select
-        distinct address a.name
+        distinct address
       from
         container_registry as a,
         jsonb_array_elements(attributes_std -> 'network_rule_set' -> 'virtual_network') as rule
     )
     select
-      type || ' ' || a.name as resource,
+      a.address as resource,
       case
         when (attributes_std -> 'network_rule_set' ->> 'default_action')::text <> 'Deny' then 'alarm'
-        when s.name is null then 'alarm'
+        when s.address is null then 'alarm'
         else 'ok'
       end as status,
       case
         when (attributes_std -> 'network_rule_set' ->> 'default_action')::text <> 'Deny' then ' not configured with virtual service endpoint'
-        when s.name is null then  ' not configured with virtual service endpoint'
+        when s.address is null then  ' not configured with virtual service endpoint'
         else ' configured with virtual service endpoint'
       end || '.' reason
       ${local.tag_dimensions_sql}
       ${local.common_dimensions_sql}
     from
       container_registry as a
-      left join container_registry_subnet as s on a.name = s.name;
+      left join container_registry_subnet as s on a.address = s.address;
   EOQ
 }
 

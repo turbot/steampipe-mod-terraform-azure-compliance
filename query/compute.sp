@@ -39,12 +39,12 @@ query "compute_vm_guest_configuration_installed_windows" {
     ),
     vm_guest_configuration as (
       select
-        split_part((b.arguments ->> 'virtual_machine_id'), '.', 2) as vm_name
+        split_part((b.attributes_std ->> 'virtual_machine_id'), '.', 2) as vm_name
       from
         all_windows_vm as a
-        left join vm_extensions as b on  (split_part((b.arguments ->> 'virtual_machine_id'), '.', 2)) = a.name
+        left join vm_extensions as b on  (split_part((b.attributes_std ->> 'virtual_machine_id'), '.', 2)) = a.name
       where
-        (b.arguments ->> 'publisher') = 'Microsoft.GuestConfiguration'
+        (b.attributes_std ->> 'publisher') = 'Microsoft.GuestConfiguration'
     )
     select
       address as resource,
@@ -83,12 +83,12 @@ query "compute_vm_guest_configuration_installed" {
     ),
     vm_guest_configuration as (
       select
-        split_part((b.arguments ->> 'virtual_machine_id'), '.', 2) as vm_name
+        split_part((b.attributes_std ->> 'virtual_machine_id'), '.', 2) as vm_name
       from
         all_vm as a
-        left join vm_extensions as b on (split_part((b.arguments ->> 'virtual_machine_id'), '.', 2)) = a.name
+        left join vm_extensions as b on (split_part((b.attributes_std ->> 'virtual_machine_id'), '.', 2)) = a.name
       where
-        (b.arguments ->> 'publisher') = 'Microsoft.GuestConfiguration'
+        (b.attributes_std ->> 'publisher') = 'Microsoft.GuestConfiguration'
     )
     select
       address as resource,
@@ -151,12 +151,12 @@ query "compute_vm_guest_configuration_installed_linux" {
     ),
     vm_guest_configuration as (
       select
-        split_part((b.arguments ->> 'virtual_machine_id'), '.', 2) as vm_name
+        split_part((b.attributes_std ->> 'virtual_machine_id'), '.', 2) as vm_name
       from
         all_linux_vm as a
-        left join vm_extensions as b on  split_part((b.arguments ->> 'virtual_machine_id'), '.', 2) = a.name
+        left join vm_extensions as b on  split_part((b.attributes_std ->> 'virtual_machine_id'), '.', 2) = a.name
       where
-        (b.arguments ->> 'publisher') = 'Microsoft.GuestConfiguration'
+        (b.attributes_std ->> 'publisher') = 'Microsoft.GuestConfiguration'
     )
     select
       address as resource,
@@ -264,13 +264,13 @@ query "compute_vm_malware_agent_installed" {
     ),
     vm_amtimalware_extension as (
       select
-        split_part((b.arguments ->> 'virtual_machine_id'), '.', 2) as vm_name
+        split_part((b.attributes_std ->> 'virtual_machine_id'), '.', 2) as vm_name
       from
         all_vm as a
-        left join vm_extensions as b on (split_part((b.arguments ->> 'virtual_machine_id'), '.', 2)) = a.name
+        left join vm_extensions as b on (split_part((b.attributes_std ->> 'virtual_machine_id'), '.', 2)) = a.name
       where
-        (b.arguments ->> 'publisher') = 'Microsoft.Azure.Security'
-        and (b.arguments ->> 'type') = 'IaaSAntimalware'
+        (b.attributes_std ->> 'publisher') = 'Microsoft.Azure.Security'
+        and (b.attributes_std ->> 'type') = 'IaaSAntimalware'
     )
     select
       address as resource,

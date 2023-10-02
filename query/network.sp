@@ -73,13 +73,13 @@ query "network_security_group_not_configured_gateway_subnets" {
     select
       a.address as resource,
       case
-        when (a.arguments ->> 'name')::text = 'GatewaySubnet' and (s.attributes_std ->> 'subnet_id') is not null then 'alarm'
-        when (a.arguments ->> 'name')::text = 'GatewaySubnet' and (s.attributes_std ->> 'subnet_id') is null then 'ok'
+        when (a.attributes_std ->> 'name')::text = 'GatewaySubnet' and (s.attributes_std ->> 'subnet_id') is not null then 'alarm'
+        when (a.attributes_std ->> 'name')::text = 'GatewaySubnet' and (s.attributes_std ->> 'subnet_id') is null then 'ok'
         else 'skip'
       end as status,
       split_part(a.address, '.', 2) || case
-        when (a.arguments ->> 'name')::text = 'GatewaySubnet' and (s.attributes_std ->> 'subnet_id') is not null then ' Gateway subnet configured with network security group'
-        when (a.arguments ->> 'name')::text = 'GatewaySubnet' and (s.attributes_std ->> 'subnet_id') is null then ' Gateway subnet not configured with network security group'
+        when (a.attributes_std ->> 'name')::text = 'GatewaySubnet' and (s.attributes_std ->> 'subnet_id') is not null then ' Gateway subnet configured with network security group'
+        when (a.attributes_std ->> 'name')::text = 'GatewaySubnet' and (s.attributes_std ->> 'subnet_id') is null then ' Gateway subnet not configured with network security group'
         else ' not of gateway subnet type'
       end || '.' reason
       ${replace(local.common_dimensions_qualifier_sql, "__QUALIFIER__", "a.")}

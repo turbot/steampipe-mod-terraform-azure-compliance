@@ -111,18 +111,18 @@ query "sql_server_audting_retention_period_90" {
     select
       address as resource,
       case
-        when (s.arguments ->> 'server_id') is not null then 'ok'
+        when (s.attributes_std ->> 'server_id') is not null then 'ok'
         else 'alarm'
       end as status,
       split_part(a.address, '.', 2) || case
-        when (s.arguments ->> 'server_name') is not null then ' audit retention greater than 90 days'
+        when (s.attributes_std ->> 'server_name') is not null then ' audit retention greater than 90 days'
         else ' audit retention less than 90 days'
       end || '.' reason
       ${replace(local.tag_dimensions_qualifier_sql, "__QUALIFIER__", "a.")}
       ${replace(local.common_dimensions_qualifier_sql, "__QUALIFIER__", "a.")}
     from
       sql_server as a
-      left join server_audit_policy as s on a.name = ( split_part((s.arguments ->> 'server_id'), '.', 2));
+      left join server_audit_policy as s on a.name = ( split_part((s.attributes_std ->> 'server_id'), '.', 2));
   EOQ
 }
 
@@ -204,9 +204,9 @@ query "sql_database_allow_internet_access" {
           coalesce(trim(attributes_std ->> 'start_ip_address'), '') = ''
           or coalesce(trim(attributes_std ->> 'end_ip_address'), '') = ''
           or (attributes_std ->> 'end_ip_address' = '0.0.0.0'
-            and arguments ->> 'start_ip_address' = '0.0.0.0')
+            and attributes_std ->> 'start_ip_address' = '0.0.0.0')
           or (attributes_std ->> 'end_ip_address' = '0.0.0.0'
-            and arguments ->> 'start_ip_address' = '255.255.255.255')
+            and attributes_std ->> 'start_ip_address' = '255.255.255.255')
         then 'alarm'
         else 'ok'
       end status,
@@ -216,9 +216,9 @@ query "sql_database_allow_internet_access" {
         when  coalesce(trim(attributes_std ->> 'end_ip_address'), '') = ''
         then ' ''end_ip_address'' is not defined.'
         when (attributes_std ->> 'end_ip_address' = '0.0.0.0'
-            and arguments ->> 'start_ip_address' = '0.0.0.0')
+            and attributes_std ->> 'start_ip_address' = '0.0.0.0')
           or (attributes_std ->> 'end_ip_address' = '0.0.0.0'
-            and arguments ->> 'start_ip_address' = '255.255.255.255')
+            and attributes_std ->> 'start_ip_address' = '255.255.255.255')
         then ' allows ingress 0.0.0.0/0 or any ip over internet'
         else ' does not allow ingress 0.0.0.0/0 or any ip over internet'
       end || '.' reason

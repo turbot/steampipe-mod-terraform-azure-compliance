@@ -44,15 +44,15 @@ query "redis_cache_min_tls_1_2" {
   sql = <<-EOQ
     select
       address as resource,
-      arguments  ->> 'minimum_tls_version',
+      attributes_std ->> 'minimum_tls_version',
       case
         when (attributes_std -> 'minimum_tls_version') is null then 'alarm'
-        when (attributes_std  ->> 'minimum_tls_version')::float < 1.2 then 'alarm'
+        when (attributes_std ->> 'minimum_tls_version')::float < 1.2 then 'alarm'
         else 'ok'
       end status,
       split_part(address, '.', 2) || case
         when (attributes_std -> 'minimum_tls_version') is null then ' ''min_tls_version'' not defined'
-        when (attributes_std  ->> 'minimum_tls_version')::float < 1.2 then ' not using the latest version of TLS encryption'
+        when (attributes_std ->> 'minimum_tls_version')::float < 1.2 then ' not using the latest version of TLS encryption'
         else ' using the latest version of TLS encryption'
       end || '.' reason
       ${local.tag_dimensions_sql}

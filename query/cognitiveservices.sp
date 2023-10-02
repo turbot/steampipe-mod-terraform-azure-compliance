@@ -37,20 +37,20 @@ query "cognitive_account_encrypted_with_cmk" {
           type = 'azurerm_cognitive_account_customer_managed_key'
     )
     select
-      c.type || ' ' || c.name as resource,
+      c.address as resource,
       case
-        when (b.arguments ->> 'cognitive_account_id') is not null then 'ok'
+        when (b.attributes_std ->> 'cognitive_account_id') is not null then 'ok'
         else 'alarm'
       end as status,
-      c.split_part(address, '.', 2) || case
-        when (b.arguments ->> 'cognitive_account_id') is not null then ' encrypted with CMK'
+      split_part(c.address, '.', 2) || case
+        when (b.attributes_std ->> 'cognitive_account_id') is not null then ' encrypted with CMK'
         else ' not encrypted with CMK'
       end || '.' reason
       ${replace(local.tag_dimensions_qualifier_sql, "__QUALIFIER__", "c.")}
       ${replace(local.common_dimensions_qualifier_sql, "__QUALIFIER__", "c.")}
     from
       all_cognitive_account as c
-      left join cognitive_account_cmk as b on c.name = (split_part((b.arguments ->> 'cognitive_account_id'), '.', 2))
+      left join cognitive_account_cmk as b on c.name = (split_part((b.attributes_std ->> 'cognitive_account_id'), '.', 2))
   EOQ
 }
 
