@@ -1,20 +1,20 @@
 query "sql_database_long_term_geo_redundant_backup_enabled" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments -> 'long_term_retention_policy') is null then 'alarm'
-        when (arguments -> 'long_term_retention_policy' ->> 'monthly_retention')::text <>  'PT0S'
-          or (arguments -> 'long_term_retention_policy' ->> 'weekly_retention')::text <>  'PT0S'
-          or (arguments -> 'long_term_retention_policy' ->> 'yearly_retention')::text <>  'PT0S'
+        when (attributes_std -> 'long_term_retention_policy') is null then 'alarm'
+        when (attributes_std -> 'long_term_retention_policy' ->> 'monthly_retention')::text <>  'PT0S'
+          or (attributes_std -> 'long_term_retention_policy' ->> 'weekly_retention')::text <>  'PT0S'
+          or (attributes_std -> 'long_term_retention_policy' ->> 'yearly_retention')::text <>  'PT0S'
           then 'ok'
         else 'alarm'
       end status,
-      name || case
-        when (arguments -> 'long_term_retention_policy') is null then ' ''long_term_retention_policy'' is not set'
-        when (arguments -> 'long_term_retention_policy' ->> 'monthly_retention')::text <>  'PT0S'
-          or (arguments -> 'long_term_retention_policy' ->> 'weekly_retention')::text <>  'PT0S'
-          or (arguments -> 'long_term_retention_policy' ->> 'yearly_retention')::text <>  'PT0S'
+      split_part(address, '.', 2) || case
+        when (attributes_std -> 'long_term_retention_policy') is null then ' ''long_term_retention_policy'' is not set'
+        when (attributes_std -> 'long_term_retention_policy' ->> 'monthly_retention')::text <>  'PT0S'
+          or (attributes_std -> 'long_term_retention_policy' ->> 'weekly_retention')::text <>  'PT0S'
+          or (attributes_std -> 'long_term_retention_policy' ->> 'yearly_retention')::text <>  'PT0S'
           then ' long-term geo-redundant backup enabled'
         else ' long-term geo-redundant backup disabled'
       end || '.' reason
@@ -30,13 +30,13 @@ query "sql_database_long_term_geo_redundant_backup_enabled" {
 query "sql_server_vm_azure_defender_enabled" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments ->> 'resource_type') = 'SqlServerVirtualMachines' and (arguments ->> 'tier') = 'Standard' then 'ok'
+        when (attributes_std ->> 'resource_type') = 'SqlServerVirtualMachines' and (attributes_std ->> 'tier') = 'Standard' then 'ok'
         else 'info'
       end status,
-      name || case
-        when (arguments ->> 'resource_type') = 'SqlServerVirtualMachines' and (arguments ->> 'tier') = 'Standard' then ' Azure Defender on for SqlServerVirtualMachines'
+      split_part(address, '.', 2) || case
+        when (attributes_std ->> 'resource_type') = 'SqlServerVirtualMachines' and (attributes_std ->> 'tier') = 'Standard' then ' Azure Defender on for SqlServerVirtualMachines'
         else ' Azure Defender off for SqlServerVirtualMachines'
       end || '.' reason
       ${local.common_dimensions_sql}
@@ -50,15 +50,15 @@ query "sql_server_vm_azure_defender_enabled" {
 query "sql_server_atp_enabled" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments -> 'threat_detection_policy') is null then 'alarm'
-        when (arguments -> 'threat_detection_policy' ->> 'state') = 'Disabled' then 'alarm'
+        when (attributes_std -> 'threat_detection_policy') is null then 'alarm'
+        when (attributes_std -> 'threat_detection_policy' ->> 'state') = 'Disabled' then 'alarm'
         else 'ok'
       end status,
-      name || case
-        when (arguments -> 'threat_detection_policy') is null then ' does not have ATP enabled'
-        when (arguments -> 'threat_detection_policy' ->> 'state') = 'Disabled' then ' does not have ATP enabled'
+      split_part(address, '.', 2) || case
+        when (attributes_std -> 'threat_detection_policy') is null then ' does not have ATP enabled'
+        when (attributes_std -> 'threat_detection_policy' ->> 'state') = 'Disabled' then ' does not have ATP enabled'
         else ' has ATP enabled'
       end || '.' reason
       ${local.tag_dimensions_sql}
@@ -73,14 +73,14 @@ query "sql_server_atp_enabled" {
 query "sql_database_server_azure_defender_enabled" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments ->> 'tier') = 'Standard' and (arguments ->> 'resource_type') = 'SqlServers' then 'ok'
+        when (attributes_std ->> 'tier') = 'Standard' and (attributes_std ->> 'resource_type') = 'SqlServers' then 'ok'
         else 'skip'
       end status,
-      name || case
-        when (arguments ->> 'tier') = 'Standard' and (arguments ->> 'resource_type') = 'SqlServers' then ' Azure defender enabled for SqlServer(s)'
-        else ' Azure defender enabled for ' || (arguments ->> 'resource_type') || ''
+      split_part(address, '.', 2) || case
+        when (attributes_std ->> 'tier') = 'Standard' and (attributes_std ->> 'resource_type') = 'SqlServers' then ' Azure defender enabled for SqlServer(s)'
+        else ' Azure defender enabled for ' || (attributes_std ->> 'resource_type') || ''
       end || '.' reason
       ${local.common_dimensions_sql}
     from
@@ -106,15 +106,15 @@ query "sql_server_audting_retention_period_90" {
         terraform_resource
       where
         type = 'azurerm_mssql_server_extended_auditing_policy'
-        and (arguments ->> 'retention_in_days')::int > 90
+        and (attributes_std ->> 'retention_in_days')::int > 90
     )
     select
-      a.type || ' ' || a.name as resource,
+      address as resource,
       case
         when (s.arguments ->> 'server_id') is not null then 'ok'
         else 'alarm'
       end as status,
-      a.name || case
+      split_part(a.address, '.', 2) || case
         when (s.arguments ->> 'server_name') is not null then ' audit retention greater than 90 days'
         else ' audit retention less than 90 days'
       end || '.' reason
@@ -129,13 +129,13 @@ query "sql_server_audting_retention_period_90" {
 query "sql_server_azure_ad_authentication_enabled" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when name in (select split_part((arguments ->> 'server_name'), '.', 2) from terraform_resource where type = 'azurerm_sql_active_directory_administrator') then 'ok'
+        when name in (select split_part((attributes_std ->> 'server_name'), '.', 2) from terraform_resource where type = 'azurerm_sql_active_directory_administrator') then 'ok'
         else 'alarm'
       end status,
-      name || case
-        when name in (select split_part((arguments ->> 'server_name'), '.', 2) from terraform_resource where type = 'azurerm_sql_active_directory_administrator') then ' has AzureAD authentication enabled'
+      split_part(address, '.', 2) || case
+        when name in (select split_part((attributes_std ->> 'server_name'), '.', 2) from terraform_resource where type = 'azurerm_sql_active_directory_administrator') then ' has AzureAD authentication enabled'
         else ' does not have AzureAD authentication enabled'
       end || '.' reason
       ${local.tag_dimensions_sql}
@@ -150,19 +150,19 @@ query "sql_server_azure_ad_authentication_enabled" {
 query "sql_server_auditing_storage_account_destination_retention_90_days" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments -> 'threat_detection_policy') is null then 'alarm'
-        when (arguments -> 'threat_detection_policy' ->> 'state') = 'Disabled' then 'alarm'
-        when (arguments -> 'threat_detection_policy' ->> 'state') = 'Enabled' and(arguments -> 'threat_detection_policy' -> 'retention_days') is null then 'alarm'
-        when (arguments -> 'threat_detection_policy' -> 'retention_days')::integer < 90 then 'alarm'
+        when (attributes_std -> 'threat_detection_policy') is null then 'alarm'
+        when (attributes_std -> 'threat_detection_policy' ->> 'state') = 'Disabled' then 'alarm'
+        when (attributes_std -> 'threat_detection_policy' ->> 'state') = 'Enabled' and(attributes_std -> 'threat_detection_policy' -> 'retention_days') is null then 'alarm'
+        when (attributes_std -> 'threat_detection_policy' -> 'retention_days')::integer < 90 then 'alarm'
         else 'ok'
       end status,
-      name || case
-        when (arguments -> 'threat_detection_policy') is null then ' threat detection policy not enabled'
-        when (arguments -> 'threat_detection_policy' ->> 'state') = 'Disabled' then ' threat detection policy disabled'
-        when (arguments -> 'threat_detection_policy' ->> 'state') = 'Enabled' and(arguments -> 'threat_detection_policy' -> 'retention_days') is null then ' auditing to storage account destination not configured with 90 days retention or higher'
-        when (arguments -> 'threat_detection_policy' -> 'retention_days')::integer < 90 then ' auditing to storage account destination not configured with 90 days retention or higher'
+      split_part(address, '.', 2) || case
+        when (attributes_std -> 'threat_detection_policy') is null then ' threat detection policy not enabled'
+        when (attributes_std -> 'threat_detection_policy' ->> 'state') = 'Disabled' then ' threat detection policy disabled'
+        when (attributes_std -> 'threat_detection_policy' ->> 'state') = 'Enabled' and(attributes_std -> 'threat_detection_policy' -> 'retention_days') is null then ' auditing to storage account destination not configured with 90 days retention or higher'
+        when (attributes_std -> 'threat_detection_policy' -> 'retention_days')::integer < 90 then ' auditing to storage account destination not configured with 90 days retention or higher'
         else ' auditing to storage account destination configured with 90 days retention or higher'
       end || '.' reason
       ${local.tag_dimensions_sql}
@@ -177,13 +177,13 @@ query "sql_server_auditing_storage_account_destination_retention_90_days" {
 query "sql_db_active_directory_admin_configured" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments -> 'azuread_administrator') is null then 'alarm'
+        when (attributes_std -> 'azuread_administrator') is null then 'alarm'
         else 'ok'
       end status,
-      name || case
-        when (arguments -> 'azuread_administrator') is null then ' Azure AD authentication not configured.'
+      split_part(address, '.', 2) || case
+        when (attributes_std -> 'azuread_administrator') is null then ' Azure AD authentication not configured.'
         else ' Azure AD authentication configured'
       end || '.' reason
       ${local.tag_dimensions_sql}
@@ -198,26 +198,26 @@ query "sql_db_active_directory_admin_configured" {
 query "sql_database_allow_internet_access" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
         when
-          coalesce(trim(arguments ->> 'start_ip_address'), '') = ''
-          or coalesce(trim(arguments ->> 'end_ip_address'), '') = ''
-          or (arguments ->> 'end_ip_address' = '0.0.0.0'
+          coalesce(trim(attributes_std ->> 'start_ip_address'), '') = ''
+          or coalesce(trim(attributes_std ->> 'end_ip_address'), '') = ''
+          or (attributes_std ->> 'end_ip_address' = '0.0.0.0'
             and arguments ->> 'start_ip_address' = '0.0.0.0')
-          or (arguments ->> 'end_ip_address' = '0.0.0.0'
+          or (attributes_std ->> 'end_ip_address' = '0.0.0.0'
             and arguments ->> 'start_ip_address' = '255.255.255.255')
         then 'alarm'
         else 'ok'
       end status,
-      name || case
-        when  coalesce(trim(arguments ->> 'start_ip_address'), '') = ''
+      split_part(address, '.', 2) || case
+        when  coalesce(trim(attributes_std ->> 'start_ip_address'), '') = ''
         then ' ''start_ip_address'' is not defined.'
-        when  coalesce(trim(arguments ->> 'end_ip_address'), '') = ''
+        when  coalesce(trim(attributes_std ->> 'end_ip_address'), '') = ''
         then ' ''end_ip_address'' is not defined.'
-        when (arguments ->> 'end_ip_address' = '0.0.0.0'
+        when (attributes_std ->> 'end_ip_address' = '0.0.0.0'
             and arguments ->> 'start_ip_address' = '0.0.0.0')
-          or (arguments ->> 'end_ip_address' = '0.0.0.0'
+          or (attributes_std ->> 'end_ip_address' = '0.0.0.0'
             and arguments ->> 'start_ip_address' = '255.255.255.255')
         then ' allows ingress 0.0.0.0/0 or any ip over internet'
         else ' does not allow ingress 0.0.0.0/0 or any ip over internet'
@@ -233,15 +233,15 @@ query "sql_database_allow_internet_access" {
 query "sql_db_public_network_access_disabled" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments -> 'public_network_access_enabled') is null then 'alarm'
-        when (arguments -> 'public_network_access_enabled')::boolean then 'alarm'
+        when (attributes_std -> 'public_network_access_enabled') is null then 'alarm'
+        when (attributes_std -> 'public_network_access_enabled')::boolean then 'alarm'
         else 'ok'
       end status,
-      name || case
-        when (arguments -> 'public_network_access_enabled') is null then ' ''public_network_access_enabled'' not defined'
-        when (arguments -> 'public_network_access_enabled')::boolean then ' public network access enabled'
+      split_part(address, '.', 2) || case
+        when (attributes_std -> 'public_network_access_enabled') is null then ' ''public_network_access_enabled'' not defined'
+        when (attributes_std -> 'public_network_access_enabled')::boolean then ' public network access enabled'
         else ' public network access disabled'
       end || '.' reason
       ${local.tag_dimensions_sql}
@@ -256,13 +256,13 @@ query "sql_db_public_network_access_disabled" {
 query "sql_server_email_security_alert_enabled" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments ->> 'email_addresses') is null then 'alarm'
+        when (attributes_std ->> 'email_addresses') is null then 'alarm'
         else 'ok'
       end status,
-      name || case
-        when (arguments ->> 'email_addresses') is null then ' email security alert disabled'
+      split_part(address, '.', 2) || case
+        when (attributes_std ->> 'email_addresses') is null then ' email security alert disabled'
         else ' email security alert enabled'
       end || '.' reason
       ${local.tag_dimensions_sql}
@@ -277,13 +277,13 @@ query "sql_server_email_security_alert_enabled" {
 query "sql_server_admins_email_security_alert_enabled" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments ->> 'email_account_admins')::boolean then 'ok'
+        when (attributes_std ->> 'email_account_admins')::boolean then 'ok'
         else 'alarm'
       end status,
-      name || case
-        when (arguments ->> 'email_account_admins')::boolean then ' account administrators email security alert enabled'
+      split_part(address, '.', 2) || case
+        when (attributes_std ->> 'email_account_admins')::boolean then ' account administrators email security alert enabled'
         else ' account administrators email security alert disabled'
       end || '.' reason
       ${local.tag_dimensions_sql}
@@ -298,13 +298,13 @@ query "sql_server_admins_email_security_alert_enabled" {
 query "sql_server_all_security_alerts_enabled" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments ->> 'disabled_alerts') is not null then 'alarm'
+        when (attributes_std ->> 'disabled_alerts') is not null then 'alarm'
         else 'ok'
       end status,
-      name || case
-        when (arguments ->> 'disabled_alerts') is not null then ' some security alerts disabled'
+      split_part(address, '.', 2) || case
+        when (attributes_std ->> 'disabled_alerts') is not null then ' some security alerts disabled'
         else ' all security alerts enabled'
       end || '.' reason
       ${local.tag_dimensions_sql}
@@ -319,15 +319,15 @@ query "sql_server_all_security_alerts_enabled" {
 query "sql_server_uses_latest_tls_version" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments ->> 'minimum_tls_version') is null then 'ok'
-        when (arguments ->> 'minimum_tls_version')::text = '1.2' then 'ok'
+        when (attributes_std ->> 'minimum_tls_version') is null then 'ok'
+        when (attributes_std ->> 'minimum_tls_version')::text = '1.2' then 'ok'
         else 'alarm'
       end status,
-      name || case
-        when (arguments ->> 'minimum_tls_version') is null then ' TLS version not defined by default uses 1.2'
-        when (arguments ->> 'minimum_tls_version')::text = '1.2' then ' TLS version 1.2'
+      split_part(address, '.', 2) || case
+        when (attributes_std ->> 'minimum_tls_version') is null then ' TLS version not defined by default uses 1.2'
+        when (attributes_std ->> 'minimum_tls_version')::text = '1.2' then ' TLS version 1.2'
         else ' TLS version not 1.2'
       end || '.' reason
       ${local.tag_dimensions_sql}
@@ -335,22 +335,22 @@ query "sql_server_uses_latest_tls_version" {
     from
       terraform_resource
     where
-      type = 'azurerm_mssql_server';    
+      type = 'azurerm_mssql_server';
   EOQ
 }
 
 query "sql_database_log_monitoring_enabled" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments -> 'log_monitoring_enabled') is null then 'ok'
-        when (arguments -> 'log_monitoring_enabled')::boolean then 'ok'
+        when (attributes_std -> 'log_monitoring_enabled') is null then 'ok'
+        when (attributes_std -> 'log_monitoring_enabled')::boolean then 'ok'
         else 'alarm'
       end status,
-      name || case
-        when (arguments -> 'log_monitoring_enabled') is null then ' log monitoring enabled'
-        when (arguments -> 'log_monitoring_enabled')::boolean then ' log monitoring enabled'
+      split_part(address, '.', 2) || case
+        when (attributes_std -> 'log_monitoring_enabled') is null then ' log monitoring enabled'
+        when (attributes_std -> 'log_monitoring_enabled')::boolean then ' log monitoring enabled'
         else ' log monitoring disabled'
       end || '.' reason
       ${local.tag_dimensions_sql}

@@ -9,20 +9,20 @@ query "keyvault_vault_use_virtual_service_endpoint" {
         type = 'azurerm_key_vault'
     ), key_vaults_subnet as (
       select
-        distinct a.name
+        distinct address a.name
       from
         key_vaults as a,
-        jsonb_array_elements(arguments -> 'network_acls' -> 'virtual_network_subnet_ids') as id
+        jsonb_array_elements(attributes_std -> 'network_acls' -> 'virtual_network_subnet_ids') as id
     )
     select
-      type || ' ' || a.name as resource,
+      a.address as resource,
       case
-        when (arguments -> 'network_acls' ->> 'default_action')::text <> 'Deny' then 'alarm'
+        when (attributes_std -> 'network_acls' ->> 'default_action')::text <> 'Deny' then 'alarm'
         when s.name is null then 'alarm'
         else 'ok'
       end as status,
       case
-        when (arguments -> 'network_rule_set' ->> 'default_action')::text <> 'Deny' then ' not configured with virtual service endpoint'
+        when (attributes_std -> 'network_rule_set' ->> 'default_action')::text <> 'Deny' then ' not configured with virtual service endpoint'
         when s.name is null then  ' not configured with virtual service endpoint'
         else ' configured with virtual service endpoint'
       end || '.' reason
@@ -50,7 +50,7 @@ query "keyvault_managed_hms_logging_enabled" {
         terraform_resource
       where
         type = 'azurerm_monitor_diagnostic_setting'
-        and (arguments ->> 'target_resource_id') like '%azurerm_key_vault_managed_hardware_security_module.%'
+        and (attributes_std ->> 'target_resource_id') like '%azurerm_key_vault_managed_hardware_security_module.%'
     ), hsm_key_vaults_logging as (
       select
         kv.name as kv_name
@@ -69,7 +69,7 @@ query "keyvault_managed_hms_logging_enabled" {
         when s.kv_name is null then 'alarm'
         else 'ok'
       end as status,
-      a.name || case
+      split_part(a.address, '.', 2) || case
         when s.kv_name is null then  ' logging disabled'
         else ' logging enabled'
       end || '.' reason
@@ -84,15 +84,15 @@ query "keyvault_managed_hms_logging_enabled" {
 query "keyvault_managed_hms_purge_protection_enabled" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments ->> 'purge_protection_enabled') is null then 'alarm'
-        when (arguments ->> 'purge_protection_enabled')::boolean then 'ok'
+        when (attributes_std ->> 'purge_protection_enabled') is null then 'alarm'
+        when (attributes_std ->> 'purge_protection_enabled')::boolean then 'ok'
         else 'alarm'
       end status,
-      name || case
-        when (arguments ->> 'purge_protection_enabled') is null then ' ''purge_protection_enabled'' not set'
-        when (arguments ->> 'purge_protection_enabled')::boolean then  ' purge protection enabled'
+      split_part(address, '.', 2) || case
+        when (attributes_std ->> 'purge_protection_enabled') is null then ' ''purge_protection_enabled'' not set'
+        when (attributes_std ->> 'purge_protection_enabled')::boolean then  ' purge protection enabled'
         else ' purge protection disabled'
       end || '.' reason
       ${local.tag_dimensions_sql}
@@ -120,7 +120,7 @@ query "keyvault_logging_enabled" {
         terraform_resource
       where
         type = 'azurerm_monitor_diagnostic_setting'
-        and (arguments ->> 'target_resource_id') like '%azurerm_key_vault.%'
+        and (attributes_std ->> 'target_resource_id') like '%azurerm_key_vault.%'
     ), key_vaults_logging as (
       select
         kv.name as kv_name,
@@ -140,7 +140,7 @@ query "keyvault_logging_enabled" {
         when s.kv_name is null then 'alarm'
         else 'ok'
       end as status,
-      a.name || case
+      split_part(a.address, '.', 2) || case
         when s.kv_name is null then  ' logging disabled'
         else ' logging enabled'
       end || '.' reason
@@ -155,15 +155,15 @@ query "keyvault_logging_enabled" {
 query "keyvault_purge_protection_enabled" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments ->> 'purge_protection_enabled') is null then 'alarm'
-        when (arguments ->> 'purge_protection_enabled')::boolean then 'ok'
+        when (attributes_std ->> 'purge_protection_enabled') is null then 'alarm'
+        when (attributes_std ->> 'purge_protection_enabled')::boolean then 'ok'
         else 'alarm'
       end status,
-      name || case
-        when (arguments ->> 'purge_protection_enabled') is null then ' ''purge_protection_enabled'' not set'
-        when (arguments ->> 'purge_protection_enabled')::boolean then  ' purge protection enabled'
+      split_part(address, '.', 2) || case
+        when (attributes_std ->> 'purge_protection_enabled') is null then ' ''purge_protection_enabled'' not set'
+        when (attributes_std ->> 'purge_protection_enabled')::boolean then  ' purge protection enabled'
         else ' purge protection disabled'
       end || '.' reason
       ${local.tag_dimensions_sql}
@@ -178,15 +178,15 @@ query "keyvault_purge_protection_enabled" {
 query "keyvault_vault_public_network_access_disabled" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments ->> 'network_acls') is null then 'alarm'
-        when (arguments -> 'network_acls' ->> 'default_action')::text != 'Deny' then 'alarm'
+        when (attributes_std ->> 'network_acls') is null then 'alarm'
+        when (attributes_std -> 'network_acls' ->> 'default_action')::text != 'Deny' then 'alarm'
         else 'ok'
       end status,
-      name || case
-        when (arguments ->> 'network_acls') is null then ' ''network_acls'' not set'
-        when (arguments -> 'network_acls' ->> 'default_action')::text != 'Deny' then ' public network access enabled'
+      split_part(address, '.', 2) || case
+        when (attributes_std ->> 'network_acls') is null then ' ''network_acls'' not set'
+        when (attributes_std -> 'network_acls' ->> 'default_action')::text != 'Deny' then ' public network access enabled'
         else ' public network access disabled'
       end || '.' reason
       ${local.tag_dimensions_sql}
@@ -201,13 +201,13 @@ query "keyvault_vault_public_network_access_disabled" {
 query "keyvault_key_expiration_set" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments ->> 'expiration_date') is null then 'alarm'
+        when (attributes_std ->> 'expiration_date') is null then 'alarm'
         else 'ok'
       end status,
-      name || case
-        when (arguments ->> 'expiration_date') is null then ' expiration_date not set'
+      split_part(address, '.', 2) || case
+        when (attributes_std ->> 'expiration_date') is null then ' expiration_date not set'
         else ' expiration_date is set'
       end || '.' reason
       ${local.tag_dimensions_sql}
@@ -222,13 +222,13 @@ query "keyvault_key_expiration_set" {
 query "keyvault_azure_defender_enabled" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments ->> 'resource_type') = 'KeyVaults' and (arguments ->> 'tier') = 'Standard' then 'ok'
+        when (attributes_std ->> 'resource_type') = 'KeyVaults' and (attributes_std ->> 'tier') = 'Standard' then 'ok'
         else 'info'
       end status,
-      name || case
-        when (arguments ->> 'resource_type') = 'KeyVaults' and (arguments ->> 'tier') = 'Standard' then ' Azure Defender on for KeyVaults'
+      split_part(address, '.', 2) || case
+        when (attributes_std ->> 'resource_type') = 'KeyVaults' and (attributes_std ->> 'tier') = 'Standard' then ' Azure Defender on for KeyVaults'
         else ' Azure Defender off for KeyVaults'
       end || '.' reason
       ${local.common_dimensions_sql}
@@ -242,13 +242,13 @@ query "keyvault_azure_defender_enabled" {
 query "keyvault_secret_expiration_set" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments ->> 'expiration_date') is null then 'alarm'
+        when (attributes_std ->> 'expiration_date') is null then 'alarm'
         else 'ok'
       end status,
-      name || case
-        when (arguments ->> 'expiration_date') is null then ' expiration_date not set'
+      split_part(address, '.', 2) || case
+        when (attributes_std ->> 'expiration_date') is null then ' expiration_date not set'
         else ' expiration_date is set'
       end || '.' reason
       ${local.tag_dimensions_sql}
@@ -263,13 +263,13 @@ query "keyvault_secret_expiration_set" {
 query "keyvault_secret_content_type_set" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments ->> 'content_type') is null then 'alarm'
+        when (attributes_std ->> 'content_type') is null then 'alarm'
         else 'ok'
       end status,
-      name || case
-        when (arguments ->> 'content_type') is null then ' content type not set'
+      split_part(address, '.', 2) || case
+        when (attributes_std ->> 'content_type') is null then ' content type not set'
         else ' content type is set'
       end || '.' reason
       ${local.tag_dimensions_sql}

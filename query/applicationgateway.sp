@@ -1,13 +1,13 @@
 query "application_gateway_uses_https_listener" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments -> 'http_listener' ->> 'protocol') = 'Https' then 'ok'
+        when (attributes_std -> 'http_listener' ->> 'protocol') = 'Https' then 'ok'
         else 'alarm'
       end status,
-      name || case
-        when (arguments -> 'http_listener' ->> 'protocol') = 'Https' then ' uses HTTPS listener'
+      split_part(address, '.', 2) || case
+        when (attributes_std -> 'http_listener' ->> 'protocol') = 'Https' then ' uses HTTPS listener'
         else ' does not use HTTPS listener'
       end || '.' reason
       ${local.tag_dimensions_sql}
@@ -22,13 +22,13 @@ query "application_gateway_uses_https_listener" {
 query "application_gateway_waf_enabled" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments -> 'waf_configuration') is not null then 'ok'
+        when (attributes_std -> 'waf_configuration') is not null then 'ok'
         else 'alarm'
       end status,
-      name || case
-        when (arguments -> 'waf_configuration') is not null then ' WAF enabled'
+      split_part(address, '.', 2) || case
+        when (attributes_std -> 'waf_configuration') is not null then ' WAF enabled'
         else ' WAF disabled'
       end || '.' reason
       ${local.tag_dimensions_sql}

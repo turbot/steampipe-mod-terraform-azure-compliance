@@ -1,13 +1,13 @@
 query "machine_learning_workspace_encrypted_with_cmk" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments -> 'encryption') is null then 'alarm'
+        when (attributes_std -> 'encryption') is null then 'alarm'
         else 'ok'
       end status,
-      name || case
-        when (arguments -> 'encryption') is null then ' not encrypted with CMK'
+      split_part(address, '.', 2) || case
+        when (attributes_std -> 'encryption') is null then ' not encrypted with CMK'
         else ' encrypted with CMK'
       end || '.' reason
       ${local.tag_dimensions_sql}
@@ -22,13 +22,13 @@ query "machine_learning_workspace_encrypted_with_cmk" {
 query "machine_learning_compute_cluster_local_auth_disabled" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments ->> 'local_auth_enabled') = 'false' then 'ok'
+        when (attributes_std ->> 'local_auth_enabled') = 'false' then 'ok'
         else 'alarm'
       end status,
-      name || case
-        when (arguments ->> 'local_auth_enabled') = 'false'  then ' local authentication disabled'
+      split_part(address, '.', 2) || case
+        when (attributes_std ->> 'local_auth_enabled') = 'false'  then ' local authentication disabled'
         else ' local authentication enabled'
       end || '.' reason
       ${local.tag_dimensions_sql}
@@ -43,12 +43,12 @@ query "machine_learning_compute_cluster_local_auth_disabled" {
 query "machine_learning_compute_cluster_minimum_node_zero" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments -> 'scale_settings' ->> 'min_node_count')::int = 0 then 'ok'
+        when (attributes_std -> 'scale_settings' ->> 'min_node_count')::int = 0 then 'ok'
         else 'alarm'
       end status,
-      name || ' minimum node count set to ' || (arguments -> 'scale_settings' ->> 'min_node_count') || '.' reason
+      name || ' minimum node count set to ' || (attributes_std -> 'scale_settings' ->> 'min_node_count') || '.' reason
       ${local.tag_dimensions_sql}
       ${local.common_dimensions_sql}
     from
@@ -61,13 +61,13 @@ query "machine_learning_compute_cluster_minimum_node_zero" {
 query "machine_learning_workspace_restrict_public_access" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments ->> 'public_network_access_enabled') = 'false' then 'ok'
+        when (attributes_std ->> 'public_network_access_enabled') = 'false' then 'ok'
         else 'alarm'
       end status,
-      name || case
-        when (arguments ->> 'public_network_access_enabled') = 'false' then ' not publicly accessible'
+      split_part(address, '.', 2) || case
+        when (attributes_std ->> 'public_network_access_enabled') = 'false' then ' not publicly accessible'
         else ' publicly accessible'
       end || '.' reason
       ${local.tag_dimensions_sql}

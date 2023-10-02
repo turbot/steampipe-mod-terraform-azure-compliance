@@ -1,13 +1,13 @@
 query "cognitive_account_public_network_access_disabled" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments ->> 'public_network_access_enabled')::boolean then 'alarm'
+        when (attributes_std ->> 'public_network_access_enabled')::boolean then 'alarm'
         else 'ok'
       end status,
-      name || case
-        when (arguments ->> 'public_network_access_enabled')::boolean then ' public network access enabled'
+      split_part(address, '.', 2) || case
+        when (attributes_std ->> 'public_network_access_enabled')::boolean then ' public network access enabled'
         else ' public network access disabled'
       end || '.' reason
       ${local.tag_dimensions_sql}
@@ -42,7 +42,7 @@ query "cognitive_account_encrypted_with_cmk" {
         when (b.arguments ->> 'cognitive_account_id') is not null then 'ok'
         else 'alarm'
       end as status,
-      c.name || case
+      c.split_part(address, '.', 2) || case
         when (b.arguments ->> 'cognitive_account_id') is not null then ' encrypted with CMK'
         else ' not encrypted with CMK'
       end || '.' reason
@@ -57,13 +57,13 @@ query "cognitive_account_encrypted_with_cmk" {
 query "cognitive_service_local_auth_disabled" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments ->> 'local_auth_enabled')::boolean then 'ok'
+        when (attributes_std ->> 'local_auth_enabled')::boolean then 'ok'
         else 'alarm'
       end status,
-      name || case
-        when (arguments ->> 'local_auth_enabled')::boolean then ' account local authentication enabled'
+      split_part(address, '.', 2) || case
+        when (attributes_std ->> 'local_auth_enabled')::boolean then ' account local authentication enabled'
         else ' account local authentication disabled'
       end || '.' reason
       ${local.tag_dimensions_sql}
@@ -78,15 +78,15 @@ query "cognitive_service_local_auth_disabled" {
 query "cognitive_account_restrict_public_access" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments -> 'network_acls') is null then 'alarm'
-        when (arguments -> 'network_acls' ->> 'default_action') <> 'Deny' then 'alarm'
+        when (attributes_std -> 'network_acls') is null then 'alarm'
+        when (attributes_std -> 'network_acls' ->> 'default_action') <> 'Deny' then 'alarm'
         else 'ok'
       end status,
-      name || case
-        when (arguments -> 'network_acls') is null then ' ''network_acls'' not defin'
-        when (arguments -> 'network_acls' ->> 'default_action') <> 'Deny' then ' publicly accessible.'
+      split_part(address, '.', 2) || case
+        when (attributes_std -> 'network_acls') is null then ' ''network_acls'' not defin'
+        when (attributes_std -> 'network_acls' ->> 'default_action') <> 'Deny' then ' publicly accessible.'
         else ' publicly not accessible'
       end || '.' reason
       ${local.tag_dimensions_sql}

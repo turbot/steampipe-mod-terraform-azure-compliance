@@ -1,15 +1,15 @@
 query "storage_sync_private_link_used" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments -> 'incoming_traffic_policy') is null then 'alarm'
-        when (arguments ->> 'incoming_traffic_policy') = 'AllowAllTraffic' then 'alarm'
+        when (attributes_std -> 'incoming_traffic_policy') is null then 'alarm'
+        when (attributes_std ->> 'incoming_traffic_policy') = 'AllowAllTraffic' then 'alarm'
         else 'ok'
       end status,
-      name || case
-        when (arguments -> 'incoming_traffic_policy') is null then ' does not use private link'
-        when (arguments ->> 'incoming_traffic_policy') = 'AllowAllTraffic' then ' uses public networks'
+      split_part(address, '.', 2) || case
+        when (attributes_std -> 'incoming_traffic_policy') is null then ' does not use private link'
+        when (attributes_std ->> 'incoming_traffic_policy') = 'AllowAllTraffic' then ' uses public networks'
         else ' uses private link'
       end || '.' reason
       ${local.tag_dimensions_sql}

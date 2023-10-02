@@ -1,13 +1,13 @@
 query "compute_vm_system_updates_installed" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments -> 'os_profile_windows_config' ->> 'enable_automatic_upgrades')::boolean then 'ok'
+        when (attributes_std -> 'os_profile_windows_config' ->> 'enable_automatic_upgrades')::boolean then 'ok'
         else 'alarm'
       end status,
-      name || case
-        when (arguments -> 'os_profile_windows_config' ->> 'enable_automatic_upgrades')::boolean then ' automatic system updates enabled'
+      split_part(address, '.', 2) || case
+        when (attributes_std -> 'os_profile_windows_config' ->> 'enable_automatic_upgrades')::boolean then ' automatic system updates enabled'
         else ' automatic system updates disabled'
       end || '.' reason
       ${local.tag_dimensions_sql}
@@ -28,7 +28,7 @@ query "compute_vm_guest_configuration_installed_windows" {
         terraform_resource
       where
         type = 'azurerm_virtual_machine'
-        and (arguments -> 'os_profile_windows_config') is not null
+        and (attributes_std -> 'os_profile_windows_config') is not null
     ), vm_extensions as (
         select
           *
@@ -47,12 +47,12 @@ query "compute_vm_guest_configuration_installed_windows" {
         (b.arguments ->> 'publisher') = 'Microsoft.GuestConfiguration'
     )
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
         when d.vm_name is null then 'alarm'
         else 'ok'
       end as status,
-      name || case
+      split_part(address, '.', 2) || case
         when d.vm_name is null then ' have guest configuration extension not installed'
         else ' have guest configuration extension installed'
       end || '.' reason
@@ -91,12 +91,12 @@ query "compute_vm_guest_configuration_installed" {
         (b.arguments ->> 'publisher') = 'Microsoft.GuestConfiguration'
     )
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
         when d.vm_name is null then 'alarm'
         else 'ok'
       end as status,
-      name || case
+      split_part(address, '.', 2) || case
         when d.vm_name is null then ' have guest configuration extension not installed'
         else ' have guest configuration extension installed'
       end || '.' reason
@@ -111,15 +111,15 @@ query "compute_vm_guest_configuration_installed" {
 query "compute_vm_utilizing_managed_disk" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments -> 'storage_os_disk' ->> 'managed_disk_type') is not null or
-        (arguments -> 'storage_os_disk' ->> 'managed_disk_id') is not null then 'ok'
+        when (attributes_std -> 'storage_os_disk' ->> 'managed_disk_type') is not null or
+        (attributes_std -> 'storage_os_disk' ->> 'managed_disk_id') is not null then 'ok'
         else 'alarm'
       end status,
-      name || case
-        when (arguments -> 'storage_os_disk' ->> 'managed_disk_type') is not null or
-        (arguments -> 'storage_os_disk' ->> 'managed_disk_id') is not null  then ' utilizing managed disks'
+      split_part(address, '.', 2) || case
+        when (attributes_std -> 'storage_os_disk' ->> 'managed_disk_type') is not null or
+        (attributes_std -> 'storage_os_disk' ->> 'managed_disk_id') is not null  then ' utilizing managed disks'
         else ' not utilizing managed disks'
       end || '.' reason
       ${local.tag_dimensions_sql}
@@ -140,7 +140,7 @@ query "compute_vm_guest_configuration_installed_linux" {
         terraform_resource
       where
         type = 'azurerm_virtual_machine'
-        and (arguments -> 'os_profile_linux_config') is not null
+        and (attributes_std -> 'os_profile_linux_config') is not null
     ), vm_extensions as (
         select
           *
@@ -159,12 +159,12 @@ query "compute_vm_guest_configuration_installed_linux" {
         (b.arguments ->> 'publisher') = 'Microsoft.GuestConfiguration'
     )
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
         when d.vm_name is null then 'alarm'
         else 'ok'
       end as status,
-      name || case
+      split_part(address, '.', 2) || case
         when d.vm_name is null then ' have guest configuration extension not installed'
         else ' have guest configuration extension installed'
       end || '.' reason
@@ -180,15 +180,15 @@ query "compute_vm_and_scale_set_encryption_at_host_enabled" {
   sql = <<-EOQ
     (
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments -> 'encryption_at_host_enabled') is null then 'alarm'
-        when (arguments -> 'encryption_at_host_enabled')::boolean then 'ok'
+        when (attributes_std -> 'encryption_at_host_enabled') is null then 'alarm'
+        when (attributes_std -> 'encryption_at_host_enabled')::boolean then 'ok'
         else 'alarm'
       end status,
-      name || case
-        when (arguments -> 'encryption_at_host_enabled') is null then ' ''encryption_at_host_enabled'' is not defined'
-        when (arguments -> 'encryption_at_host_enabled')::boolean then ' encryption at host enabled'
+      split_part(address, '.', 2) || case
+        when (attributes_std -> 'encryption_at_host_enabled') is null then ' ''encryption_at_host_enabled'' is not defined'
+        when (attributes_std -> 'encryption_at_host_enabled')::boolean then ' encryption at host enabled'
         else ' encryption at host disabled'
       end || '.' reason
       ${local.tag_dimensions_sql}
@@ -202,15 +202,15 @@ query "compute_vm_and_scale_set_encryption_at_host_enabled" {
     union
     (
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments -> 'encryption_at_host_enabled') is null then 'alarm'
-        when (arguments -> 'encryption_at_host_enabled')::boolean then 'ok'
+        when (attributes_std -> 'encryption_at_host_enabled') is null then 'alarm'
+        when (attributes_std -> 'encryption_at_host_enabled')::boolean then 'ok'
         else 'alarm'
       end status,
-      name || case
-        when (arguments -> 'encryption_at_host_enabled') is null then ' ''encryption_at_host_enabled'' is not defined'
-        when (arguments -> 'encryption_at_host_enabled')::boolean then ' encryption at host enabled'
+      split_part(address, '.', 2) || case
+        when (attributes_std -> 'encryption_at_host_enabled') is null then ' ''encryption_at_host_enabled'' is not defined'
+        when (attributes_std -> 'encryption_at_host_enabled')::boolean then ' encryption at host enabled'
         else ' encryption at host disabled'
       end || '.' reason
       ${local.tag_dimensions_sql}
@@ -227,13 +227,13 @@ query "compute_vm_and_scale_set_encryption_at_host_enabled" {
 query "compute_vm_uses_azure_resource_manager" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments ->> 'resource_group_name') is not null then 'ok'
+        when (attributes_std ->> 'resource_group_name') is not null then 'ok'
         else 'alarm'
       end status,
-      name || case
-        when (arguments ->> 'resource_group_name') is not null then ' uses azure resource manager'
+      split_part(address, '.', 2) || case
+        when (attributes_std ->> 'resource_group_name') is not null then ' uses azure resource manager'
         else ' uses azure resource manager'
       end || '.' reason
       ${local.tag_dimensions_sql}
@@ -273,12 +273,12 @@ query "compute_vm_malware_agent_installed" {
         and (b.arguments ->> 'type') = 'IaaSAntimalware'
     )
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
         when d.vm_name is null then 'alarm'
         else 'ok'
       end as status,
-      name || case
+      split_part(address, '.', 2) || case
         when d.vm_name is null then ' IaaSAntimalware extension not installed'
         else ' IaaSAntimalware extension installed'
       end || '.' reason
@@ -292,13 +292,13 @@ query "compute_vm_malware_agent_installed" {
 query "compute_managed_disk_set_encryption_enabled" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments -> 'disk_encryption_set_id') is not null then 'ok'
+        when (attributes_std -> 'disk_encryption_set_id') is not null then 'ok'
         else 'alarm'
       end status,
-      name || case
-        when (arguments -> 'disk_encryption_set_id') is not null then ' encryption enabled'
+      split_part(address, '.', 2) || case
+        when (attributes_std -> 'disk_encryption_set_id') is not null then ' encryption enabled'
         else ' encryption disabled'
       end || '.' reason
       ${local.tag_dimensions_sql}
@@ -313,13 +313,13 @@ query "compute_managed_disk_set_encryption_enabled" {
 query "compute_vm_allow_extension_operations_disabled" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments ->> 'allow_extension_operations')::boolean or (arguments ->> 'allow_extension_operations') is null then 'alarm'
+        when (attributes_std ->> 'allow_extension_operations')::boolean or (attributes_std ->> 'allow_extension_operations') is null then 'alarm'
         else 'ok'
       end status,
-      name || case
-        when (arguments ->> 'allow_extension_operations')::boolean or (arguments ->> 'allow_extension_operations') is null then ' allow extension operations'
+      split_part(address, '.', 2) || case
+        when (attributes_std ->> 'allow_extension_operations')::boolean or (attributes_std ->> 'allow_extension_operations') is null then ' allow extension operations'
         else ' disallow extension operations'
       end || '.' reason
       ${local.tag_dimensions_sql}
@@ -334,13 +334,13 @@ query "compute_vm_allow_extension_operations_disabled" {
 query "compute_vm_disable_password_authentication_linux" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments ->> 'disable_password_authentication')::boolean then 'ok'
+        when (attributes_std ->> 'disable_password_authentication')::boolean then 'ok'
         else 'alarm'
       end status,
-      name || case
-        when (arguments ->> 'disable_password_authentication')::boolean then ' disable password authentication'
+      split_part(address, '.', 2) || case
+        when (attributes_std ->> 'disable_password_authentication')::boolean then ' disable password authentication'
         else ' enable password authentication'
       end || '.' reason
       ${local.tag_dimensions_sql}
@@ -355,13 +355,13 @@ query "compute_vm_disable_password_authentication_linux" {
 query "compute_vm_disable_password_authentication" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments -> 'os_profile_linux_config' ->> 'disable_password_authentication')::boolean then 'ok'
+        when (attributes_std -> 'os_profile_linux_config' ->> 'disable_password_authentication')::boolean then 'ok'
         else 'alarm'
       end status,
-      name || case
-        when (arguments -> 'os_profile_linux_config' ->> 'disable_password_authentication')::boolean then ' disable password authentication'
+      split_part(address, '.', 2) || case
+        when (attributes_std -> 'os_profile_linux_config' ->> 'disable_password_authentication')::boolean then ' disable password authentication'
         else ' enable password authentication'
       end || '.' reason
       ${local.tag_dimensions_sql}
@@ -376,13 +376,13 @@ query "compute_vm_disable_password_authentication" {
 query "compute_vm_scale_set_disable_password_authentication_linux" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments ->> 'disable_password_authentication') = 'false' then 'alarm'
+        when (attributes_std ->> 'disable_password_authentication') = 'false' then 'alarm'
         else 'ok'
       end status,
-      name || case
-        when (arguments ->> 'disable_password_authentication') = 'false' then ' password authentication enabled'
+      split_part(address, '.', 2) || case
+        when (attributes_std ->> 'disable_password_authentication') = 'false' then ' password authentication enabled'
         else ' password authentication disabled'
       end || '.' reason
       ${local.tag_dimensions_sql}
@@ -397,13 +397,13 @@ query "compute_vm_scale_set_disable_password_authentication_linux" {
 query "compute_vm_and_scale_set_ssh_key_enabled_linux" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments -> 'admin_ssh_key') is not null then 'ok'
+        when (attributes_std -> 'admin_ssh_key') is not null then 'ok'
         else 'alarm'
       end status,
-      name || case
-        when (arguments -> 'admin_ssh_key') is not null then ' SSH key enabled'
+      split_part(address, '.', 2) || case
+        when (attributes_std -> 'admin_ssh_key') is not null then ' SSH key enabled'
         else ' SSH key disabled'
       end || '.' reason
       ${local.tag_dimensions_sql}
@@ -418,13 +418,13 @@ query "compute_vm_and_scale_set_ssh_key_enabled_linux" {
 query "compute_vm_scale_set_automatic_os_upgrade_enabled" {
   sql = <<-EOQ
      select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments -> 'automatic_os_upgrade_policy' ->> 'enable_automatic_os_upgrade') = 'true' then 'ok'
+        when (attributes_std -> 'automatic_os_upgrade_policy' ->> 'enable_automatic_os_upgrade') = 'true' then 'ok'
         else 'alarm'
       end status,
-      name || case
-        when (arguments -> 'automatic_os_upgrade_policy' ->> 'enable_automatic_os_upgrade') = 'true' then ' automatic OS upgrade enabled'
+      split_part(address, '.', 2) || case
+        when (attributes_std -> 'automatic_os_upgrade_policy' ->> 'enable_automatic_os_upgrade') = 'true' then ' automatic OS upgrade enabled'
         else ' automatic OS upgrade disabled'
       end || '.' reason
       ${local.tag_dimensions_sql}

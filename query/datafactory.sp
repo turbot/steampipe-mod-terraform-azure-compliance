@@ -1,15 +1,15 @@
 query "data_factory_encrypted_with_cmk" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments ->> 'customer_managed_key_id') is null then 'alarm'
-        when (arguments -> 'customer_managed_key_id') is not null then 'ok'
+        when (attributes_std ->> 'customer_managed_key_id') is null then 'alarm'
+        when (attributes_std -> 'customer_managed_key_id') is not null then 'ok'
         else 'alarm'
       end status,
-      name || case
-        when (arguments ->> 'customer_managed_key_id') is null then ' ''customer_managed_key_id'' not defined'
-        when (arguments ->> 'customer_managed_key_id' ) is not null then ' encrypted with CMK'
+      split_part(address, '.', 2) || case
+        when (attributes_std ->> 'customer_managed_key_id') is null then ' ''customer_managed_key_id'' not defined'
+        when (attributes_std ->> 'customer_managed_key_id' ) is not null then ' encrypted with CMK'
         else ' not encrypted with CMK'
       end || '.' reason
       ${local.tag_dimensions_sql}
@@ -24,13 +24,13 @@ query "data_factory_encrypted_with_cmk" {
 query "data_factory_restrict_public_access" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments ->> 'public_network_enabled') = 'false' then 'ok'
+        when (attributes_std ->> 'public_network_enabled') = 'false' then 'ok'
         else 'alarm'
       end status,
-      name || case
-        when (arguments ->> 'public_network_enabled') = 'false' then ' not publicly accessible'
+      split_part(address, '.', 2) || case
+        when (attributes_std ->> 'public_network_enabled') = 'false' then ' not publicly accessible'
         else ' publicly accessible'
       end || '.' reason
       ${local.tag_dimensions_sql}
@@ -45,13 +45,13 @@ query "data_factory_restrict_public_access" {
 query "data_factory_uses_git_repository" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when ((arguments -> 'github_configuration') is not null) or ((arguments -> 'vsts_configuration') is not null) then 'ok'
+        when ((attributes_std -> 'github_configuration') is not null) or ((attributes_std -> 'vsts_configuration') is not null) then 'ok'
         else 'alarm'
       end status,
-      name || case
-        when ((arguments -> 'github_configuration') is not null) or ((arguments -> 'vsts_configuration') is not null) then ' uses git repository'
+      split_part(address, '.', 2) || case
+        when ((attributes_std -> 'github_configuration') is not null) or ((attributes_std -> 'vsts_configuration') is not null) then ' uses git repository'
         else ' not use git repository'
       end || '.' reason
       ${local.tag_dimensions_sql}

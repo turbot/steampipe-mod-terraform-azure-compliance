@@ -1,15 +1,15 @@
 query "container_registry_encrypted_with_cmk" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments -> 'encryption' ) is null then 'alarm'
-        when (arguments -> 'encryption' ->> 'enabled')::boolean then 'ok'
+        when (attributes_std -> 'encryption' ) is null then 'alarm'
+        when (attributes_std -> 'encryption' ->> 'enabled')::boolean then 'ok'
         else 'alarm'
       end status,
-      name || case
-        when (arguments -> 'encryption' ) is null then ' ''encryption'' not defined'
-        when (arguments -> 'encryption' ->> 'enabled')::boolean then ' encrypted with CMK'
+      split_part(address, '.', 2) || case
+        when (attributes_std -> 'encryption' ) is null then ' ''encryption'' not defined'
+        when (attributes_std -> 'encryption' ->> 'enabled')::boolean then ' encrypted with CMK'
         else ' not encrypted with CMK'
       end || '.' reason
       ${local.tag_dimensions_sql}
@@ -24,13 +24,13 @@ query "container_registry_encrypted_with_cmk" {
 query "container_registry_azure_defender_enabled" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments ->> 'resource_type') = 'AppServices' and (arguments ->> 'tier') = 'Standard' then 'ok'
+        when (attributes_std ->> 'resource_type') = 'AppServices' and (attributes_std ->> 'tier') = 'Standard' then 'ok'
         else 'info'
       end status,
-      name || case
-        when (arguments ->> 'resource_type') = 'ContainerRegistry' and (arguments ->> 'tier') = 'Standard' then ' Azure Defender on for Container Registry'
+      split_part(address, '.', 2) || case
+        when (attributes_std ->> 'resource_type') = 'ContainerRegistry' and (attributes_std ->> 'tier') = 'Standard' then ' Azure Defender on for Container Registry'
         else ' Azure Defender off for Container Registry'
       end || '.' reason
       ${local.common_dimensions_sql}
@@ -44,15 +44,15 @@ query "container_registry_azure_defender_enabled" {
 query "container_registry_restrict_public_access" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments -> 'network_rule_set') is null then 'alarm'
-        when (arguments -> 'network_rule_set' ->> 'default_action')::text = 'Deny' then 'ok'
+        when (attributes_std -> 'network_rule_set') is null then 'alarm'
+        when (attributes_std -> 'network_rule_set' ->> 'default_action')::text = 'Deny' then 'ok'
         else 'alarm'
       end status,
-      name || case
-        when (arguments -> 'network_rule_set') is null then ' ''network_rule_set'' not defined'
-        when (arguments -> 'network_rule_set' ->> 'default_action')::text = 'Deny' then ' not publicly accessible'
+      split_part(address, '.', 2) || case
+        when (attributes_std -> 'network_rule_set') is null then ' ''network_rule_set'' not defined'
+        when (attributes_std -> 'network_rule_set' ->> 'default_action')::text = 'Deny' then ' not publicly accessible'
         else ' publicly accessible'
       end || '.' reason
       ${local.tag_dimensions_sql}
@@ -75,20 +75,20 @@ query "container_registry_use_virtual_service_endpoint" {
         type = 'azurerm_container_registry'
     ), container_registry_subnet as (
       select
-        distinct a.name
+        distinct address a.name
       from
         container_registry as a,
-        jsonb_array_elements(arguments -> 'network_rule_set' -> 'virtual_network') as rule
+        jsonb_array_elements(attributes_std -> 'network_rule_set' -> 'virtual_network') as rule
     )
     select
       type || ' ' || a.name as resource,
       case
-        when (arguments -> 'network_rule_set' ->> 'default_action')::text <> 'Deny' then 'alarm'
+        when (attributes_std -> 'network_rule_set' ->> 'default_action')::text <> 'Deny' then 'alarm'
         when s.name is null then 'alarm'
         else 'ok'
       end as status,
       case
-        when (arguments -> 'network_rule_set' ->> 'default_action')::text <> 'Deny' then ' not configured with virtual service endpoint'
+        when (attributes_std -> 'network_rule_set' ->> 'default_action')::text <> 'Deny' then ' not configured with virtual service endpoint'
         when s.name is null then  ' not configured with virtual service endpoint'
         else ' configured with virtual service endpoint'
       end || '.' reason
@@ -103,13 +103,13 @@ query "container_registry_use_virtual_service_endpoint" {
 query "container_registry_admin_user_disabled" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments ->> 'admin_enabled')::boolean then 'alarm'
+        when (attributes_std ->> 'admin_enabled')::boolean then 'alarm'
         else 'ok'
       end status,
-      name || case
-        when (arguments ->> 'admin_enabled')::boolean then ' admin user enabled'
+      split_part(address, '.', 2) || case
+        when (attributes_std ->> 'admin_enabled')::boolean then ' admin user enabled'
         else ' admin user disabled'
       end || '.' reason
       ${local.tag_dimensions_sql}
@@ -124,13 +124,13 @@ query "container_registry_admin_user_disabled" {
 query "container_registry_anonymous_pull_disabled" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments ->> 'sku') in ('Standard', 'Premium') and (arguments ->> 'anonymous_pull_enabled')::boolean then 'alarm'
+        when (attributes_std ->> 'sku') in ('Standard', 'Premium') and (attributes_std ->> 'anonymous_pull_enabled')::boolean then 'alarm'
         else 'ok'
       end status,
-      name || case
-        when (arguments ->> 'sku') in ('Standard', 'Premium') and (arguments ->> 'anonymous_pull_enabled')::boolean then ' anonymous pull enabled'
+      split_part(address, '.', 2) || case
+        when (attributes_std ->> 'sku') in ('Standard', 'Premium') and (attributes_std ->> 'anonymous_pull_enabled')::boolean then ' anonymous pull enabled'
         else ' anonymous pull disabled'
       end || '.' reason
       ${local.tag_dimensions_sql}
@@ -145,13 +145,13 @@ query "container_registry_anonymous_pull_disabled" {
 query "container_registry_image_scan_enabled" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments ->> 'sku') in ('Standard', 'Premium') then 'ok'
+        when (attributes_std ->> 'sku') in ('Standard', 'Premium') then 'ok'
         else 'alarm'
       end status,
-      name || case
-        when (arguments ->> 'sku') in ('Standard', 'Premium') then ' image scan enabled'
+      split_part(address, '.', 2) || case
+        when (attributes_std ->> 'sku') in ('Standard', 'Premium') then ' image scan enabled'
         else ' image scan disabled'
       end || '.' reason
       ${local.tag_dimensions_sql}
@@ -166,13 +166,13 @@ query "container_registry_image_scan_enabled" {
 query "container_registry_quarantine_policy_enabled" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments ->> 'sku') = 'Premium' and (arguments ->> 'quarantine_policy_enabled')::bool then 'ok'
+        when (attributes_std ->> 'sku') = 'Premium' and (attributes_std ->> 'quarantine_policy_enabled')::bool then 'ok'
         else 'alarm'
       end status,
-      name || case
-        when (arguments ->> 'sku') = 'Premium' and (arguments ->> 'quarantine_policy_enabled')::bool then ' quarantine policy enabled'
+      split_part(address, '.', 2) || case
+        when (attributes_std ->> 'sku') = 'Premium' and (attributes_std ->> 'quarantine_policy_enabled')::bool then ' quarantine policy enabled'
         else ' quarantine policy disabled'
       end || '.' reason
       ${local.tag_dimensions_sql}
@@ -187,13 +187,13 @@ query "container_registry_quarantine_policy_enabled" {
 query "container_registry_retention_policy_enabled" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments ->> 'sku') = 'Premium' and (arguments -> 'retention_policy' ->> 'enabled')::bool then 'ok'
+        when (attributes_std ->> 'sku') = 'Premium' and (attributes_std -> 'retention_policy' ->> 'enabled')::bool then 'ok'
         else 'alarm'
       end status,
-      name || case
-        when (arguments ->> 'sku') = 'Premium' and (arguments -> 'retention_policy' ->> 'enabled')::bool then ' retention policy enabled'
+      split_part(address, '.', 2) || case
+        when (attributes_std ->> 'sku') = 'Premium' and (attributes_std -> 'retention_policy' ->> 'enabled')::bool then ' retention policy enabled'
         else ' retention policy disabled'
       end || '.' reason
       ${local.tag_dimensions_sql}
@@ -208,13 +208,13 @@ query "container_registry_retention_policy_enabled" {
 query "container_registry_geo_replication_enabled" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments ->> 'sku') = 'Premium' and (arguments ->> 'georeplications') is not null then 'ok'
+        when (attributes_std ->> 'sku') = 'Premium' and (attributes_std ->> 'georeplications') is not null then 'ok'
         else 'alarm'
       end status,
-      name || case
-        when (arguments ->> 'sku') = 'Premium' and (arguments ->> 'georeplications') is not null then ' geo-replication enabled'
+      split_part(address, '.', 2) || case
+        when (attributes_std ->> 'sku') = 'Premium' and (attributes_std ->> 'georeplications') is not null then ' geo-replication enabled'
         else ' geo-replication disabled'
       end || '.' reason
       ${local.tag_dimensions_sql}
@@ -229,13 +229,13 @@ query "container_registry_geo_replication_enabled" {
 query "container_registry_public_network_access_disabled" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments ->> 'public_network_access_enabled')::bool or (arguments ->> 'public_network_access_enabled') is null then 'alarm'
+        when (attributes_std ->> 'public_network_access_enabled')::bool or (attributes_std ->> 'public_network_access_enabled') is null then 'alarm'
         else 'ok'
       end status,
-      name || case
-        when (arguments ->> 'public_network_access_enabled')::bool or (arguments ->> 'public_network_access_enabled') is null  then ' public network access enabled'
+      split_part(address, '.', 2) || case
+        when (attributes_std ->> 'public_network_access_enabled')::bool or (attributes_std ->> 'public_network_access_enabled') is null  then ' public network access enabled'
         else ' public network access disabled'
       end || '.' reason
       ${local.tag_dimensions_sql}
@@ -250,13 +250,13 @@ query "container_registry_public_network_access_disabled" {
 query "container_registry_trust_policy_enabled" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments -> 'trust_policy' ->> 'enabled')::boolean then 'ok'
+        when (attributes_std -> 'trust_policy' ->> 'enabled')::boolean then 'ok'
         else 'alarm'
       end status,
-      name || case
-        when (arguments -> 'trust_policy' ->> 'enabled')::boolean then ' trust policy enabled'
+      split_part(address, '.', 2) || case
+        when (attributes_std -> 'trust_policy' ->> 'enabled')::boolean then ' trust policy enabled'
         else ' trust policy disabled'
       end || '.' reason
       ${local.tag_dimensions_sql}

@@ -1,13 +1,13 @@
 query "spring_cloud_service_network_injection_enabled" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments -> 'network') is null then 'alarm'
+        when (attributes_std -> 'network') is null then 'alarm'
         else 'ok'
       end status,
-      name || case
-        when (arguments -> 'network') is null then ' network injection disabled'
+      split_part(address, '.', 2) || case
+        when (attributes_std -> 'network') is null then ' network injection disabled'
         else ' network injection enabled'
       end || '.' reason
       ${local.tag_dimensions_sql}
@@ -22,13 +22,13 @@ query "spring_cloud_service_network_injection_enabled" {
 query "spring_cloud_api_restrict_public_access" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments ->> 'public_network_access_enabled')::boolean then 'alarm'
+        when (attributes_std ->> 'public_network_access_enabled')::boolean then 'alarm'
         else 'ok'
       end status,
-      name || case
-        when (arguments ->> 'public_network_access_enabled')::boolean then ' publicly accessible'
+      split_part(address, '.', 2) || case
+        when (attributes_std ->> 'public_network_access_enabled')::boolean then ' publicly accessible'
         else ' not publicly accessible'
       end || '.' reason
       ${local.tag_dimensions_sql}
@@ -43,13 +43,13 @@ query "spring_cloud_api_restrict_public_access" {
 query "spring_cloud_api_https_only_enabled" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments ->> 'https_only_enabled')::boolean then 'ok'
+        when (attributes_std ->> 'https_only_enabled')::boolean then 'ok'
         else 'alarm'
       end status,
-      name || case
-        when (arguments ->> 'https_only_enabled')::boolean then ' HTTPS only enabled'
+      split_part(address, '.', 2) || case
+        when (attributes_std ->> 'https_only_enabled')::boolean then ' HTTPS only enabled'
         else ' HTTPS only disabled'
       end || '.' reason
       ${local.tag_dimensions_sql}

@@ -9,24 +9,24 @@ query "eventhub_namespace_use_virtual_service_endpoint" {
         type = 'azurerm_eventhub_namespace'
     ), eventhub_namespaces_subnet as (
       select
-        distinct a.name
+        distinct address a.name
       from
         eventhub_namespaces as a,
-        jsonb_array_elements(arguments -> 'network_rulesets') as rule
+        jsonb_array_elements(attributes_std -> 'network_rulesets') as rule
       where
-        jsonb_typeof(arguments -> 'network_rulesets') ='array'
+        jsonb_typeof(attributes_std -> 'network_rulesets') ='array'
         and (rule -> 'virtual_network_rule' ->> 'subnet_id') is not null
     )
     select
       type || ' ' || a.name as resource,
       case
-        when (arguments -> 'network_rulesets') is null then 'alarm'
-        when (s.name is not null) or ((arguments -> 'network_rulesets' -> 'virtual_network_rule' -> 'subnet_id') is not null) then 'ok'
+        when (attributes_std -> 'network_rulesets') is null then 'alarm'
+        when (s.name is not null) or ((attributes_std -> 'network_rulesets' -> 'virtual_network_rule' -> 'subnet_id') is not null) then 'ok'
         else 'alarm'
       end as status,
-      a.name || case
-        when (arguments -> 'network_rulesets') is null then ' ''network_rule_set'' is not defined'
-        when (s.name is not null) or ((arguments -> 'network_rulesets' -> 'virtual_network_rule' -> 'subnet_id') is not null) then ' configured with virtual network service endpoint'
+      split_part(a.address, '.', 2) || case
+        when (attributes_std -> 'network_rulesets') is null then ' ''network_rule_set'' is not defined'
+        when (s.name is not null) or ((attributes_std -> 'network_rulesets' -> 'virtual_network_rule' -> 'subnet_id') is not null) then ' configured with virtual network service endpoint'
         else ' not configured with virtual network service endpoint'
       end || '.' reason
       ${local.tag_dimensions_sql}
@@ -40,13 +40,13 @@ query "eventhub_namespace_use_virtual_service_endpoint" {
 query "eventhub_namespace_cmk_encryption_enabled" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments -> 'key_vault_key_ids') is not null then 'ok'
+        when (attributes_std -> 'key_vault_key_ids') is not null then 'ok'
         else 'alarm'
       end status,
-      name || case
-        when (arguments -> 'key_vault_key_ids') is not null then ' CMK encryption enabled'
+      split_part(address, '.', 2) || case
+        when (attributes_std -> 'key_vault_key_ids') is not null then ' CMK encryption enabled'
         else ' CMK encryption disabled'
       end || '.' reason
       ${local.common_dimensions_sql}

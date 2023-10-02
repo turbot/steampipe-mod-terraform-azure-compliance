@@ -1,13 +1,13 @@
 query "batch_account_encrypted_with_cmk" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments -> 'key_vault_reference') is not null then 'ok'
+        when (attributes_std -> 'key_vault_reference') is not null then 'ok'
         else 'alarm'
       end status,
-      name || case
-        when (arguments -> 'key_vault_reference') is not null  then ' encrypted with CMK'
+      split_part(address, '.', 2) || case
+        when (attributes_std -> 'key_vault_reference') is not null  then ' encrypted with CMK'
         else ' not encrypted with CMK'
       end || '.' reason
       ${local.tag_dimensions_sql}
@@ -34,7 +34,7 @@ query "batch_account_logging_enabled" {
       from
         terraform_resource
       where
-        type = 'azurerm_monitor_diagnostic_setting' and (arguments ->> 'target_resource_id') like '%azurerm_batch_account.%'
+        type = 'azurerm_monitor_diagnostic_setting' and (attributes_std ->> 'target_resource_id') like '%azurerm_batch_account.%'
     ), batch_account_logging as (
       select
         ba.name as ba_name
@@ -52,7 +52,7 @@ query "batch_account_logging_enabled" {
         when s.ba_name is null then 'alarm'
         else 'ok'
       end as status,
-      a.name || case
+      split_part(a.address, '.', 2) || case
         when s.ba_name is null then ' logging disabled'
         else ' logging enabled'
       end || '.' reason

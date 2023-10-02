@@ -1,13 +1,13 @@
 query "dns_azure_defender_enabled" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments ->> 'resource_type') = 'Dns' and (arguments ->> 'tier') = 'Standard' then 'ok'
+        when (attributes_std ->> 'resource_type') = 'Dns' and (attributes_std ->> 'tier') = 'Standard' then 'ok'
         else 'skip'
       end status,
-      name || case
-        when (arguments ->> 'resource_type') = 'Dns' and (arguments ->> 'tier') = 'Standard' then ' Dns azure defender enabled'
+      split_part(address, '.', 2) || case
+        when (attributes_std ->> 'resource_type') = 'Dns' and (attributes_std ->> 'tier') = 'Standard' then ' Dns azure defender enabled'
         else ' Dns azure defender disabled'
       end || '.' reason
       ${local.common_dimensions_sql}

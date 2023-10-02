@@ -1,13 +1,13 @@
 query "mysql_db_server_geo_redundant_backup_enabled" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments ->> 'geo_redundant_backup_enabled')::boolean then 'ok'
+        when (attributes_std ->> 'geo_redundant_backup_enabled')::boolean then 'ok'
         else 'alarm'
       end status,
-      name || case
-        when (arguments ->> 'geo_redundant_backup_enabled')::boolean then ' Geo-redundant backup enabled'
+      split_part(address, '.', 2) || case
+        when (attributes_std ->> 'geo_redundant_backup_enabled')::boolean then ' Geo-redundant backup enabled'
         else ' Geo-redundant backup disabled'
       end || '.' reason
       ${local.tag_dimensions_sql}
@@ -22,13 +22,13 @@ query "mysql_db_server_geo_redundant_backup_enabled" {
 query "mysql_server_infrastructure_encryption_enabled" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments ->> 'infrastructure_encryption_enabled')::boolean then 'ok'
+        when (attributes_std ->> 'infrastructure_encryption_enabled')::boolean then 'ok'
         else 'alarm'
       end status,
-      name || case
-        when (arguments ->> 'infrastructure_encryption_enabled')::boolean then ' infrastructure encryption enabled'
+      split_part(address, '.', 2) || case
+        when (attributes_std ->> 'infrastructure_encryption_enabled')::boolean then ' infrastructure encryption enabled'
         else ' infrastructure encryption disabled'
       end || '.' reason
       ${local.tag_dimensions_sql}
@@ -43,13 +43,13 @@ query "mysql_server_infrastructure_encryption_enabled" {
 query "mysql_ssl_enabled" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments ->> 'ssl_enforcement_enabled')::boolean then 'ok'
+        when (attributes_std ->> 'ssl_enforcement_enabled')::boolean then 'ok'
         else 'ok'
       end status,
-      name || case
-        when (arguments ->> 'ssl_enforcement_enabled')::boolean then ' SSL connection enabled'
+      split_part(address, '.', 2) || case
+        when (attributes_std ->> 'ssl_enforcement_enabled')::boolean then ' SSL connection enabled'
         else ' SSL connection disabled'
       end || '.' reason
       ${local.tag_dimensions_sql}
@@ -64,13 +64,13 @@ query "mysql_ssl_enabled" {
 query "mysql_server_public_network_access_disabled" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments ->> 'public_network_access_enabled')::boolean then 'alarm'
+        when (attributes_std ->> 'public_network_access_enabled')::boolean then 'alarm'
         else 'ok'
       end status,
-      name || case
-        when (arguments ->> 'public_network_access_enabled')::boolean then ' public network access enabled'
+      split_part(address, '.', 2) || case
+        when (attributes_std ->> 'public_network_access_enabled')::boolean then ' public network access enabled'
         else ' public network access disabled'
       end || '.' reason
       ${local.tag_dimensions_sql}
@@ -98,15 +98,15 @@ query "mysql_server_encrypted_at_rest_using_cmk" {
         terraform_resource
       where
         type = 'azurerm_mysql_server_key'
-        and (arguments -> 'key_vault_key_id') is not null
+        and (attributes_std -> 'key_vault_key_id') is not null
     )
     select
-      a.type || ' ' || a.name as resource,
+      address as resource,
       case
         when (s.arguments ->> 'server_id') is not null then 'ok'
         else 'alarm'
       end as status,
-      a.name || case
+      split_part(a.address, '.', 2) || case
         when (s.arguments ->> 'server_id') is not null then ' encrypted with CMK'
         else ' not encrypted with CMK'
       end || '.' reason
@@ -121,15 +121,15 @@ query "mysql_server_encrypted_at_rest_using_cmk" {
 query "mysql_server_min_tls_1_2" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when ((arguments -> 'ssl_minimal_tls_version_enforced') is null)
-          or ((arguments ->> 'ssl_minimal_tls_version_enforced') = 'TLS1_2') then 'ok'
+        when ((attributes_std -> 'ssl_minimal_tls_version_enforced') is null)
+          or ((attributes_std ->> 'ssl_minimal_tls_version_enforced') = 'TLS1_2') then 'ok'
         else 'alarm'
       end status,
-      name || case
-        when ((arguments -> 'ssl_minimal_tls_version_enforced') is null)
-        or ((arguments ->> 'ssl_minimal_tls_version_enforced') = 'TLS1_2') then ' not using the latest version of TLS encryption'
+      split_part(address, '.', 2) || case
+        when ((attributes_std -> 'ssl_minimal_tls_version_enforced') is null)
+        or ((attributes_std ->> 'ssl_minimal_tls_version_enforced') = 'TLS1_2') then ' not using the latest version of TLS encryption'
         else ' using the latest version of TLS encryption'
       end || '.' reason
       ${local.tag_dimensions_sql}
@@ -144,15 +144,15 @@ query "mysql_server_min_tls_1_2" {
 query "mysql_server_threat_detection_enabled" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments -> 'threat_detection_policy') is null then 'alarm'
-        when (arguments -> 'threat_detection_policy' ->> 'enabled') = 'true' then 'ok'
+        when (attributes_std -> 'threat_detection_policy') is null then 'alarm'
+        when (attributes_std -> 'threat_detection_policy' ->> 'enabled') = 'true' then 'ok'
         else 'alarm'
       end status,
-      name || case
-        when (arguments -> 'threat_detection_policy') is null then ' threat detection policy not defined'
-        when (arguments -> 'threat_detection_policy' ->> 'enabled') = 'true' then ' threat detection policy enabled'
+      split_part(address, '.', 2) || case
+        when (attributes_std -> 'threat_detection_policy') is null then ' threat detection policy not defined'
+        when (attributes_std -> 'threat_detection_policy' ->> 'enabled') = 'true' then ' threat detection policy enabled'
         else ' threat detection policy disabled'
       end || '.' reason
       ${local.tag_dimensions_sql}
