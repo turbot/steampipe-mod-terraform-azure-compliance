@@ -1,13 +1,13 @@
 query "container_instance_container_group_in_virtual_network" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments ->> 'subnet_ids') is null then 'alarm'
+        when (attributes_std ->> 'subnet_ids') is null then 'alarm'
         else 'ok'
       end status,
-      name || case
-        when (arguments ->> 'subnet_ids') is null then ' in virtual network.'
+      split_part(address, '.', 2) || case
+        when (attributes_std ->> 'subnet_ids') is null then ' in virtual network.'
         else ' not in virtual network.'
       end || '.' reason
       ${local.tag_dimensions_sql}

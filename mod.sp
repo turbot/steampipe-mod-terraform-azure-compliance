@@ -37,7 +37,7 @@ locals {
   # Local internal variable to build the SQL select clause for tag
   # dimensions. Do not edit directly.
   tag_dimensions_qualifier_sql = <<-EOQ
-  %{~ for dim in var.tag_dimensions },  __QUALIFIER__arguments -> 'tags' ->> '${dim}' as "${replace(dim, "\"", "\"\"")}"%{ endfor ~}
+  %{~ for dim in var.tag_dimensions },  __QUALIFIER__attributes_std -> 'tags' ->> '${dim}' as "${replace(dim, "\"", "\"\"")}"%{ endfor ~}
   EOQ
 
 }
@@ -68,7 +68,7 @@ mod "terraform_azure_compliance" {
 
   require {
     plugin "terraform" {
-      version = "0.0.5"
+      version = "0.10.0"
     }
   }
 }

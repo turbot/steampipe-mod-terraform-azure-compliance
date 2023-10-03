@@ -1,15 +1,15 @@
 query "cosmosdb_use_virtual_service_endpoint" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments ->> 'virtual_network_rule') is null then 'alarm'
-        when (arguments -> 'virtual_network_rule' ->> 'id') is not null then 'ok'
+        when (attributes_std ->> 'virtual_network_rule') is null then 'alarm'
+        when (attributes_std -> 'virtual_network_rule' ->> 'id') is not null then 'ok'
         else 'alarm'
       end status,
-      name || case
-        when (arguments ->> 'virtual_network_rule') is null then ' ''virtual_network_rule'' not defined'
-        when (arguments -> 'virtual_network_rule' ->> 'id') is not null then ' configured with virtual network service endpointle'
+      split_part(address, '.', 2) || case
+        when (attributes_std ->> 'virtual_network_rule') is null then ' ''virtual_network_rule'' not defined'
+        when (attributes_std -> 'virtual_network_rule' ->> 'id') is not null then ' configured with virtual network service endpointle'
         else ' not configured with virtual network service endpoint'
       end || '.' reason
       ${local.tag_dimensions_sql}
@@ -24,17 +24,17 @@ query "cosmosdb_use_virtual_service_endpoint" {
 query "cosmosdb_account_with_firewall_rules" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments ->> 'public_network_access_enabled')::boolean
-          and (arguments ->>  'is_virtual_network_filter_enabled' )::boolean = 'false'
-          and (arguments ->>  'ip_range_filter') is null then 'alarm'
+        when (attributes_std ->> 'public_network_access_enabled')::boolean
+          and (attributes_std ->>  'is_virtual_network_filter_enabled' )::boolean = 'false'
+          and (attributes_std ->>  'ip_range_filter') is null then 'alarm'
         else 'ok'
       end status,
-      name || case
-        when (arguments ->> 'public_network_access_enabled')::boolean
-          and (arguments ->>  'is_virtual_network_filter_enabled' )::boolean = 'false'
-          and (arguments ->>  'ip_range_filter') is null then  ' not have firewall rules'
+      split_part(address, '.', 2) || case
+        when (attributes_std ->> 'public_network_access_enabled')::boolean
+          and (attributes_std ->>  'is_virtual_network_filter_enabled' )::boolean = 'false'
+          and (attributes_std ->>  'ip_range_filter') is null then  ' not have firewall rules'
         else ' have firewall rules'
       end || '.' reason
       ${local.tag_dimensions_sql}
@@ -49,13 +49,13 @@ query "cosmosdb_account_with_firewall_rules" {
 query "cosmosdb_account_encryption_at_rest_using_cmk" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments ->> 'key_vault_key_id') is not null then 'ok'
+        when (attributes_std ->> 'key_vault_key_id') is not null then 'ok'
         else 'alarm'
       end status,
-      name || case
-        when (arguments ->> 'key_vault_key_id') is not null then  ' encrypted at rest using CMK'
+      split_part(address, '.', 2) || case
+        when (attributes_std ->> 'key_vault_key_id') is not null then  ' encrypted at rest using CMK'
         else ' not encrypted at rest using CMK'
       end || '.' reason
       ${local.tag_dimensions_sql}
@@ -70,15 +70,15 @@ query "cosmosdb_account_encryption_at_rest_using_cmk" {
 query "cosmodb_account_access_key_metadata_writes_disabled" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments ->> 'access_key_metadata_writes_enabled') is null then 'alarm'
-        when (arguments ->> 'access_key_metadata_writes_enabled')::boolean then 'alarm'
+        when (attributes_std ->> 'access_key_metadata_writes_enabled') is null then 'alarm'
+        when (attributes_std ->> 'access_key_metadata_writes_enabled')::boolean then 'alarm'
         else 'ok'
       end status,
-      name || case
-        when (arguments ->> 'access_key_metadata_writes_enabled') is null then ' access key metadata writes enabled'
-        when (arguments ->> 'access_key_metadata_writes_enabled')::boolean then  ' access key metadata writes enabled'
+      split_part(address, '.', 2) || case
+        when (attributes_std ->> 'access_key_metadata_writes_enabled') is null then ' access key metadata writes enabled'
+        when (attributes_std ->> 'access_key_metadata_writes_enabled')::boolean then  ' access key metadata writes enabled'
         else ' access key metadata writes disabled'
       end || '.' reason
       ${local.tag_dimensions_sql}
@@ -93,15 +93,15 @@ query "cosmodb_account_access_key_metadata_writes_disabled" {
 query "cosmodb_account_public_network_access_disabled" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments ->> 'public_network_access_enabled') is null then 'alarm'
-        when (arguments ->> 'public_network_access_enabled')::boolean then 'alarm'
+        when (attributes_std ->> 'public_network_access_enabled') is null then 'alarm'
+        when (attributes_std ->> 'public_network_access_enabled')::boolean then 'alarm'
         else 'ok'
       end status,
-      name || case
-        when (arguments ->> 'public_network_access_enabled') is null then ' public network access enabled'
-        when (arguments ->> 'public_network_access_enabled')::boolean then  ' public network access enabled'
+      split_part(address, '.', 2) || case
+        when (attributes_std ->> 'public_network_access_enabled') is null then ' public network access enabled'
+        when (attributes_std ->> 'public_network_access_enabled')::boolean then  ' public network access enabled'
         else ' public network access disabled'
       end || '.' reason
       ${local.tag_dimensions_sql}
@@ -116,15 +116,15 @@ query "cosmodb_account_public_network_access_disabled" {
 query "cosmodb_account_local_authentication_disabled" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments ->> 'kind') is not null and (arguments ->> 'kind') <> 'GlobalDocumentDB' then 'skip'
-        when (arguments ->> 'local_authentication_disabled')::boolean then 'ok'
+        when (attributes_std ->> 'kind') is not null and (attributes_std ->> 'kind') <> 'GlobalDocumentDB' then 'skip'
+        when (attributes_std ->> 'local_authentication_disabled')::boolean then 'ok'
         else 'alarm'
       end status,
-      name || case
-        when (arguments ->> 'kind') is not null and (arguments ->> 'kind') <> 'GlobalDocumentDB' then ' not GlobalDocumentDB'
-        when (arguments ->> 'local_authentication_disabled')::boolean then  ' local authentication disabled'
+      split_part(address, '.', 2) || case
+        when (attributes_std ->> 'kind') is not null and (attributes_std ->> 'kind') <> 'GlobalDocumentDB' then ' not GlobalDocumentDB'
+        when (attributes_std ->> 'local_authentication_disabled')::boolean then  ' local authentication disabled'
         else ' local authentication enabled'
       end || '.' reason
       ${local.tag_dimensions_sql}
@@ -139,15 +139,15 @@ query "cosmodb_account_local_authentication_disabled" {
 query "cosmodb_account_restrict_public_access" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments ->> 'public_network_access_enabled') = 'false' then 'ok'
-        when (arguments ->> 'public_network_access_enabled')::boolean and (arguments ->> 'is_virtual_network_filter_enabled')::boolean and ((arguments ->> 'virtual_network_rule') is not null or (arguments ->> 'ip_range_filter') is not null) then 'ok'
+        when (attributes_std ->> 'public_network_access_enabled') = 'false' then 'ok'
+        when (attributes_std ->> 'public_network_access_enabled')::boolean and (attributes_std ->> 'is_virtual_network_filter_enabled')::boolean and ((attributes_std ->> 'virtual_network_rule') is not null or (attributes_std ->> 'ip_range_filter') is not null) then 'ok'
         else 'alarm'
       end status,
-      name || case
-        when (arguments ->> 'public_network_access_enabled') = 'false' then 'ok'
-        when (arguments ->> 'public_network_access_enabled')::boolean and (arguments ->> 'is_virtual_network_filter_enabled')::boolean and ((arguments ->> 'virtual_network_rule') is not null or (arguments ->> 'ip_range_filter') is not null) then  ' with restricted access'
+      split_part(address, '.', 2) || case
+        when (attributes_std ->> 'public_network_access_enabled') = 'false' then 'ok'
+        when (attributes_std ->> 'public_network_access_enabled')::boolean and (attributes_std ->> 'is_virtual_network_filter_enabled')::boolean and ((attributes_std ->> 'virtual_network_rule') is not null or (attributes_std ->> 'ip_range_filter') is not null) then  ' with restricted access'
         else ' without restricted access'
       end || '.' reason
       ${local.tag_dimensions_sql}

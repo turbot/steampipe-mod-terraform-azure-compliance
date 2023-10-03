@@ -1,13 +1,13 @@
 query "appservice_web_app_remote_debugging_disabled" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments -> 'site_config' ->> 'remote_debugging_enabled') = 'true' then 'alarm'
+        when (attributes_std -> 'site_config' ->> 'remote_debugging_enabled') = 'true' then 'alarm'
         else 'ok'
       end status,
-      name || case
-        when (arguments -> 'site_config' ->> 'remote_debugging_enabled') = 'true' then ' remote debugging enabled'
+      split_part(address, '.', 2) || case
+        when (attributes_std -> 'site_config' ->> 'remote_debugging_enabled') = 'true' then ' remote debugging enabled'
         else ' remote debugging disabled'
       end || '.' reason
       ${local.tag_dimensions_sql}
@@ -22,13 +22,13 @@ query "appservice_web_app_remote_debugging_disabled" {
 query "appservice_web_app_incoming_client_cert_on" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments ->> 'client_cert_enabled')::boolean then 'ok'
+        when (attributes_std ->> 'client_cert_enabled')::boolean then 'ok'
         else 'alarm'
       end status,
-      name || case
-        when (arguments ->> 'client_cert_enabled')::boolean then ' incoming client certificates set to on'
+      split_part(address, '.', 2) || case
+        when (attributes_std ->> 'client_cert_enabled')::boolean then ' incoming client certificates set to on'
         else ' incoming client certificates set to off'
       end || '.' reason
       ${local.tag_dimensions_sql}
@@ -43,15 +43,15 @@ query "appservice_web_app_incoming_client_cert_on" {
 query "appservice_authentication_enabled" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments -> 'auth_settings') is null then 'alarm'
-        when (arguments -> 'auth_settings' ->> 'enabled')::boolean then 'ok'
+        when (attributes_std -> 'auth_settings') is null then 'alarm'
+        when (attributes_std -> 'auth_settings' ->> 'enabled')::boolean then 'ok'
         else 'alarm'
       end status,
-      name || case
-        when (arguments -> 'auth_settings') is null then ' ''auth_settings'' not defined'
-        when (arguments -> 'auth_settings' ->> 'enabled')::boolean then ' authentication set'
+      split_part(address, '.', 2) || case
+        when (attributes_std -> 'auth_settings') is null then ' ''auth_settings'' not defined'
+        when (attributes_std -> 'auth_settings' ->> 'enabled')::boolean then ' authentication set'
         else ' authentication not set'
       end || '.' reason
       ${local.tag_dimensions_sql}
@@ -66,13 +66,13 @@ query "appservice_authentication_enabled" {
 query "appservice_web_app_client_certificates_on" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments ->> 'client_cert_enabled')::boolean then 'ok'
+        when (attributes_std ->> 'client_cert_enabled')::boolean then 'ok'
         else 'alarm'
       end status,
-      name || case
-        when (arguments ->> 'client_cert_enabled')::boolean then ' client certificate enabled'
+      split_part(address, '.', 2) || case
+        when (attributes_std ->> 'client_cert_enabled')::boolean then ' client certificate enabled'
         else ' client certificate disabled'
       end || '.' reason
       ${local.tag_dimensions_sql}
@@ -87,15 +87,15 @@ query "appservice_web_app_client_certificates_on" {
 query "appservice_function_app_latest_tls_version" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments -> 'site_config') is null then 'alarm'
-        when (arguments -> 'site_config' ->> 'min_tls_version')::float < 1.2 then 'alarm'
+        when (attributes_std -> 'site_config') is null then 'alarm'
+        when (attributes_std -> 'site_config' ->> 'min_tls_version')::float < 1.2 then 'alarm'
         else 'ok'
       end status,
-      name || case
-        when (arguments -> 'site_config') is null then ' ''min_tls_version'' not defined'
-        when (arguments -> 'site_config' ->> 'min_tls_version')::float < 1.2 then ' not using the latest version of TLS encryption'
+      split_part(address, '.', 2) || case
+        when (attributes_std -> 'site_config') is null then ' ''min_tls_version'' not defined'
+        when (attributes_std -> 'site_config' ->> 'min_tls_version')::float < 1.2 then ' not using the latest version of TLS encryption'
         else ' using the latest version of TLS encryption'
       end || '.' reason
       ${local.tag_dimensions_sql}
@@ -110,13 +110,13 @@ query "appservice_function_app_latest_tls_version" {
 query "appservice_azure_defender_enabled" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments ->> 'resource_type') = 'AppServices' and (arguments ->> 'tier') = 'Standard' then 'ok'
+        when (attributes_std ->> 'resource_type') = 'AppServices' and (attributes_std ->> 'tier') = 'Standard' then 'ok'
         else 'info'
       end status,
-      name || case
-        when (arguments ->> 'resource_type') = 'AppServices' and (arguments ->> 'tier') = 'Standard' then ' Azure Defender on for AppServices'
+      split_part(address, '.', 2) || case
+        when (attributes_std ->> 'resource_type') = 'AppServices' and (attributes_std ->> 'tier') = 'Standard' then ' Azure Defender on for AppServices'
         else ' Azure Defender off for AppServices'
       end || '.' reason
       ${local.common_dimensions_sql}
@@ -130,15 +130,15 @@ query "appservice_azure_defender_enabled" {
 query "appservice_web_app_register_with_active_directory_enabled" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments -> 'identity') is null then 'alarm'
-        when (arguments -> 'identity' ->> 'type')::text = 'SystemAssigned' then 'ok'
+        when (attributes_std -> 'identity') is null then 'alarm'
+        when (attributes_std -> 'identity' ->> 'type')::text = 'SystemAssigned' then 'ok'
         else 'ok'
       end status,
-      name || case
-        when (arguments -> 'identity') is null then ' ''identity'' not defined'
-        when (arguments -> 'identity' ->> 'type')::text = 'SystemAssigned' then ' register with azure active directory enabled'
+      split_part(address, '.', 2) || case
+        when (attributes_std -> 'identity') is null then ' ''identity'' not defined'
+        when (attributes_std -> 'identity' ->> 'type')::text = 'SystemAssigned' then ' register with azure active directory enabled'
         else ' register with azure active directory disabled.'
       end || '.' reason
       ${local.tag_dimensions_sql}
@@ -153,19 +153,19 @@ query "appservice_web_app_register_with_active_directory_enabled" {
 query "appservice_environment_internal_encryption_enabled" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments -> 'cluster_setting') is null then 'alarm'
+        when (attributes_std -> 'cluster_setting') is null then 'alarm'
         when
-          (arguments -> 'cluster_setting' ->> 'name')::text = 'InternalEncryption'
-          and (arguments -> 'cluster_setting' ->> 'value')::text = 'true' then 'ok'
+          (attributes_std -> 'cluster_setting' ->> 'name')::text = 'InternalEncryption'
+          and (attributes_std -> 'cluster_setting' ->> 'value')::text = 'true' then 'ok'
         else 'alarm'
       end status,
-      name || case
-        when (arguments -> 'cluster_setting') is null then ' ''cluster_setting'' not defined'
+      split_part(address, '.', 2) || case
+        when (attributes_std -> 'cluster_setting') is null then ' ''cluster_setting'' not defined'
         when
-          (arguments -> 'cluster_setting' ->> 'name')::text = 'InternalEncryption'
-          and (arguments -> 'cluster_setting' ->> 'value')::text = 'true' then ' internal encryption enabled'
+          (attributes_std -> 'cluster_setting' ->> 'name')::text = 'InternalEncryption'
+          and (attributes_std -> 'cluster_setting' ->> 'value')::text = 'true' then ' internal encryption enabled'
         else ' internal encryption disabled'
       end || '.' reason
       ${local.tag_dimensions_sql}
@@ -180,13 +180,13 @@ query "appservice_environment_internal_encryption_enabled" {
 query "appservice_function_app_only_https_accessible" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments -> 'https_only')::boolean then 'ok'
+        when (attributes_std -> 'https_only')::boolean then 'ok'
         else 'ok'
       end status,
-      name || case
-        when (arguments -> 'https_only')::boolean then ' https-only accessible enabled'
+      split_part(address, '.', 2) || case
+        when (attributes_std -> 'https_only')::boolean then ' https-only accessible enabled'
         else ' https-only accessible disabled'
       end || '.' reason
       ${local.tag_dimensions_sql}
@@ -201,21 +201,21 @@ query "appservice_function_app_only_https_accessible" {
 query "appservice_web_app_diagnostic_logs_enabled" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments -> 'logs') is null then 'alarm'
+        when (attributes_std -> 'logs') is null then 'alarm'
         when
-          (arguments -> 'logs' ->> 'detailed_error_messages_enabled')::boolean
-          and (arguments -> 'logs' ->> 'failed_request_tracing_enabled')::boolean
-          and (arguments -> 'logs' -> 'http_logs') is not null then 'ok'
+          (attributes_std -> 'logs' ->> 'detailed_error_messages_enabled')::boolean
+          and (attributes_std -> 'logs' ->> 'failed_request_tracing_enabled')::boolean
+          and (attributes_std -> 'logs' -> 'http_logs') is not null then 'ok'
         else 'alarm'
       end status,
-      name || case
-        when (arguments -> 'logs') is null then ' ''logs'' not defined'
+      split_part(address, '.', 2) || case
+        when (attributes_std -> 'logs') is null then ' ''logs'' not defined'
         when
-          (arguments -> 'logs' ->> 'detailed_error_messages_enabled')::boolean
-          and (arguments -> 'logs' ->> 'failed_request_tracing_enabled')::boolean
-          and (arguments -> 'logs' -> 'http_logs' -> 'file_system') is not null then ' diagnostic logs enabled'
+          (attributes_std -> 'logs' ->> 'detailed_error_messages_enabled')::boolean
+          and (attributes_std -> 'logs' ->> 'failed_request_tracing_enabled')::boolean
+          and (attributes_std -> 'logs' -> 'http_logs' -> 'file_system') is not null then ' diagnostic logs enabled'
         else ' diagnostic logs disabled'
       end || '.' reason
       ${local.tag_dimensions_sql}
@@ -230,17 +230,17 @@ query "appservice_web_app_diagnostic_logs_enabled" {
 query "appservice_web_app_latest_php_version" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments -> 'site_config') is null then 'alarm'
-        when (arguments -> 'site_config' ->> 'linux_fx_version')::text not like 'PHP%' then 'ok'
-        when (arguments -> 'site_config' ->> 'linux_fx_version')::text = 'PYTHON|3.9' then 'ok'
+        when (attributes_std -> 'site_config') is null then 'alarm'
+        when (attributes_std -> 'site_config' ->> 'linux_fx_version')::text not like 'PHP%' then 'ok'
+        when (attributes_std -> 'site_config' ->> 'linux_fx_version')::text = 'PYTHON|3.9' then 'ok'
         else 'alarm'
       end status,
-      name || case
-        when (arguments -> 'site_config') is null then ' ''site_config'' not defined'
-        when (arguments -> 'site_config' ->> 'linux_fx_version')::text not like 'PHP%' then' not using php version'
-        when (arguments -> 'site_config' ->> 'linux_fx_version')::text = 'PHP|8.0' then ' using the latest php version'
+      split_part(address, '.', 2) || case
+        when (attributes_std -> 'site_config') is null then ' ''site_config'' not defined'
+        when (attributes_std -> 'site_config' ->> 'linux_fx_version')::text not like 'PHP%' then' not using php version'
+        when (attributes_std -> 'site_config' ->> 'linux_fx_version')::text = 'PHP|8.0' then ' using the latest php version'
         else ' not using latest php version'
       end || '.' reason
       ${local.tag_dimensions_sql}
@@ -255,15 +255,15 @@ query "appservice_web_app_latest_php_version" {
 query "appservice_web_app_cors_no_star" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments -> 'site_config') is null then 'alarm'
-        when (arguments -> 'site_config' -> 'cors' -> 'allowed_origins') @> '["*"]' then 'alarm'
+        when (attributes_std -> 'site_config') is null then 'alarm'
+        when (attributes_std -> 'site_config' -> 'cors' -> 'allowed_origins') @> '["*"]' then 'alarm'
         else 'ok'
       end status,
-      name || case
-        when (arguments -> 'site_config') is null then ' ''site_config'' not defined'
-        when (arguments -> 'site_config' -> 'cors' -> 'allowed_origins') @> '["*"]' then ' CORS allow all domains to access the application'
+      split_part(address, '.', 2) || case
+        when (attributes_std -> 'site_config') is null then ' ''site_config'' not defined'
+        when (attributes_std -> 'site_config' -> 'cors' -> 'allowed_origins') @> '["*"]' then ' CORS allow all domains to access the application'
         else ' CORS does not all domains to access the application'
       end || '.' reason
       ${local.tag_dimensions_sql}
@@ -278,15 +278,15 @@ query "appservice_web_app_cors_no_star" {
 query "appservice_function_app_ftps_enabled" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments -> 'site_config') is null then 'alarm'
-        when (arguments -> 'site_config' ->> 'ftps_state')::text = 'FtpsOnly' then 'ok'
+        when (attributes_std -> 'site_config') is null then 'alarm'
+        when (attributes_std -> 'site_config' ->> 'ftps_state')::text = 'FtpsOnly' then 'ok'
         else 'alarm'
       end status,
-      name || case
-        when (arguments -> 'site_config') is null then ' ''site_config'' not defined'
-        when (arguments -> 'site_config' ->> 'ftps_state')::text = 'FtpsOnly' then ' FTPS enabled'
+      split_part(address, '.', 2) || case
+        when (attributes_std -> 'site_config') is null then ' ''site_config'' not defined'
+        when (attributes_std -> 'site_config' ->> 'ftps_state')::text = 'FtpsOnly' then ' FTPS enabled'
         else '  FTPS disabled'
       end || '.' reason
       ${local.tag_dimensions_sql}
@@ -301,15 +301,15 @@ query "appservice_function_app_ftps_enabled" {
 query "appservice_web_app_latest_http_version" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments -> 'site_config') is null then 'alarm'
-        when (arguments -> 'site_config' ->> 'http2_enabled')::boolean then 'ok'
+        when (attributes_std -> 'site_config') is null then 'alarm'
+        when (attributes_std -> 'site_config' ->> 'http2_enabled')::boolean then 'ok'
         else 'alarm'
       end status,
-      name || case
-        when (arguments -> 'site_config') is null then ' HTTP version not defined'
-        when (arguments -> 'site_config' ->> 'http2_enabled')::boolean then ' HTTP version is latest'
+      split_part(address, '.', 2) || case
+        when (attributes_std -> 'site_config') is null then ' HTTP version not defined'
+        when (attributes_std -> 'site_config' ->> 'http2_enabled')::boolean then ' HTTP version is latest'
         else ' HTTP version not latest'
       end || '.' reason
       ${local.tag_dimensions_sql}
@@ -324,15 +324,15 @@ query "appservice_web_app_latest_http_version" {
 query "appservice_ftp_deployment_disabled" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments -> 'site_config') is null then 'alarm'
-        when (arguments -> 'site_config' ->> 'ftps_state')::text = 'FtpsOnly' then 'ok'
+        when (attributes_std -> 'site_config') is null then 'alarm'
+        when (attributes_std -> 'site_config' ->> 'ftps_state')::text = 'FtpsOnly' then 'ok'
         else 'alarm'
       end status,
-      name || case
-        when (arguments -> 'site_config') is null then ' ''site_config'' not defined'
-        when (arguments -> 'site_config' ->> 'ftps_state')::text = 'FtpsOnly' then ' FTPS enabled'
+      split_part(address, '.', 2) || case
+        when (attributes_std -> 'site_config') is null then ' ''site_config'' not defined'
+        when (attributes_std -> 'site_config' ->> 'ftps_state')::text = 'FtpsOnly' then ' FTPS enabled'
         else '  FTPS disabled'
       end || '.' reason
       ${local.tag_dimensions_sql}
@@ -345,15 +345,15 @@ query "appservice_ftp_deployment_disabled" {
     union
 
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments -> 'site_config') is null then 'alarm'
-        when (arguments -> 'site_config' ->> 'ftps_state')::text = 'FtpsOnly' then 'ok'
+        when (attributes_std -> 'site_config') is null then 'alarm'
+        when (attributes_std -> 'site_config' ->> 'ftps_state')::text = 'FtpsOnly' then 'ok'
         else 'alarm'
       end status,
-      name || case
-        when (arguments -> 'site_config') is null then ' ''site_config'' not defined'
-        when (arguments -> 'site_config' ->> 'ftps_state')::text = 'FtpsOnly' then ' FTPS enabled'
+      split_part(address, '.', 2) || case
+        when (attributes_std -> 'site_config') is null then ' ''site_config'' not defined'
+        when (attributes_std -> 'site_config' ->> 'ftps_state')::text = 'FtpsOnly' then ' FTPS enabled'
         else '  FTPS disabled'
       end || '.' reason
       ${local.tag_dimensions_sql}
@@ -368,17 +368,17 @@ query "appservice_ftp_deployment_disabled" {
 query "appservice_function_app_latest_java_version" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments -> 'site_config') is null then 'alarm'
-        when (arguments -> 'site_config' ->> 'linux_fx_version')::text not like 'JAVA%' then 'ok'
-        when (arguments -> 'site_config' ->> 'linux_fx_version')::text = 'PYTHON|3.9' then 'ok'
+        when (attributes_std -> 'site_config') is null then 'alarm'
+        when (attributes_std -> 'site_config' ->> 'linux_fx_version')::text not like 'JAVA%' then 'ok'
+        when (attributes_std -> 'site_config' ->> 'linux_fx_version')::text = 'PYTHON|3.9' then 'ok'
         else 'alarm'
       end status,
-      name || case
-        when (arguments -> 'site_config') is null then ' ''site_config'' not defined'
-        when (arguments -> 'site_config' ->> 'linux_fx_version')::text not like 'JAVA%' then' not using JAVA version'
-        when (arguments -> 'site_config' ->> 'linux_fx_version')::text like '%11' then ' using the latest JAVA version'
+      split_part(address, '.', 2) || case
+        when (attributes_std -> 'site_config') is null then ' ''site_config'' not defined'
+        when (attributes_std -> 'site_config' ->> 'linux_fx_version')::text not like 'JAVA%' then' not using JAVA version'
+        when (attributes_std -> 'site_config' ->> 'linux_fx_version')::text like '%11' then ' using the latest JAVA version'
         else ' not using latest JAVA version'
       end || '.' reason
       ${local.tag_dimensions_sql}
@@ -393,13 +393,13 @@ query "appservice_function_app_latest_java_version" {
 query "appservice_function_app_client_certificates_on" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments -> 'client_cert_mode') is not null then 'ok'
+        when (attributes_std -> 'client_cert_mode') is not null then 'ok'
         else 'alarm'
       end status,
-      name || case
-        when (arguments -> 'client_cert_mode') is not null then ' cilient certificate enabled'
+      split_part(address, '.', 2) || case
+        when (attributes_std -> 'client_cert_mode') is not null then ' cilient certificate enabled'
         else ' client certificate disabled'
       end || '.' reason
       ${local.tag_dimensions_sql}
@@ -414,15 +414,15 @@ query "appservice_function_app_client_certificates_on" {
 query "appservice_web_app_latest_tls_version" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments -> 'site_config') is null then 'alarm'
-        when (arguments -> 'site_config' ->> 'min_tls_version')::float < 1.2 then 'alarm'
+        when (attributes_std -> 'site_config') is null then 'alarm'
+        when (attributes_std -> 'site_config' ->> 'min_tls_version')::float < 1.2 then 'alarm'
         else 'ok'
       end status,
-      name || case
-        when (arguments -> 'site_config') is null then ' ''min_tls_version'' not defined'
-        when (arguments -> 'site_config' ->> 'min_tls_version')::float < 1.2 then ' not using the latest version of TLS encryption'
+      split_part(address, '.', 2) || case
+        when (attributes_std -> 'site_config') is null then ' ''min_tls_version'' not defined'
+        when (attributes_std -> 'site_config' ->> 'min_tls_version')::float < 1.2 then ' not using the latest version of TLS encryption'
         else ' using the latest version of TLS encryption'
       end || '.' reason
       ${local.tag_dimensions_sql}
@@ -437,15 +437,15 @@ query "appservice_web_app_latest_tls_version" {
 query "appservice_function_app_latest_http_version" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments -> 'site_config') is null then 'alarm'
-        when (arguments -> 'site_config' ->> 'http2_enabled')::boolean then 'ok'
+        when (attributes_std -> 'site_config') is null then 'alarm'
+        when (attributes_std -> 'site_config' ->> 'http2_enabled')::boolean then 'ok'
         else 'alarm'
       end status,
-      name || case
-        when (arguments -> 'site_config') is null then ' HTTP version not defined'
-        when (arguments -> 'site_config' ->> 'http2_enabled')::boolean then ' HTTP version is latest'
+      split_part(address, '.', 2) || case
+        when (attributes_std -> 'site_config') is null then ' HTTP version not defined'
+        when (attributes_std -> 'site_config' ->> 'http2_enabled')::boolean then ' HTTP version is latest'
         else ' HTTP version not latest'
       end || '.' reason
       ${local.tag_dimensions_sql}
@@ -460,14 +460,14 @@ query "appservice_function_app_latest_http_version" {
 query "appservice_web_app_uses_managed_identity" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments -> 'identity') is null then 'alarm'
+        when (attributes_std -> 'identity') is null then 'alarm'
         else 'ok'
       end status,
-      name || case
-        when (arguments -> 'identity') is null then ' ''identity'' is not defined'
-        else ' uses ' || (arguments -> 'identity' ->> 'type') || ' identity'
+      split_part(address, '.', 2) || case
+        when (attributes_std -> 'identity') is null then ' ''identity'' is not defined'
+        else ' uses ' || (attributes_std -> 'identity' ->> 'type') || ' identity'
       end || '.' reason
       ${local.tag_dimensions_sql}
       ${local.common_dimensions_sql}
@@ -481,14 +481,14 @@ query "appservice_web_app_uses_managed_identity" {
 query "appservice_function_app_uses_managed_identity" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments -> 'identity') is null then 'alarm'
+        when (attributes_std -> 'identity') is null then 'alarm'
         else 'ok'
       end status,
-      name || case
-        when (arguments -> 'identity') is null then ' ''identity'' is not defined'
-        else ' uses ' || (arguments -> 'identity' ->> 'type') || ' identity'
+      split_part(address, '.', 2) || case
+        when (attributes_std -> 'identity') is null then ' ''identity'' is not defined'
+        else ' uses ' || (attributes_std -> 'identity' ->> 'type') || ' identity'
       end || '.' reason
       ${local.tag_dimensions_sql}
       ${local.common_dimensions_sql}
@@ -502,15 +502,15 @@ query "appservice_function_app_uses_managed_identity" {
 query "appservice_function_app_cors_no_star" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments -> 'site_config') is null then 'alarm'
-        when (arguments -> 'site_config' -> 'cors' -> 'allowed_origins') @> '["*"]' then 'alarm'
+        when (attributes_std -> 'site_config') is null then 'alarm'
+        when (attributes_std -> 'site_config' -> 'cors' -> 'allowed_origins') @> '["*"]' then 'alarm'
         else 'ok'
       end status,
-      name || case
-        when (arguments -> 'site_config') is null then ' ''site_config'' not defined'
-        when (arguments -> 'site_config' -> 'cors' -> 'allowed_origins') @> '["*"]' then ' CORS allow all domains to access the application'
+      split_part(address, '.', 2) || case
+        when (attributes_std -> 'site_config') is null then ' ''site_config'' not defined'
+        when (attributes_std -> 'site_config' -> 'cors' -> 'allowed_origins') @> '["*"]' then ' CORS allow all domains to access the application'
         else ' CORS does not all domains to access the application'
       end || '.' reason
       ${local.tag_dimensions_sql}
@@ -525,17 +525,17 @@ query "appservice_function_app_cors_no_star" {
 query "appservice_function_app_latest_python_version" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments -> 'site_config') is null then 'alarm'
-        when (arguments -> 'site_config' ->> 'linux_fx_version')::text not like 'PYTHON%' then 'ok'
-        when (arguments -> 'site_config' ->> 'linux_fx_version')::text = 'PYTHON|3.9' then 'ok'
+        when (attributes_std -> 'site_config') is null then 'alarm'
+        when (attributes_std -> 'site_config' ->> 'linux_fx_version')::text not like 'PYTHON%' then 'ok'
+        when (attributes_std -> 'site_config' ->> 'linux_fx_version')::text = 'PYTHON|3.9' then 'ok'
         else 'alarm'
       end status,
-      name || case
-        when (arguments -> 'site_config') is null then ' ''site_config'' not defined'
-        when (arguments -> 'site_config' ->> 'linux_fx_version')::text not like 'PYTHON%' then' not using python version'
-        when (arguments -> 'site_config' ->> 'linux_fx_version')::text = 'PYTHON|3.9' then ' using the latest python version'
+      split_part(address, '.', 2) || case
+        when (attributes_std -> 'site_config') is null then ' ''site_config'' not defined'
+        when (attributes_std -> 'site_config' ->> 'linux_fx_version')::text not like 'PYTHON%' then' not using python version'
+        when (attributes_std -> 'site_config' ->> 'linux_fx_version')::text = 'PYTHON|3.9' then ' using the latest python version'
         else ' not using latest python version'
       end || '.' reason
       ${local.tag_dimensions_sql}
@@ -550,13 +550,13 @@ query "appservice_function_app_latest_python_version" {
 query "appservice_web_app_use_https" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments -> 'https_only')::boolean then 'ok'
+        when (attributes_std -> 'https_only')::boolean then 'ok'
         else 'ok'
       end status,
-      name || case
-        when (arguments -> 'https_only')::boolean then ' redirects all HTTP traffic to HTTPS'
+      split_part(address, '.', 2) || case
+        when (attributes_std -> 'https_only')::boolean then ' redirects all HTTP traffic to HTTPS'
         else ' does not redirect all HTTP traffic to HTTPS'
       end || '.' reason
       ${local.tag_dimensions_sql}
@@ -571,15 +571,15 @@ query "appservice_web_app_use_https" {
 query "appservice_web_app_ftps_enabled" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments -> 'site_config') is null then 'alarm'
-        when (arguments -> 'site_config' ->> 'ftps_state')::text = 'FtpsOnly' then 'ok'
+        when (attributes_std -> 'site_config') is null then 'alarm'
+        when (attributes_std -> 'site_config' ->> 'ftps_state')::text = 'FtpsOnly' then 'ok'
         else 'alarm'
       end status,
-      name || case
-        when (arguments -> 'site_config') is null then ' ''site_config'' not defined'
-        when (arguments -> 'site_config' ->> 'ftps_state')::text = 'FtpsOnly' then ' FTPS enabled'
+      split_part(address, '.', 2) || case
+        when (attributes_std -> 'site_config') is null then ' ''site_config'' not defined'
+        when (attributes_std -> 'site_config' ->> 'ftps_state')::text = 'FtpsOnly' then ' FTPS enabled'
         else '  FTPS disabled'
       end || '.' reason
       ${local.tag_dimensions_sql}
@@ -594,17 +594,17 @@ query "appservice_web_app_ftps_enabled" {
 query "appservice_web_app_latest_python_version" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments -> 'site_config') is null then 'alarm'
-        when (arguments -> 'site_config' ->> 'linux_fx_version')::text not like 'PYTHON%' then 'ok'
-        when (arguments -> 'site_config' ->> 'linux_fx_version')::text = 'PYTHON|3.9' then 'ok'
+        when (attributes_std -> 'site_config') is null then 'alarm'
+        when (attributes_std -> 'site_config' ->> 'linux_fx_version')::text not like 'PYTHON%' then 'ok'
+        when (attributes_std -> 'site_config' ->> 'linux_fx_version')::text = 'PYTHON|3.9' then 'ok'
         else 'alarm'
       end status,
-      name || case
-        when (arguments -> 'site_config') is null then ' ''site_config'' not defined'
-        when (arguments -> 'site_config' ->> 'linux_fx_version')::text not like 'PYTHON%' then' not using python version'
-        when (arguments -> 'site_config' ->> 'linux_fx_version')::text = 'PYTHON|3.9' then ' using the latest python version'
+      split_part(address, '.', 2) || case
+        when (attributes_std -> 'site_config') is null then ' ''site_config'' not defined'
+        when (attributes_std -> 'site_config' ->> 'linux_fx_version')::text not like 'PYTHON%' then' not using python version'
+        when (attributes_std -> 'site_config' ->> 'linux_fx_version')::text = 'PYTHON|3.9' then ' using the latest python version'
         else ' not using latest python version'
       end || '.' reason
       ${local.tag_dimensions_sql}
@@ -633,40 +633,40 @@ query "appservice_web_app_use_virtual_service_endpoint" {
           terraform_resource
         where
           type = 'azurerm_app_service_slot_virtual_network_swift_connection'
-          and (arguments ->> 'subnet_id') is not null
+          and (attributes_std ->> 'subnet_id') is not null
     )
     select
-      a.type || ' ' || a.name as resource,
+      a.address as resource,
       case
-        when (s.arguments ->> 'app_service_id') is null then 'alarm'
+        when (s.attributes_std ->> 'app_service_id') is null then 'alarm'
         else 'ok'
       end as status,
-      a.name || case
-        when (s.arguments ->> 'app_service_id') is null then  ' not configured with virtual network service endpoint'
+      split_part(a.address, '.', 2) || case
+        when (s.attributes_std ->> 'app_service_id') is null then  ' not configured with virtual network service endpoint'
         else ' configured with virtual network service endpoint'
       end || '.' reason
       ${replace(local.tag_dimensions_qualifier_sql, "__QUALIFIER__", "a.")}
       ${replace(local.common_dimensions_qualifier_sql, "__QUALIFIER__", "a.")}
     from
       app_service as a
-      left join app_service_vnet as s on a.id = (s.arguments ->> 'app_service_id');
+      left join app_service_vnet as s on a.id = (s.attributes_std ->> 'app_service_id');
   EOQ
 }
 
 query "appservice_web_app_latest_java_version" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments -> 'site_config') is null then 'alarm'
-        when (arguments -> 'site_config' ->> 'linux_fx_version')::text not like 'JAVA%' then 'ok'
-        when (arguments -> 'site_config' ->> 'linux_fx_version')::text = 'PYTHON|3.9' then 'ok'
+        when (attributes_std -> 'site_config') is null then 'alarm'
+        when (attributes_std -> 'site_config' ->> 'linux_fx_version')::text not like 'JAVA%' then 'ok'
+        when (attributes_std -> 'site_config' ->> 'linux_fx_version')::text = 'PYTHON|3.9' then 'ok'
         else 'alarm'
       end status,
-      name || case
-        when (arguments -> 'site_config') is null then ' ''site_config'' not defined'
-        when (arguments -> 'site_config' ->> 'linux_fx_version')::text not like 'JAVA%' then' not using JAVA version'
-        when (arguments -> 'site_config' ->> 'linux_fx_version')::text like '%11' then ' using the latest JAVA version'
+      split_part(address, '.', 2) || case
+        when (attributes_std -> 'site_config') is null then ' ''site_config'' not defined'
+        when (attributes_std -> 'site_config' ->> 'linux_fx_version')::text not like 'JAVA%' then' not using JAVA version'
+        when (attributes_std -> 'site_config' ->> 'linux_fx_version')::text like '%11' then ' using the latest JAVA version'
         else ' not using latest JAVA version'
       end || '.' reason
       ${local.tag_dimensions_sql}
@@ -681,13 +681,13 @@ query "appservice_web_app_latest_java_version" {
 query "appservice_web_app_always_on" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments -> 'site_config' ->> 'always_on') = 'false' then 'alarm'
+        when (attributes_std -> 'site_config' ->> 'always_on') = 'false' then 'alarm'
         else 'ok'
       end status,
-      name || case
-        when (arguments -> 'site_config' ->> 'always_on') = 'false' then ' alwaysOn disabled'
+      split_part(address, '.', 2) || case
+        when (attributes_std -> 'site_config' ->> 'always_on') = 'false' then ' alwaysOn disabled'
         else ' alwaysOn enabled'
       end || '.' reason
       ${local.tag_dimensions_sql}
@@ -702,13 +702,13 @@ query "appservice_web_app_always_on" {
 query "appservice_web_app_detailed_error_messages_enabled" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when ((arguments -> 'logs' ->> 'detailed_error_messages_enabled') = 'true') or ((arguments -> 'logs' ->> 'detailed_error_messages') = 'true') then 'ok'
+        when ((attributes_std -> 'logs' ->> 'detailed_error_messages_enabled') = 'true') or ((attributes_std -> 'logs' ->> 'detailed_error_messages') = 'true') then 'ok'
         else 'alarm'
       end status,
-      name || case
-        when ((arguments -> 'logs' ->> 'detailed_error_messages_enabled') = 'true') or ((arguments -> 'logs' ->> 'detailed_error_messages') = 'true') then ' detailed error messages enabled'
+      split_part(address, '.', 2) || case
+        when ((attributes_std -> 'logs' ->> 'detailed_error_messages_enabled') = 'true') or ((attributes_std -> 'logs' ->> 'detailed_error_messages') = 'true') then ' detailed error messages enabled'
         else ' detailed error messages disabled'
       end || '.' reason
       ${local.tag_dimensions_sql}
@@ -723,15 +723,15 @@ query "appservice_web_app_detailed_error_messages_enabled" {
 query "appservice_web_app_latest_dotnet_framework_version" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments -> 'site_config' ->> 'dotnet_framework_version') is null then 'skip'
-        when (arguments -> 'site_config' ->> 'dotnet_framework_version') = 'v6.0' then 'ok'
+        when (attributes_std -> 'site_config' ->> 'dotnet_framework_version') is null then 'skip'
+        when (attributes_std -> 'site_config' ->> 'dotnet_framework_version') = 'v6.0' then 'ok'
         else 'alarm'
       end status,
-      name || case
-        when (arguments -> 'site_config' ->> 'dotnet_framework_version') is null then ' not using dotnet framework'
-        when (arguments -> 'site_config' ->> 'dotnet_framework_version') = 'v6.0' then ' using latest dotnet framework version'
+      split_part(address, '.', 2) || case
+        when (attributes_std -> 'site_config' ->> 'dotnet_framework_version') is null then ' not using dotnet framework'
+        when (attributes_std -> 'site_config' ->> 'dotnet_framework_version') = 'v6.0' then ' using latest dotnet framework version'
         else ' not using latest dotnet framework version'
       end || '.' reason
       ${local.tag_dimensions_sql}
@@ -746,13 +746,13 @@ query "appservice_web_app_latest_dotnet_framework_version" {
 query "appservice_web_app_failed_request_tracing_enabled" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when ((arguments -> 'logs' ->> 'failed_request_tracing') = 'true') or ((arguments -> 'logs' ->> 'failed_request_tracing_enabled') = 'true') then 'ok'
+        when ((attributes_std -> 'logs' ->> 'failed_request_tracing') = 'true') or ((attributes_std -> 'logs' ->> 'failed_request_tracing_enabled') = 'true') then 'ok'
         else 'alarm'
       end status,
-      name || case
-        when ((arguments -> 'logs' ->> 'failed_request_tracing') = 'true') or ((arguments -> 'logs' ->> 'failed_request_tracing_enabled') = 'true') then ' failed request tracing enabled'
+      split_part(address, '.', 2) || case
+        when ((attributes_std -> 'logs' ->> 'failed_request_tracing') = 'true') or ((attributes_std -> 'logs' ->> 'failed_request_tracing_enabled') = 'true') then ' failed request tracing enabled'
         else ' failed request tracing disabled'
       end || '.' reason
       ${local.tag_dimensions_sql}
@@ -767,13 +767,13 @@ query "appservice_web_app_failed_request_tracing_enabled" {
 query "appservice_web_app_http_logs_enabled" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when ((arguments -> 'logs' -> 'http_logs') is not null) or ((arguments -> 'logs' -> 'dynamic' -> 'http_logs') is not null) then 'ok'
+        when ((attributes_std -> 'logs' -> 'http_logs') is not null) or ((attributes_std -> 'logs' -> 'dynamic' -> 'http_logs') is not null) then 'ok'
         else 'alarm'
       end status,
-      name || case
-        when ((arguments -> 'logs' -> 'http_logs') is not null) or ((arguments -> 'logs' -> 'dynamic' -> 'http_logs') is not null) then ' HTTP logs enabled'
+      split_part(address, '.', 2) || case
+        when ((attributes_std -> 'logs' -> 'http_logs') is not null) or ((attributes_std -> 'logs' -> 'dynamic' -> 'http_logs') is not null) then ' HTTP logs enabled'
         else ' HTTP logs disabled'
       end || '.' reason
       ${local.tag_dimensions_sql}
@@ -788,15 +788,15 @@ query "appservice_web_app_http_logs_enabled" {
 query "appservice_web_app_worker_more_than_one" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments ->> 'worker_count')::int >= 2 then 'ok'
-        when (arguments ->> 'worker_count')::int < 2 then 'alarm'
+        when (attributes_std ->> 'worker_count')::int >= 2 then 'ok'
+        when (attributes_std ->> 'worker_count')::int < 2 then 'alarm'
         else 'alarm'
       end status,
-      name || case
-        when (arguments ->> 'worker_count')::int >= 2 then ' has ' || (arguments ->> 'worker_count') || ' number of workers'
-        when (arguments ->> 'worker_count')::int < 2 then ' has ' || (arguments ->> 'worker_count') || ' number of workers'
+      split_part(address, '.', 2) || case
+        when (attributes_std ->> 'worker_count')::int >= 2 then ' has ' || (attributes_std ->> 'worker_count') || ' number of workers'
+        when (attributes_std ->> 'worker_count')::int < 2 then ' has ' || (attributes_std ->> 'worker_count') || ' number of workers'
         else ' worker count is not set'
       end || '.' reason
       ${local.tag_dimensions_sql}
@@ -811,13 +811,13 @@ query "appservice_web_app_worker_more_than_one" {
 query "appservice_web_app_health_check_enabled" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments -> 'site_config' -> 'health_check_path') is not null then 'ok'
+        when (attributes_std -> 'site_config' -> 'health_check_path') is not null then 'ok'
         else 'alarm'
       end status,
-      name || case
-        when (arguments -> 'site_config' -> 'health_check_path') is not null then ' health check enabled'
+      split_part(address, '.', 2) || case
+        when (attributes_std -> 'site_config' -> 'health_check_path') is not null then ' health check enabled'
         else ' health check disabled'
       end || '.' reason
       ${local.tag_dimensions_sql}
@@ -832,12 +832,12 @@ query "appservice_web_app_health_check_enabled" {
 query "appservice_plan_minimum_sku" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments ->>'sku_name') in ('F1', 'D1', 'B1', 'B2', 'B3') then 'alarm'
+        when (attributes_std ->>'sku_name') in ('F1', 'D1', 'B1', 'B2', 'B3') then 'alarm'
         else 'ok'
       end status,
-      name || ' is of ' || (arguments ->>'sku_name') || ' SKU family.' as  reason
+      name || ' is of ' || (attributes_std ->>'sku_name') || ' SKU family.' as  reason
       ${local.tag_dimensions_sql}
       ${local.common_dimensions_sql}
     from
@@ -850,13 +850,13 @@ query "appservice_plan_minimum_sku" {
 query "appservice_web_app_slot_remote_debugging_disabled" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments -> 'site_config' ->> 'remote_debugging_enabled') = 'true' then 'alarm'
+        when (attributes_std -> 'site_config' ->> 'remote_debugging_enabled') = 'true' then 'alarm'
         else 'ok'
       end status,
-      name || case
-        when (arguments -> 'site_config' ->> 'remote_debugging_enabled') = 'true' then ' remote debugging enabled'
+      split_part(address, '.', 2) || case
+        when (attributes_std -> 'site_config' ->> 'remote_debugging_enabled') = 'true' then ' remote debugging enabled'
         else ' remote debugging disabled'
       end || '.' reason
       ${local.tag_dimensions_sql}
@@ -871,13 +871,13 @@ query "appservice_web_app_slot_remote_debugging_disabled" {
 query "appservice_web_app_slot_use_https" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments ->> 'https_only') = 'true' then 'ok'
+        when (attributes_std ->> 'https_only') = 'true' then 'ok'
         else 'alarm'
       end status,
-      name || case
-        when (arguments ->> 'https_only') ='true' then ' accessible over HTTPS'
+      split_part(address, '.', 2) || case
+        when (attributes_std ->> 'https_only') ='true' then ' accessible over HTTPS'
         else ' not accessible over HTTPS'
       end || '.' reason
       ${local.tag_dimensions_sql}
@@ -892,13 +892,13 @@ query "appservice_web_app_slot_use_https" {
 query "appservice_web_app_slot_latest_tls_version" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments -> 'site_config' ->> 'min_tls_version')::float < 1.2 then 'alarm'
+        when (attributes_std -> 'site_config' ->> 'min_tls_version')::float < 1.2 then 'alarm'
         else 'ok'
       end status,
-      name || case
-        when (arguments -> 'site_config' ->> 'min_tls_version')::float < 1.2 then ' not using the latest version of TLS encryption'
+      split_part(address, '.', 2) || case
+        when (attributes_std -> 'site_config' ->> 'min_tls_version')::float < 1.2 then ' not using the latest version of TLS encryption'
         else ' using the latest version of TLS encryption'
       end || '.' reason
       ${local.tag_dimensions_sql}
@@ -913,13 +913,13 @@ query "appservice_web_app_slot_latest_tls_version" {
 query "appservice_web_app_uses_azure_file" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments -> 'storage_account' ->> 'type') = 'AzureFiles' then 'ok'
+        when (attributes_std -> 'storage_account' ->> 'type') = 'AzureFiles' then 'ok'
         else 'alarm'
       end status,
-      name || case
-        when (arguments -> 'storage_account' ->> 'type') = 'AzureFiles' then ' uses Azure files'
+      split_part(address, '.', 2) || case
+        when (attributes_std -> 'storage_account' ->> 'type') = 'AzureFiles' then ' uses Azure files'
         else ' not uses Azure files'
       end || '.' reason
       ${local.tag_dimensions_sql}
@@ -934,13 +934,13 @@ query "appservice_web_app_uses_azure_file" {
 query "appservice_function_app_builtin_logging_enabled" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments ->> 'enable_builtin_logging') = 'false' then 'alarm'
+        when (attributes_std ->> 'enable_builtin_logging') = 'false' then 'alarm'
         else 'ok'
       end status,
-      name || case
-        when (arguments ->> 'enable_builtin_logging') = 'false' then ' builtin logging disabled'
+      split_part(address, '.', 2) || case
+        when (attributes_std ->> 'enable_builtin_logging') = 'false' then ' builtin logging disabled'
         else ' builtin logging enabled'
       end || '.' reason
       ${local.tag_dimensions_sql}

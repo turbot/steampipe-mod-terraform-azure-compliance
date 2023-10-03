@@ -1,13 +1,13 @@
 query "resource_manager_azure_defender_enabled" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments ->> 'resource_type') = 'Arm' and (arguments ->> 'tier') = 'Standard' then 'ok'
+        when (attributes_std ->> 'resource_type') = 'Arm' and (attributes_std ->> 'tier') = 'Standard' then 'ok'
         else 'info'
       end status,
-      name || case
-        when (arguments ->> 'resource_type') = 'Arm' and (arguments ->> 'tier') = 'Standard' then ' Arm azure defender enabled'
+      split_part(address, '.', 2) || case
+        when (attributes_std ->> 'resource_type') = 'Arm' and (attributes_std ->> 'tier') = 'Standard' then ' Arm azure defender enabled'
         else 'Arm azure defender disabled'
       end || '.' reason
       ${local.common_dimensions_sql}

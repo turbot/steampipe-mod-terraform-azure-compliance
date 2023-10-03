@@ -1,13 +1,13 @@
 query "service_bus_namespace_infrastructure_encryption_enabled" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments -> 'customer_managed_key' -> 'infrastructure_encryption_enabled')::bool is true then 'ok'
+        when (attributes_std -> 'customer_managed_key' -> 'infrastructure_encryption_enabled')::bool is true then 'ok'
         else 'alarm'
       end status,
-      name || case
-        when (arguments -> 'customer_managed_key' -> 'infrastructure_encryption_enabled')::bool is true then ' infrastructure encryption enabled'
+      split_part(address, '.', 2) || case
+        when (attributes_std -> 'customer_managed_key' -> 'infrastructure_encryption_enabled')::bool is true then ' infrastructure encryption enabled'
         else ' infrastructure encryption disabled'
       end || '.' reason
       ${local.tag_dimensions_sql}
@@ -22,13 +22,13 @@ query "service_bus_namespace_infrastructure_encryption_enabled" {
 query "service_bus_namespace_encrypted_with_cmk" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments -> 'customer_managed_key' -> 'key_vault_key_id') is not null then 'ok'
+        when (attributes_std -> 'customer_managed_key' -> 'key_vault_key_id') is not null then 'ok'
         else 'alarm'
       end status,
-      name || case
-        when (arguments -> 'customer_managed_key' -> 'key_vault_key_id') is not null then ' encrypted with CMK'
+      split_part(address, '.', 2) || case
+        when (attributes_std -> 'customer_managed_key' -> 'key_vault_key_id') is not null then ' encrypted with CMK'
         else ' not encrypted with CMK'
       end || '.' reason
       ${local.tag_dimensions_sql}
@@ -43,13 +43,13 @@ query "service_bus_namespace_encrypted_with_cmk" {
 query "service_bus_namespace_uses_managed_identity" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments -> 'identity' ->> 'type') = 'SystemAssigned' then 'ok'
+        when (attributes_std -> 'identity' ->> 'type') = 'SystemAssigned' then 'ok'
         else 'alarm'
       end status,
-      name || case
-        when (arguments -> 'identity' ->> 'type') = 'SystemAssigned' then ' uses managed identity'
+      split_part(address, '.', 2) || case
+        when (attributes_std -> 'identity' ->> 'type') = 'SystemAssigned' then ' uses managed identity'
         else ' not use managed identity'
       end || '.' reason
       ${local.tag_dimensions_sql}
@@ -64,13 +64,13 @@ query "service_bus_namespace_uses_managed_identity" {
 query "service_bus_namespace_local_auth_disabled" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments ->> 'local_auth_enabled') = 'false' then 'ok'
+        when (attributes_std ->> 'local_auth_enabled') = 'false' then 'ok'
         else 'alarm'
       end status,
-      name || case
-        when (arguments ->> 'local_auth_enabled') = 'false' then ' local authentication disabled'
+      split_part(address, '.', 2) || case
+        when (attributes_std ->> 'local_auth_enabled') = 'false' then ' local authentication disabled'
         else ' local authentication enabled'
       end || '.' reason
       ${local.tag_dimensions_sql}
@@ -85,13 +85,13 @@ query "service_bus_namespace_local_auth_disabled" {
 query "service_bus_namespace_latest_tls_version" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments ->> 'minimum_tls_version')::float < 1.2 then 'alarm'
+        when (attributes_std ->> 'minimum_tls_version')::float < 1.2 then 'alarm'
         else 'ok'
       end status,
-      name || case
-        when (arguments ->> 'minimum_tls_version')::float < 1.2 then ' not using the latest version of TLS encryption'
+      split_part(address, '.', 2) || case
+        when (attributes_std ->> 'minimum_tls_version')::float < 1.2 then ' not using the latest version of TLS encryption'
         else ' using the latest version of TLS encryption'
       end || '.' reason
       ${local.tag_dimensions_sql}
@@ -106,13 +106,13 @@ query "service_bus_namespace_latest_tls_version" {
 query "service_bus_namespace_restrict_public_access" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments ->> 'public_network_access_enabled') = 'false' then 'ok'
+        when (attributes_std ->> 'public_network_access_enabled') = 'false' then 'ok'
         else 'alarm'
       end status,
-      name || case
-        when (arguments ->> 'public_network_access_enabled') = 'false' then ' not publicly accessible'
+      split_part(address, '.', 2) || case
+        when (attributes_std ->> 'public_network_access_enabled') = 'false' then ' not publicly accessible'
         else ' publicly accessible'
       end || '.' reason
       ${local.tag_dimensions_sql}
