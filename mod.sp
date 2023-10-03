@@ -68,7 +68,7 @@ mod "terraform_azure_compliance" {
 
   require {
     plugin "terraform" {
-      version >= "0.8.0"
+      version = "0.8.0"
     }
   }
 }
