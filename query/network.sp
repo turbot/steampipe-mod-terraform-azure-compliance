@@ -16,32 +16,32 @@ query "network_security_group_subnet_associated" {
         type = 'azurerm_subnet_network_security_group_association'
     )
     select
-      a.type || ' ' || a.name as resource,
+      a.address as resource,
       case
-        when (s.arguments ->> 'subnet_id') is not null then 'ok'
+        when (s.attributes_std ->> 'subnet_id') is not null then 'ok'
         else 'alarm'
       end as status,
-      a.name || case
-        when (s.arguments ->> 'subnet_id') is not null then ' associated with subnet'
+      split_part(a.address, '.', 2) || case
+        when (s.attributes_std ->> 'subnet_id') is not null then ' associated with subnet'
         else ' not associated with subnet'
       end || '.' reason
       ${replace(local.common_dimensions_qualifier_sql, "__QUALIFIER__", "a.")}
     from
       all_subnet as a
-      left join network_security_group_association as s on a.name = ( split_part((s.arguments ->> 'subnet_id'), '.', 2));
+      left join network_security_group_association as s on a.name = ( split_part((s.attributes_std ->> 'subnet_id'), '.', 2));
   EOQ
 }
 
 query "network_interface_ip_forwarding_disabled" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments ->> 'enable_ip_forwarding')::boolean then 'alarm'
+        when (attributes_std ->> 'enable_ip_forwarding')::boolean then 'alarm'
         else 'ok'
       end as status,
-      name || case
-        when (arguments ->> 'enable_ip_forwarding')::boolean then ' network interface enabled with IP forwarding'
+      split_part(address, '.', 2) || case
+        when (attributes_std ->> 'enable_ip_forwarding')::boolean then ' network interface enabled with IP forwarding'
         else ' network interface disabled with IP forwarding'
       end || '.' reason
       ${local.tag_dimensions_sql}
@@ -71,36 +71,36 @@ query "network_security_group_not_configured_gateway_subnets" {
         type = 'azurerm_subnet_network_security_group_association'
     )
     select
-      a.type || ' ' || a.name as resource,
+      a.address as resource,
       case
-        when (a.arguments ->> 'name')::text = 'GatewaySubnet' and (s.arguments ->> 'subnet_id') is not null then 'alarm'
-        when (a.arguments ->> 'name')::text = 'GatewaySubnet' and (s.arguments ->> 'subnet_id') is null then 'ok'
+        when (a.attributes_std ->> 'name')::text = 'GatewaySubnet' and (s.attributes_std ->> 'subnet_id') is not null then 'alarm'
+        when (a.attributes_std ->> 'name')::text = 'GatewaySubnet' and (s.attributes_std ->> 'subnet_id') is null then 'ok'
         else 'skip'
       end as status,
-      a.name || case
-        when (a.arguments ->> 'name')::text = 'GatewaySubnet' and (s.arguments ->> 'subnet_id') is not null then ' Gateway subnet configured with network security group'
-        when (a.arguments ->> 'name')::text = 'GatewaySubnet' and (s.arguments ->> 'subnet_id') is null then ' Gateway subnet not configured with network security group'
+      split_part(a.address, '.', 2) || case
+        when (a.attributes_std ->> 'name')::text = 'GatewaySubnet' and (s.attributes_std ->> 'subnet_id') is not null then ' Gateway subnet configured with network security group'
+        when (a.attributes_std ->> 'name')::text = 'GatewaySubnet' and (s.attributes_std ->> 'subnet_id') is null then ' Gateway subnet not configured with network security group'
         else ' not of gateway subnet type'
       end || '.' reason
       ${replace(local.common_dimensions_qualifier_sql, "__QUALIFIER__", "a.")}
     from
       all_subnet as a
-      left join network_security_group_association as s on a.name = ( split_part((s.arguments ->> 'subnet_id'), '.', 2));
+      left join network_security_group_association as s on a.name = ( split_part((s.attributes_std ->> 'subnet_id'), '.', 2));
   EOQ
 }
 
 query "network_watcher_flow_log_retention_period_90_days" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when (arguments -> 'retention_policy' ->> 'enabled') = 'false' then 'alarm'
-        when (arguments -> 'retention_policy' ->> 'enabled') = 'true' and (arguments -> 'retention_policy' ->> 'days')::int >= 90 then 'ok'
+        when (attributes_std -> 'retention_policy' ->> 'enabled') = 'false' then 'alarm'
+        when (attributes_std -> 'retention_policy' ->> 'enabled') = 'true' and (attributes_std -> 'retention_policy' ->> 'days')::int >= 90 then 'ok'
         else 'alarm'
       end as status,
-      name || case
-        when (arguments -> 'retention_policy' ->> 'enabled') = 'false' then ' retention policy disabled'
-        else ' retention set to ' || (arguments -> 'retention_policy' ->> 'days') || ' day(s)'
+      split_part(address, '.', 2) || case
+        when (attributes_std -> 'retention_policy' ->> 'enabled') = 'false' then ' retention policy disabled'
+        else ' retention set to ' || (attributes_std -> 'retention_policy' ->> 'days') || ' day(s)'
       end || '.' reason
       ${local.tag_dimensions_sql}
       ${local.common_dimensions_sql}
@@ -115,12 +115,12 @@ query "network_security_group_udp_access_restricted" {
   sql = <<-EOQ
     with nsg_udp_access as (
       select
-       distinct name
+       distinct address as name
       from
         terraform_resource,
         jsonb_array_elements(
-          case jsonb_typeof(arguments -> 'security_rule')
-          when 'array' then (arguments -> 'security_rule')
+          case jsonb_typeof(attributes_std -> 'security_rule')
+          when 'array' then (attributes_std -> 'security_rule')
           else null end
          ) as s
       where
@@ -131,23 +131,23 @@ query "network_security_group_udp_access_restricted" {
         and lower(s ->> 'source_address_prefix') in ('*', '0.0.0.0', '<nw>/0', '/0', 'internet', 'any')
     )
     select
-      type || ' ' || r.name as resource,
+      r.address as resource,
       case
-        when (arguments -> 'security_rule') is null then 'alarm'
+        when (attributes_std -> 'security_rule') is null then 'alarm'
         when s.name is not null then 'alarm'
-        when lower(arguments -> 'security_rule' ->> 'protocol') = 'udp'
-          and lower(arguments -> 'security_rule' ->> 'direction') = 'inbound'
-          and lower(arguments -> 'security_rule' ->> 'access') = 'allow'
-          and lower(arguments -> 'security_rule' ->> 'source_address_prefix') in ('*', '0.0.0.0', '<nw>/0', '/0', 'internet', 'any') then 'alarm'
+        when lower(attributes_std -> 'security_rule' ->> 'protocol') = 'udp'
+          and lower(attributes_std -> 'security_rule' ->> 'direction') = 'inbound'
+          and lower(attributes_std -> 'security_rule' ->> 'access') = 'allow'
+          and lower(attributes_std -> 'security_rule' ->> 'source_address_prefix') in ('*', '0.0.0.0', '<nw>/0', '/0', 'internet', 'any') then 'alarm'
         else 'ok'
       end as status,
-      r.name || case
-        when (arguments -> 'security_rule') is  null then ' security rule not defined'
+      split_part(r.address, '.', 2) || case
+        when (attributes_std -> 'security_rule') is  null then ' security rule not defined'
         when s.name is not null then ' allows UDP services from internet'
-        when lower(arguments -> 'security_rule' ->> 'protocol') = 'udp'
-          and lower(arguments -> 'security_rule' ->> 'direction') = 'inbound'
-          and lower(arguments -> 'security_rule' ->> 'access') = 'allow'
-          and lower(arguments -> 'security_rule' ->> 'source_address_prefix') in ('*', '0.0.0.0', '<nw>/0', '/0', 'internet', 'any') then ' allows UDP services from internet'
+        when lower(attributes_std -> 'security_rule' ->> 'protocol') = 'udp'
+          and lower(attributes_std -> 'security_rule' ->> 'direction') = 'inbound'
+          and lower(attributes_std -> 'security_rule' ->> 'access') = 'allow'
+          and lower(attributes_std -> 'security_rule' ->> 'source_address_prefix') in ('*', '0.0.0.0', '<nw>/0', '/0', 'internet', 'any') then ' allows UDP services from internet'
         else ' restricts UDP services from internet'
       end || '.' reason
       ${local.tag_dimensions_sql}
@@ -163,19 +163,19 @@ query "network_security_group_udp_access_restricted" {
 query "network_security_rule_udp_access_restricted" {
   sql = <<-EOQ
     select
-      type || ' ' || name as resource,
+      address as resource,
       case
-        when lower(arguments ->> 'protocol') = 'udp'
-          and lower(arguments ->> 'direction') = 'inbound'
-          and lower(arguments ->> 'access') = 'allow'
-          and lower(arguments ->> 'source_address_prefix') in ('*', '0.0.0.0', '<nw>/0', '/0', 'internet', 'any') then 'alarm'
+        when lower(attributes_std ->> 'protocol') = 'udp'
+          and lower(attributes_std ->> 'direction') = 'inbound'
+          and lower(attributes_std ->> 'access') = 'allow'
+          and lower(attributes_std ->> 'source_address_prefix') in ('*', '0.0.0.0', '<nw>/0', '/0', 'internet', 'any') then 'alarm'
         else 'ok'
       end as status,
-      name || case
-        when lower(arguments ->> 'protocol') = 'udp'
-          and lower(arguments ->> 'direction') = 'inbound'
-          and lower(arguments ->> 'access') = 'allow'
-          and lower(arguments ->> 'source_address_prefix') in ('*', '0.0.0.0', '<nw>/0', '/0', 'internet', 'any') then ' allows UDP services from internet'
+      split_part(address, '.', 2) || case
+        when lower(attributes_std ->> 'protocol') = 'udp'
+          and lower(attributes_std ->> 'direction') = 'inbound'
+          and lower(attributes_std ->> 'access') = 'allow'
+          and lower(attributes_std ->> 'source_address_prefix') in ('*', '0.0.0.0', '<nw>/0', '/0', 'internet', 'any') then ' allows UDP services from internet'
         else ' restricts UDP services from internet'
       end || '.' reason
       ${local.common_dimensions_sql}
@@ -190,24 +190,24 @@ query "network_security_rule_rdp_access_restricted" {
   sql = <<-EOQ
     with nsg_rule as (
       select
-        distinct name
+        distinct address as name
       from
         terraform_resource,
         jsonb_array_elements_text(
           case
-            when ((arguments -> 'destination_port_ranges') != 'null') and jsonb_array_length(arguments -> 'destination_port_ranges') > 0 then (arguments -> 'destination_port_ranges')
-            else jsonb_build_array(arguments -> 'destination_port_range')
+            when ((attributes_std -> 'destination_port_ranges') != 'null') and jsonb_array_length(attributes_std -> 'destination_port_ranges') > 0 then (attributes_std -> 'destination_port_ranges')
+            else jsonb_build_array(attributes_std -> 'destination_port_range')
           end ) as dport,
         jsonb_array_elements_text(
           case
-            when ((arguments -> 'source_address_prefixes') != 'null') and jsonb_array_length(arguments -> 'source_address_prefixes') > 0 then (arguments -> 'source_address_prefixes')
-            else jsonb_build_array(arguments -> 'source_address_prefix')
+            when ((attributes_std -> 'source_address_prefixes') != 'null') and jsonb_array_length(attributes_std -> 'source_address_prefixes') > 0 then (attributes_std -> 'source_address_prefixes')
+            else jsonb_build_array(attributes_std -> 'source_address_prefix')
           end) as sip
       where
         type = 'azurerm_network_security_rule'
-        and lower(arguments ->> 'access') = 'allow'
-        and lower(arguments ->> 'direction') = 'inbound'
-        and (lower(arguments ->> 'protocol') ilike 'TCP' or lower(arguments ->> 'protocol') = '*')
+        and lower(attributes_std ->> 'access') = 'allow'
+        and lower(attributes_std ->> 'direction') = 'inbound'
+        and (lower(attributes_std ->> 'protocol') ilike 'TCP' or lower(attributes_std ->> 'protocol') = '*')
         and lower(sip) in ('*', '0.0.0.0', '0.0.0.0/0', 'internet', 'any', '<nw>/0', '/0')
         and (
           dport in ('3389', '*')
@@ -219,12 +219,12 @@ query "network_security_rule_rdp_access_restricted" {
         )
     )
     select
-      type || ' ' || r.name as resource,
+      r.address as resource,
       case
         when rule.name is null then 'ok'
         else 'alarm'
       end as status,
-      r.name || case
+      split_part(r.address, '.', 2) || case
         when rule.name is null then ' restricts RDP access from internet'
         else ' allows RDP access from internet'
       end || '.' reason
@@ -241,13 +241,13 @@ query "network_security_group_rdp_access_restricted" {
   sql = <<-EOQ
     with nsg_group as (
       select
-        distinct name
+        distinct address as name
       from
         terraform_resource,
         jsonb_array_elements(
-          case jsonb_typeof(arguments -> 'security_rule')
-            when 'array' then (arguments -> 'security_rule')
-            when 'object' then jsonb_build_array(arguments -> 'security_rule')
+          case jsonb_typeof(attributes_std -> 'security_rule')
+            when 'array' then (attributes_std -> 'security_rule')
+            when 'object' then jsonb_build_array(attributes_std -> 'security_rule')
             else null end
           ) sg,
         jsonb_array_elements_text(
@@ -276,12 +276,12 @@ query "network_security_group_rdp_access_restricted" {
         )
     )
     select
-      type || ' ' || r.name as resource,
+      r.address as resource,
       case
         when g.name is null then 'ok'
         else 'alarm'
       end as status,
-      r.name || case
+      split_part(r.address, '.', 2) || case
         when g.name is null then ' restricts RDP access from internet'
         else ' allows RDP access from internet'
       end || '.' reason
@@ -299,24 +299,24 @@ query "network_security_rule_ssh_access_restricted" {
   sql = <<-EOQ
     with nsg_rule as (
       select
-        distinct name
+        distinct address as name
       from
         terraform_resource,
         jsonb_array_elements_text(
           case
-            when ((arguments -> 'destination_port_ranges') != 'null') and jsonb_array_length(arguments -> 'destination_port_ranges') > 0 then (arguments -> 'destination_port_ranges')
-            else jsonb_build_array(arguments -> 'destination_port_range')
+            when ((attributes_std -> 'destination_port_ranges') != 'null') and jsonb_array_length(attributes_std -> 'destination_port_ranges') > 0 then (attributes_std -> 'destination_port_ranges')
+            else jsonb_build_array(attributes_std -> 'destination_port_range')
           end ) as dport,
         jsonb_array_elements_text(
           case
-            when ((arguments -> 'source_address_prefixes') != 'null') and jsonb_array_length(arguments -> 'source_address_prefixes') > 0 then (arguments -> 'source_address_prefixes')
-            else jsonb_build_array(arguments -> 'source_address_prefix')
+            when ((attributes_std -> 'source_address_prefixes') != 'null') and jsonb_array_length(attributes_std -> 'source_address_prefixes') > 0 then (attributes_std -> 'source_address_prefixes')
+            else jsonb_build_array(attributes_std -> 'source_address_prefix')
           end) as sip
       where
         type = 'azurerm_network_security_rule'
-        and lower(arguments ->> 'access') = 'allow'
-        and lower(arguments ->> 'direction') = 'inbound'
-        and (lower(arguments ->> 'protocol') ilike 'TCP' or lower(arguments ->> 'protocol') = '*')
+        and lower(attributes_std ->> 'access') = 'allow'
+        and lower(attributes_std ->> 'direction') = 'inbound'
+        and (lower(attributes_std ->> 'protocol') ilike 'TCP' or lower(attributes_std ->> 'protocol') = '*')
         and lower(sip) in ('*', '0.0.0.0', '0.0.0.0/0', 'internet', 'any', '<nw>/0', '/0')
         and (
           dport in ('22', '*')
@@ -328,12 +328,12 @@ query "network_security_rule_ssh_access_restricted" {
         )
     )
     select
-      type || ' ' || r.name as resource,
+      r.address as resource,
       case
         when rule.name is null then 'ok'
         else 'alarm'
       end as status,
-      r.name || case
+      split_part(r.address, '.', 2) || case
         when rule.name is null then ' restricts SSH access from internet'
         else ' allows SSH access from internet'
       end || '.' reason
@@ -350,13 +350,13 @@ query "network_security_group_ssh_access_restricted" {
   sql = <<-EOQ
     with nsg_group as (
       select
-        distinct name
+        distinct address as name
       from
         terraform_resource,
         jsonb_array_elements(
-          case jsonb_typeof(arguments -> 'security_rule')
-            when 'array' then (arguments -> 'security_rule')
-            when 'object' then jsonb_build_array(arguments -> 'security_rule')
+          case jsonb_typeof(attributes_std -> 'security_rule')
+            when 'array' then (attributes_std -> 'security_rule')
+            when 'object' then jsonb_build_array(attributes_std -> 'security_rule')
             else null end
           ) sg,
         jsonb_array_elements_text(
@@ -385,12 +385,12 @@ query "network_security_group_ssh_access_restricted" {
         )
     )
     select
-      type || ' ' || r.name as resource,
+      r.address as resource,
       case
         when g.name is null then 'ok'
         else 'alarm'
       end as status,
-      r.name || case
+      split_part(r.address, '.', 2) || case
         when g.name is null then ' restricts SSH access from internet'
         else ' allows SSH access from internet'
       end || '.' reason
@@ -408,24 +408,24 @@ query "network_security_rule_http_access_restricted" {
   sql = <<-EOQ
     with nsg_rule as (
       select
-        distinct name
+        distinct address as name
       from
         terraform_resource,
         jsonb_array_elements_text(
           case
-            when ((arguments -> 'destination_port_ranges') != 'null') and jsonb_array_length(arguments -> 'destination_port_ranges') > 0 then (arguments -> 'destination_port_ranges')
-            else jsonb_build_array(arguments -> 'destination_port_range')
+            when ((attributes_std -> 'destination_port_ranges') != 'null') and jsonb_array_length(attributes_std -> 'destination_port_ranges') > 0 then (attributes_std -> 'destination_port_ranges')
+            else jsonb_build_array(attributes_std -> 'destination_port_range')
           end ) as dport,
         jsonb_array_elements_text(
           case
-            when ((arguments -> 'source_address_prefixes') != 'null') and jsonb_array_length(arguments -> 'source_address_prefixes') > 0 then (arguments -> 'source_address_prefixes')
-            else jsonb_build_array(arguments -> 'source_address_prefix')
+            when ((attributes_std -> 'source_address_prefixes') != 'null') and jsonb_array_length(attributes_std -> 'source_address_prefixes') > 0 then (attributes_std -> 'source_address_prefixes')
+            else jsonb_build_array(attributes_std -> 'source_address_prefix')
           end) as sip
       where
         type = 'azurerm_network_security_rule'
-        and lower(arguments ->> 'access') = 'allow'
-        and lower(arguments ->> 'direction') = 'inbound'
-        and (lower(arguments ->> 'protocol') ilike 'TCP' or lower(arguments ->> 'protocol') = '*')
+        and lower(attributes_std ->> 'access') = 'allow'
+        and lower(attributes_std ->> 'direction') = 'inbound'
+        and (lower(attributes_std ->> 'protocol') ilike 'TCP' or lower(attributes_std ->> 'protocol') = '*')
         and lower(sip) in ('*', '0.0.0.0', '0.0.0.0/0', 'internet', 'any', '<nw>/0', '/0')
         and (
           dport in ('80', '*')
@@ -437,12 +437,12 @@ query "network_security_rule_http_access_restricted" {
         )
     )
     select
-      type || ' ' || r.name as resource,
+      r.address as resource,
       case
         when rule.name is null then 'ok'
         else 'alarm'
       end as status,
-      r.name || case
+      split_part(r.address, '.', 2) || case
         when rule.name is null then ' restricts HTTP access from internet'
         else ' allows HTTP access from internet'
       end || '.' reason
@@ -459,13 +459,13 @@ query "network_security_group_http_access_restricted" {
   sql = <<-EOQ
     with nsg_group as (
       select
-        distinct name
+        distinct address as name
       from
         terraform_resource,
         jsonb_array_elements(
-          case jsonb_typeof(arguments -> 'security_rule')
-            when 'array' then (arguments -> 'security_rule')
-            when 'object' then jsonb_build_array(arguments -> 'security_rule')
+          case jsonb_typeof(attributes_std -> 'security_rule')
+            when 'array' then (attributes_std -> 'security_rule')
+            when 'object' then jsonb_build_array(attributes_std -> 'security_rule')
             else null end
           ) sg,
         jsonb_array_elements_text(
@@ -494,12 +494,12 @@ query "network_security_group_http_access_restricted" {
         )
     )
     select
-      type || ' ' || r.name as resource,
+      r.address as resource,
       case
         when g.name is null then 'ok'
         else 'alarm'
       end as status,
-      r.name || case
+      split_part(r.address, '.', 2) || case
         when g.name is null then ' restricts HTTP access from internet'
         else ' allows HTTP access from internet'
       end || '.' reason

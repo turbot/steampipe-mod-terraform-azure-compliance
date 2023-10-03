@@ -173,17 +173,17 @@ control "securitycenter_azure_defender_on_for_storage" {
 }
 
 control "securitycenter_contact_number_configured" {
-  title = "Subscriptions should have a contact phone number for security issues"
+  title       = "Subscriptions should have a contact phone number for security issues"
   description = "To ensure the relevant people in your organization are notified when there is a potential security breach in one of your subscriptions, set a security contact to receive phone notifications from Security Center."
-  query = query.securitycenter_contact_number_configured
+  query       = query.securitycenter_contact_number_configured
 
   tags = local.securitycenter_compliance_common_tags
 }
 
 control "securitycenter_uses_standard_pricing_tier" {
-  title = "Security Center should use the standard pricing tier"
+  title       = "Security Center should use the standard pricing tier"
   description = "The standard pricing tier provides advanced security capabilities, including threat detection for Azure and hybrid workloads, just-in-time (JIT) virtual machine (VM) access, and access and application controls."
-  query = query.securitycenter_uses_standard_pricing_tier
+  query       = query.securitycenter_uses_standard_pricing_tier
 
   tags = local.securitycenter_compliance_common_tags
 }
