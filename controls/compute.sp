@@ -184,7 +184,7 @@ control "compute_vm_scale_set_automatic_os_upgrade_enabled" {
 }
 
 control "compute_vm_automatic_updates_enabled_windows" {
-  title       = "Windows Virtual machines and scale sets should have automatic updates enabled."
+  title       = "Windows Virtual machines and scale sets should have automatic updates enabled"
   description = "This control checks whether windows virtual machine and scale sets have automatic updates enabled."
   query       = query.compute_vm_automatic_updates_enabled_windows
 
@@ -192,8 +192,8 @@ control "compute_vm_automatic_updates_enabled_windows" {
 }
 
 control "compute_vm_and_scale_set_agent_installed" {
-  title       = "Virtual machines and scale sets should have agent installed."
-  description = "This control checks whether windows virtual machine and scale sets have automatic updates enabled."
+  title       = "Virtual machines and scale sets should have agent installed"
+  description = "This control checks whether windows virtual machine and scale sets have agent installed."
   query       = query.compute_vm_and_scale_set_agent_installed
 
   tags = local.compute_compliance_common_tags

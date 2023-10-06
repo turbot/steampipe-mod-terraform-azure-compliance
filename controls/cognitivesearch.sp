@@ -63,7 +63,7 @@ control "search_service_replica_count_3" {
 
 control "search_service_public_allowed_ip_restrict_public_access" {
   title       = "Cognitive Search services allowed IPs should restrict public access"
-  description = "This control checks if Cognitive Search service allowed IPs restrict public access ."
+  description = "This control checks if Cognitive Search service allowed IPs restrict public access."
   query       = query.search_service_public_allowed_ip_restrict_public_access
 
   tags = local.cognitivesearch_compliance_common_tags

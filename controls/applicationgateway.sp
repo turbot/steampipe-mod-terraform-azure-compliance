@@ -12,7 +12,7 @@ benchmark "applicationgateway" {
     control.application_gateway_restrict_message_lookup_log4j2,
     control.application_gateway_use_secure_ssl_cipher,
     control.application_gateway_uses_https_listener,
-    control.application_gateway_waf_enabled,
+    control.application_gateway_waf_enabled
   ]
 
   tags = merge(local.application_gateway_compliance_common_tags, {
@@ -48,7 +48,7 @@ control "application_gateway_use_secure_ssl_cipher" {
 }
 
 control "application_gateway_restrict_message_lookup_log4j2" {
-  title       = "Application Gateway should restrict message lookup in Log4j2 "
+  title       = "Application Gateway should restrict message lookup in Log4j2"
   description = "This control checks that Application Gateway restrict message lookup in Log4j2 due to the CVE-2021-44228 vulnerability, also known as log4jshell."
   query       = query.application_gateway_restrict_message_lookup_log4j2
 
