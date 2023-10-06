@@ -435,3 +435,45 @@ query "compute_vm_scale_set_automatic_os_upgrade_enabled" {
       type in ('azurerm_linux_virtual_machine_scale_set', 'azurerm_windows_virtual_machine_scale_set');
   EOQ
 }
+
+query "compute_vm_automatic_updates_enabled_windows" {
+  sql = <<-EOQ
+    select
+      address as resource,
+      case
+        when not (attributes_std ->> 'enable_automatic_updates')::boolean then 'alarm'
+        else 'ok'
+      end status,
+      split_part(address, '.', 2) || case
+        when not (attributes_std ->> 'enable_automatic_updates')::boolean then ' automatic updates disabled'
+        else ' automatic updates enabled'
+      end || '.' reason
+      ${local.tag_dimensions_sql}
+      ${local.common_dimensions_sql}
+    from
+      terraform_resource
+    where
+      type in ('azurerm_windows_virtual_machine', 'azurerm_windows_virtual_machine_scale_set');
+  EOQ
+}
+
+query "compute_vm_and_scale_set_agent_installed" {
+  sql = <<-EOQ
+    select
+      address as resource,
+      case
+        when (attributes_std -> 'provision_vm_agent') = 'false' then 'alarm'
+        else 'ok'
+      end status,
+      split_part(address, '.', 2) || case
+        when (attributes_std -> 'provision_vm_agent') = 'false'then ' agent not installed'
+        else ' agent installed'
+      end || '.' reason
+      ${local.tag_dimensions_sql}
+      ${local.common_dimensions_sql}
+    from
+      terraform_resource
+    where
+      type in ('azurerm_linux_virtual_machine_scale_set', 'azurerm_windows_virtual_machine_scale_set', 'azurerm_windows_virtual_machine', 'azurerm_linux_virtual_machine');
+  EOQ
+}

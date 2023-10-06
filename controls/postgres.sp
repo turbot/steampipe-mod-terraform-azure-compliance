@@ -160,3 +160,11 @@ control "postgres_db_server_threat_detection_policy_enabled" {
 
   tags = local.postgres_compliance_common_tags
 }
+
+control "postgres_db_server_latest_tls_version" {
+  title       = "PostgreSQL Servers should use at least TLS 1.2 version"
+  description = "This control checks that the PostgreSQL server uses at least TLS 1.2 version. This control is non-compliant if PostgreSQL server uses older TLS version."
+  query       = query.postgres_db_server_latest_tls_version
+
+  tags = local.postgres_compliance_common_tags
+}

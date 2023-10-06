@@ -512,3 +512,47 @@ query "network_security_group_http_access_restricted" {
       type = 'azurerm_network_security_group';
   EOQ
 }
+
+query "network_dns_server_2" {
+  sql = <<-EOQ
+    select
+      address as resource,
+      case
+        when attributes_std -> 'dns_servers' is null then 'alarm'
+        when jsonb_array_length(attributes_std -> 'dns_servers') > 1 then 'ok'
+        else 'alarm'
+      end as status,
+      split_part(address, '.', 2) || case
+        when attributes_std -> 'dns_servers' is null then ' DNS servers not defined'
+        else ' has ' || (jsonb_array_length(attributes_std -> 'dns_servers')) || ' DNS server(s) configured'
+      end || '.' reason
+      ${local.tag_dimensions_sql}
+      ${local.common_dimensions_sql}
+    from
+      terraform_resource
+    where
+      type = 'azurerm_virtual_network';
+  EOQ
+}
+
+query "network_virtual_network_dns_server_2" {
+  sql = <<-EOQ
+    select
+      address as resource,
+      case
+        when attributes_std -> 'dns_servers' is null then 'alarm'
+        when jsonb_array_length(attributes_std -> 'dns_servers') > 1 then 'ok'
+        else 'alarm'
+      end as status,
+      split_part(address, '.', 2) || case
+        when attributes_std -> 'dns_servers' is null then ' '
+        when jsonb_array_length(attributes_std -> 'dns_servers') > 1 then ' allows UDP services from internet'
+        else ' restricts UDP services from internet'
+      end || '.' reason
+      ${local.common_dimensions_sql}
+    from
+      terraform_resource
+    where
+      type =  'azurerm_virtual_network_dns_servers';
+  EOQ
+}
