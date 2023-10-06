@@ -9,6 +9,7 @@ benchmark "applicationgateway" {
   description = "This benchmark provides a set of controls that detect Terraform Azure Application Gateway resources deviating from security best practices."
 
   children = [
+    control.application_gateway_use_secure_ssl_cipher,
     control.application_gateway_uses_https_listener,
     control.application_gateway_waf_enabled
   ]
@@ -35,4 +36,12 @@ control "application_gateway_waf_enabled" {
   tags = merge(local.network_compliance_common_tags, {
     hipaa_hitrust_v92 = "true"
   })
+}
+
+control "application_gateway_use_secure_ssl_cipher" {
+  title       = "Application Gateway should use secure SSL cipher"
+  description = "This control checks whether Application Gateway uses secure SSL cipher."
+  query       = query.application_gateway_use_secure_ssl_cipher
+
+  tags = local.application_gateway_compliance_common_tags
 }
