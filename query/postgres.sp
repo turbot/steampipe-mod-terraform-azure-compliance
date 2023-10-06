@@ -357,3 +357,24 @@ query "postgres_db_server_threat_detection_policy_enabled" {
       type = 'azurerm_postgresql_server';
   EOQ
 }
+
+query "postgres_db_server_latest_tls_version" {
+  sql = <<-EOQ
+    select
+      address as resource,
+      case
+        when (attributes_std ->> 'ssl_minimal_tls_version_enforced') is null or (attributes_std ->> 'ssl_minimal_tls_version_enforced') = 'TLS1_2' then 'ok'
+        else 'alarm'
+      end status,
+      split_part(address, '.', 2) || case
+        when  (attributes_std ->> 'ssl_minimal_tls_version_enforced') is null or (attributes_std ->> 'ssl_minimal_tls_version_enforced') = 'TLS1_2' then ' using the latest version of TLS encryption'
+        else ' not using the latest version of TLS encryption'
+      end || '.' reason
+      ${local.tag_dimensions_sql}
+      ${local.common_dimensions_sql}
+    from
+      terraform_resource
+    where
+      type = 'azurerm_postgresql_server';
+  EOQ
+}
