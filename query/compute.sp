@@ -466,7 +466,7 @@ query "compute_vm_and_scale_set_agent_installed" {
         else 'ok'
       end status,
       split_part(address, '.', 2) || case
-        when (attributes_std -> 'provision_vm_agent') = 'false'then ' agent not installed'
+        when (attributes_std -> 'provision_vm_agent') = 'false' then ' agent not installed'
         else ' agent installed'
       end || '.' reason
       ${local.tag_dimensions_sql}

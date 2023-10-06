@@ -123,16 +123,16 @@ control "network_security_group_http_access_restricted" {
 }
 
 control "network_dns_server_2" {
-  title       = "Network should have atleast two connected DNS Endpoints"
-  description = "This check ensures that Network have atleast two connected DNS Endpoints."
+  title       = "Network should have at least two connected DNS Endpoints"
+  description = "This check ensures that Network has at least two connected DNS Endpoints."
   query       = query.network_dns_server_2
 
   tags = local.network_compliance_common_tags
 }
 
 control "network_virtual_network_dns_server_2" {
-  title       = "Network DNS server should have atleast two connected DNS Endpoint"
-  description = "This check ensures that Network DNS server have atleast two connected DNS Endpoints."
+  title       = "Network DNS server should have at least  two connected DNS Endpoint"
+  description = "This check ensures that Network DNS server has at least two connected DNS Endpoints."
   query       = query.network_virtual_network_dns_server_2
 
   tags = local.network_compliance_common_tags

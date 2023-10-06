@@ -29,7 +29,7 @@ control "frontdoor_waf_enabled" {
 }
 
 control "frontdoor_firewall_policy_restrict_message_lookup_log4j2" {
-  title       = "Front Door firewall policy should restrict message lookup in Log4j2"
+  title       = "Front Door firewall policy should restricts message lookup in Log4j2"
   description = "This control checks that Front Door firewall policy restrict message lookup in Log4j2 due to the CVE-2021-44228 vulnerability, also known as log4jshell."
   query       = query.frontdoor_firewall_policy_restrict_message_lookup_log4j2
 

@@ -91,7 +91,7 @@ query "search_service_public_allowed_ip_restrict_public_access" {
         else 'ok'
       end status,
       split_part(address, '.', 2) || case
-        when (attributes_std -> 'allowed_ips') @> '["0.0.0.0/0"]' then ' allowed IPS does not restrict  public access'
+        when (attributes_std -> 'allowed_ips') @> '["0.0.0.0/0"]' then ' allowed IPS does not restrict public access'
         else ' allowed IPS restrict public access'
       end || '.' reason
       ${local.tag_dimensions_sql}

@@ -552,6 +552,6 @@ query "network_virtual_network_dns_server_2" {
     from
       terraform_resource
     where
-      type =  'azurerm_virtual_network_dns_servers';
+      type = 'azurerm_virtual_network_dns_servers';
   EOQ
 }
