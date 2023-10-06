@@ -12,6 +12,7 @@ benchmark "postgres" {
     control.postgres_db_flexible_server_geo_redundant_backup_enabled,
     control.postgres_db_server_connection_throttling_on,
     control.postgres_db_server_geo_redundant_backup_enabled,
+    control.postgres_db_server_latest_tls_version,
     control.postgres_db_server_log_checkpoints_on,
     control.postgres_db_server_log_connections_on,
     control.postgres_db_server_log_disconnections_on,
@@ -157,6 +158,14 @@ control "postgres_db_server_threat_detection_policy_enabled" {
   title       = "PostgreSQL Servers threat detection policy should be enabled"
   description = "Ensure that PostgreSQL server threat detection policy is enabled. This control is non-compliant if PostgreSQL server threat detection policy is disabled."
   query       = query.postgres_db_server_threat_detection_policy_enabled
+
+  tags = local.postgres_compliance_common_tags
+}
+
+control "postgres_db_server_latest_tls_version" {
+  title       = "PostgreSQL Servers should use at least TLS 1.2 version"
+  description = "This control checks that the PostgreSQL server uses at least TLS 1.2 version. This control is non-compliant if PostgreSQL server uses older TLS version."
+  query       = query.postgres_db_server_latest_tls_version
 
   tags = local.postgres_compliance_common_tags
 }

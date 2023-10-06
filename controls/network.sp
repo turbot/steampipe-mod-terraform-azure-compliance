@@ -9,6 +9,7 @@ benchmark "network" {
   description = "This benchmark provides a set of controls that detect Terraform Azure Virtual Network resources deviating from security best practices."
 
   children = [
+    control.network_dns_server_2,
     control.network_security_group_http_access_restricted,
     control.network_security_group_not_configured_gateway_subnets,
     control.network_security_group_rdp_access_restricted,
@@ -19,6 +20,7 @@ benchmark "network" {
     control.network_security_rule_rdp_access_restricted,
     control.network_security_rule_ssh_access_restricted,
     control.network_security_rule_udp_access_restricted,
+    control.network_virtual_network_dns_server_2,
     control.network_watcher_flow_log_retention_period_90_days
   ]
 
@@ -116,6 +118,22 @@ control "network_security_group_http_access_restricted" {
   title       = "Network Security Groups HTTP Services are restricted from the Internet"
   description = "Disable Internet exposed HTTP ports on network security groups."
   query       = query.network_security_group_http_access_restricted
+
+  tags = local.network_compliance_common_tags
+}
+
+control "network_dns_server_2" {
+  title       = "Network should have at least two connected DNS Endpoints"
+  description = "This check ensures that Network has at least two connected DNS Endpoints."
+  query       = query.network_dns_server_2
+
+  tags = local.network_compliance_common_tags
+}
+
+control "network_virtual_network_dns_server_2" {
+  title       = "Network DNS server should have at least  two connected DNS Endpoint"
+  description = "This check ensures that Network DNS server has at least two connected DNS Endpoints."
+  query       = query.network_virtual_network_dns_server_2
 
   tags = local.network_compliance_common_tags
 }
