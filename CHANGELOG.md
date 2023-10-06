@@ -1,3 +1,16 @@
+## v0.9 [2023-10-06]
+
+_What's new?_
+
+- Added 11 new controls across the benchmarks for the following services: ([#39](https://github.com/turbot/steampipe-mod-terraform-azure-compliance/pull/39))
+  - `Application Gateway`
+  - `Automation`
+  - `Cognitive Search`
+  - `Compute`
+  - `Frontdoor`
+  - `Network`
+  - `PostgreSQL`
+
 ## v0.8 [2023-10-03]
 
 _Enhancements_
