@@ -12,6 +12,7 @@ benchmark "postgres" {
     control.postgres_db_flexible_server_geo_redundant_backup_enabled,
     control.postgres_db_server_connection_throttling_on,
     control.postgres_db_server_geo_redundant_backup_enabled,
+    control.postgres_db_server_latest_tls_version,
     control.postgres_db_server_log_checkpoints_on,
     control.postgres_db_server_log_connections_on,
     control.postgres_db_server_log_disconnections_on,
