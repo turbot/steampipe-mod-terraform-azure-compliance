@@ -68,7 +68,7 @@ mod "terraform_azure_compliance" {
 
   require {
     plugin "terraform" {
-      version = "0.10.0"
+      min_version = "0.10.0"
     }
   }
 }
