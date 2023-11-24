@@ -12,6 +12,7 @@ benchmark "appservice" {
     control.appservice_authentication_enabled,
     control.appservice_azure_defender_enabled,
     control.appservice_environment_internal_encryption_enabled,
+    control.appservice_environment_zone_redundant_enabled,
     control.appservice_ftp_deployment_disabled,
     control.appservice_function_app_builtin_logging_enabled,
     control.appservice_function_app_client_certificates_on,
@@ -22,8 +23,10 @@ benchmark "appservice" {
     control.appservice_function_app_latest_python_version,
     control.appservice_function_app_latest_tls_version,
     control.appservice_function_app_only_https_accessible,
+    control.appservice_function_app_public_access_disabled,
     control.appservice_function_app_uses_managed_identity,
     control.appservice_plan_minimum_sku,
+    control.appservice_plan_zone_redundant,
     control.appservice_web_app_always_on,
     control.appservice_web_app_client_certificates_on,
     control.appservice_web_app_cors_no_star,
@@ -40,6 +43,7 @@ benchmark "appservice" {
     control.appservice_web_app_latest_php_version,
     control.appservice_web_app_latest_python_version,
     control.appservice_web_app_latest_tls_version,
+    control.appservice_web_app_public_access_disabled,
     control.appservice_web_app_register_with_active_directory_enabled,
     control.appservice_web_app_remote_debugging_disabled,
     control.appservice_web_app_slot_latest_tls_version,
@@ -49,11 +53,7 @@ benchmark "appservice" {
     control.appservice_web_app_use_virtual_service_endpoint,
     control.appservice_web_app_uses_azure_file,
     control.appservice_web_app_uses_managed_identity,
-    control.appservice_web_app_worker_more_than_one,
-    control.appservice_plan_zone_redundant,
-    control.appservice_web_app_public_access_disabled,
-    control.appservice_environment_zone_redundant_enabled,
-    control.appservice_function_app_public_access_disabled,
+    control.appservice_web_app_worker_more_than_one
   ]
 
   tags = merge(local.appservice_compliance_common_tags, {
