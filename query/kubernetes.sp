@@ -344,3 +344,45 @@ query "kubernetes_cluster_node_pool_type_scale_set" {
       type = 'azurerm_kubernetes_cluster';
   EOQ
 }
+
+query "kubernetes_cluster_os_disk_ephemeral" {
+  sql = <<-EOQ
+    select
+      address as resource,
+      case
+        when (attributes_std -> 'default_node_pool' ->> 'os_disk_type') = 'Ephemeral' then 'ok'
+        else 'alarm'
+      end status,
+      split_part(address, '.', 2) || case
+        when (attributes_std -> 'default_node_pool' ->> 'os_disk_type') = 'Ephemeral' then ' using ephemeral OS disks'
+        else  ' not using ephemeral OS disks'
+      end || '.' reason
+      ${local.tag_dimensions_sql}
+      ${local.common_dimensions_sql}
+    from
+      terraform_resource
+    where
+      type = 'azurerm_kubernetes_cluster';
+  EOQ
+}
+
+query "kubernetes_cluster_critical_pods_on_system_nodes" {
+  sql = <<-EOQ
+    select
+      address as resource,
+      case
+        when (attributes_std -> 'default_node_pool' ->> 'only_critical_addons_enabled')::bool then 'ok'
+        else 'alarm'
+      end status,
+      split_part(address, '.', 2) || case
+        when (attributes_std -> 'default_node_pool' ->> 'only_critical_addons_enabled')::bool then ' critical addons enabled'
+        else  ' critical addons disabled'
+      end || '.' reason
+      ${local.tag_dimensions_sql}
+      ${local.common_dimensions_sql}
+    from
+      terraform_resource
+    where
+      type = 'azurerm_kubernetes_cluster';
+  EOQ
+}
