@@ -49,7 +49,11 @@ benchmark "appservice" {
     control.appservice_web_app_use_virtual_service_endpoint,
     control.appservice_web_app_uses_azure_file,
     control.appservice_web_app_uses_managed_identity,
-    control.appservice_web_app_worker_more_than_one
+    control.appservice_web_app_worker_more_than_one,
+    control.appservice_plan_zone_redundant,
+    control.appservice_web_app_public_access_disabled,
+    control.appservice_environment_zone_redundant_enabled,
+    control.appservice_function_app_public_access_disabled,
   ]
 
   tags = merge(local.appservice_compliance_common_tags, {
@@ -474,6 +478,38 @@ control "appservice_function_app_builtin_logging_enabled" {
   title       = "Function Apps builtin logging should be enabled"
   description = "Ensure that builtin logging is enabled for Function Apps."
   query       = query.appservice_function_app_builtin_logging_enabled
+
+  tags = local.appservice_compliance_common_tags
+}
+
+control "appservice_plan_zone_redundant" {
+  title       = "App Service plans should be zone redundant"
+  description = "This control ensures that App Service plans is zone redundant."
+  query       = query.appservice_plan_zone_redundant
+
+  tags = local.appservice_compliance_common_tags
+}
+
+control "appservice_web_app_public_access_disabled" {
+  title       = "Web apps should restrict public network access"
+  description = "This control checks whether Web apps is not publicly accessible."
+  query       = query.appservice_web_app_public_access_disabled
+
+  tags = local.appservice_compliance_common_tags
+}
+
+control "appservice_environment_zone_redundant_enabled" {
+  title       = "App Service environment should be zone redundant"
+  description = "This control ensures that App Service environment is zone redundant."
+  query       = query.appservice_environment_zone_redundant_enabled
+
+  tags = local.appservice_compliance_common_tags
+}
+
+control "appservice_function_app_public_access_disabled" {
+  title       = "Function apps should restrict public network access"
+  description = "This control checks whether Function apps is not publicly accessible."
+  query       = query.appservice_function_app_public_access_disabled
 
   tags = local.appservice_compliance_common_tags
 }
