@@ -68,8 +68,8 @@ query "eventhub_namespace_uses_latest_tls_version" {
       end status,
       split_part(address, '.', 2) || case
         when (attributes_std ->> 'minimum_tls_version') is null then ' TLS version not defined by default uses 1.2'
-        when (attributes_std ->> 'minimum_tls_version')::text = '1.2' then ' TLS version 1.2'
-        else ' TLS version not 1.2'
+        when (attributes_std ->> 'minimum_tls_version')::text = '1.2' then ' use TLS version 1.2'
+        else ' does not use TLS version 1.2'
       end || '.' reason
       ${local.tag_dimensions_sql}
       ${local.common_dimensions_sql}
@@ -80,7 +80,7 @@ query "eventhub_namespace_uses_latest_tls_version" {
   EOQ
 }
 
-query "event_hub_namespace_zone_redundant" {
+query "eventhub_namespace_zone_redundant" {
   sql = <<-EOQ
     select
       address as resource,
@@ -89,8 +89,8 @@ query "event_hub_namespace_zone_redundant" {
         else 'alarm'
       end status,
       split_part(address, '.', 2) || case
-        when (attributes_std ->> 'zone_redundant')::bool then ' zone redundant enabled'
-        else ' zone redundant disabled'
+        when (attributes_std ->> 'zone_redundant')::bool then ' zone redundant'
+        else ' not zone redundant'
       end || '.' reason
       ${local.tag_dimensions_sql}
       ${local.common_dimensions_sql}

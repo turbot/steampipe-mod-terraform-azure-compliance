@@ -9,7 +9,7 @@ benchmark "eventhub" {
   description = "This benchmark provides a set of controls that detect Terraform Azure Event Hub resources deviating from security best practices."
 
   children = [
-    control.event_hub_namespace_zone_redundant,
+    control.eventhub_namespace_zone_redundant,
     control.eventhub_namespace_cmk_encryption_enabled,
     control.eventhub_namespace_use_virtual_service_endpoint,
     control.eventhub_namespace_uses_latest_tls_version
@@ -46,10 +46,10 @@ control "eventhub_namespace_uses_latest_tls_version" {
   tags = local.eventhub_compliance_common_tags
 }
 
-control "event_hub_namespace_zone_redundant" {
+control "eventhub_namespace_zone_redundant" {
   title       = "Event Hub namespaces should be zone redundant"
   description = "This control ensures that Event Hub namespace is zone redundant."
-  query       = query.event_hub_namespace_zone_redundant
+  query       = query.eventhub_namespace_zone_redundant
 
   tags = local.eventhub_compliance_common_tags
 }

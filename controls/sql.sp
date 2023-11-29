@@ -25,7 +25,7 @@ benchmark "sql" {
     control.sql_server_azure_defender_enabled,
     control.sql_server_email_security_alert_enabled,
     control.sql_server_uses_latest_tls_version,
-    control.sql_server_vm_azure_defender_enabled,
+    control.sql_server_vm_azure_defender_enabled
   ]
 
   tags = merge(local.sql_compliance_common_tags, {
@@ -192,7 +192,7 @@ control "sql_database_zone_redundant_enabled" {
 }
 
 control "sql_database_ledger_enabled" {
-  title       = "SQL databases should ledger should be enabled"
+  title       = "SQL databases ledger should be enabled"
   description = "This control ensures that ledger is enabled for SQL database."
   query       = query.sql_database_ledger_enabled
 

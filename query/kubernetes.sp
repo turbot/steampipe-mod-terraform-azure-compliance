@@ -354,8 +354,8 @@ query "kubernetes_cluster_os_disk_ephemeral" {
         else 'alarm'
       end status,
       split_part(address, '.', 2) || case
-        when (attributes_std -> 'default_node_pool' ->> 'os_disk_type') = 'Ephemeral' then ' using ephemeral OS disks'
-        else  ' not using ephemeral OS disks'
+        when (attributes_std -> 'default_node_pool' ->> 'os_disk_type') = 'Ephemeral' then ' use ephemeral OS disks'
+        else  ' does not use ephemeral OS disks'
       end || '.' reason
       ${local.tag_dimensions_sql}
       ${local.common_dimensions_sql}

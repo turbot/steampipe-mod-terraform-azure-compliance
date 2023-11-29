@@ -484,7 +484,7 @@ control "appservice_function_app_builtin_logging_enabled" {
 
 control "appservice_plan_zone_redundant" {
   title       = "App Service plans should be zone redundant"
-  description = "This control ensures that App Service plans is zone redundant."
+  description = "This control ensures that App Service plans are zone redundant."
   query       = query.appservice_plan_zone_redundant
 
   tags = local.appservice_compliance_common_tags
@@ -492,7 +492,7 @@ control "appservice_plan_zone_redundant" {
 
 control "appservice_web_app_public_access_disabled" {
   title       = "Web apps should restrict public network access"
-  description = "This control checks whether Web apps is not publicly accessible."
+  description = "This control checks whether Web apps are not publicly accessible."
   query       = query.appservice_web_app_public_access_disabled
 
   tags = local.appservice_compliance_common_tags
@@ -508,7 +508,7 @@ control "appservice_environment_zone_redundant_enabled" {
 
 control "appservice_function_app_public_access_disabled" {
   title       = "Function apps should restrict public network access"
-  description = "This control checks whether Function apps is not publicly accessible."
+  description = "This control checks whether Function apps are not publicly accessible."
   query       = query.appservice_function_app_public_access_disabled
 
   tags = local.appservice_compliance_common_tags
