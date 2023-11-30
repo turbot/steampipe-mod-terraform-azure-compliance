@@ -951,3 +951,91 @@ query "appservice_function_app_builtin_logging_enabled" {
       type in ('azurerm_function_app', 'azurerm_function_app_slot');
   EOQ
 }
+
+query "appservice_plan_zone_redundant" {
+  sql = <<-EOQ
+    select
+      address as resource,
+      case
+        when (attributes_std -> 'zone_balancing_enabled') is null then 'alarm'
+        when (attributes_std ->> 'zone_balancing_enabled')::bool then 'ok'
+        else 'alarm'
+      end status,
+      split_part(address, '.', 2) || case
+        when (attributes_std -> 'zone_balancing_enabled') is null then ' ''zone_balancing_enabled'' is not set'
+        when (attributes_std ->> 'zone_balancing_enabled')::bool then ' zone redundant'
+        else ' not zone redundant'
+      end || '.' reason
+      ${local.tag_dimensions_sql}
+      ${local.common_dimensions_sql}
+    from
+      terraform_resource
+    where
+      type = 'azurerm_service_plan';
+  EOQ
+}
+
+query "appservice_web_app_public_access_disabled" {
+  sql = <<-EOQ
+    select
+      address as resource,
+      case
+        when (attributes_std -> 'public_network_access_enabled') is null or (attributes_std ->> 'public_network_access_enabled')::bool then 'alarm'
+        else 'ok'
+      end status,
+      split_part(address, '.', 2) || case
+        when (attributes_std -> 'public_network_access_enabled') is null or (attributes_std ->> 'public_network_access_enabled')::bool then ' publicly accessible'
+        else ' not publicly accessible'
+      end || '.' reason
+      ${local.tag_dimensions_sql}
+      ${local.common_dimensions_sql}
+    from
+      terraform_resource
+    where
+      type in ('azurerm_linux_web_app', 'azurerm_windows_web_app');
+  EOQ
+}
+
+query "appservice_environment_zone_redundant_enabled" {
+  sql = <<-EOQ
+    select
+      address as resource,
+      case
+        when (attributes_std -> 'zone_redundant') is null then 'alarm'
+        when (attributes_std ->> 'zone_redundant')::bool then 'ok'
+        else 'alarm'
+      end status,
+      split_part(address, '.', 2) || case
+        when (attributes_std -> 'zone_redundant') is null then ' ''zone_redundant'' is not set'
+        when (attributes_std ->> 'zone_redundant')::bool then ' zone redundant'
+        else ' not zone redundant'
+      end || '.' reason
+      ${local.tag_dimensions_sql}
+      ${local.common_dimensions_sql}
+    from
+      terraform_resource
+    where
+      type = 'azurerm_app_service_environment_v3';
+  EOQ
+}
+
+query "appservice_function_app_public_access_disabled" {
+  sql = <<-EOQ
+    select
+      address as resource,
+      case
+        when (attributes_std -> 'public_network_access_enabled') is null or (attributes_std ->> 'public_network_access_enabled')::bool then 'alarm'
+        else 'ok'
+      end status,
+      split_part(address, '.', 2) || case
+        when (attributes_std -> 'public_network_access_enabled') is null or (attributes_std ->> 'public_network_access_enabled')::bool then ' publicly accessible'
+        else ' not publicly accessible'
+      end || '.' reason
+      ${local.tag_dimensions_sql}
+      ${local.common_dimensions_sql}
+    from
+      terraform_resource
+    where
+      type in ('azurerm_linux_function_app', 'azurerm_linux_function_app_slot', 'azurerm_windows_function_app', 'azurerm_windows_function_app_slot');
+  EOQ
+}

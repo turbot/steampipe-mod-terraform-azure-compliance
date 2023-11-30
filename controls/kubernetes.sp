@@ -12,6 +12,7 @@ benchmark "kubernetes" {
     control.kubernetes_azure_defender_enabled,
     control.kubernetes_cluster_add_on_azure_policy_enabled,
     control.kubernetes_cluster_authorized_ip_range_defined,
+    control.kubernetes_cluster_critical_pods_on_system_nodes,
     control.kubernetes_cluster_key_vault_secret_rotation_enabled,
     control.kubernetes_cluster_local_admin_disabled,
     control.kubernetes_cluster_logging_enabled,
@@ -20,6 +21,7 @@ benchmark "kubernetes" {
     control.kubernetes_cluster_node_pool_type_scale_set,
     control.kubernetes_cluster_node_restrict_public_access,
     control.kubernetes_cluster_os_and_data_disks_encrypted_with_cmk,
+    control.kubernetes_cluster_os_disk_ephemeral,
     control.kubernetes_cluster_restrict_public_access,
     control.kubernetes_cluster_sku_standard,
     control.kubernetes_cluster_temp_disks_and_agent_node_pool_cache_encrypted_at_host,
@@ -185,6 +187,22 @@ control "kubernetes_cluster_node_pool_type_scale_set" {
   title       = "Kubernetes clusters should use scale sets type nodes"
   description = "Ensure Kubernetes clusters uses scale sets type nodes. This control is non-compliant if Kubernetes clusters do not use scale sets type nodes."
   query       = query.kubernetes_cluster_node_pool_type_scale_set
+
+  tags = local.kubernetes_compliance_common_tags
+}
+
+control "kubernetes_cluster_os_disk_ephemeral" {
+  title       = "Kubernetes clusters should use type ephemeral OS disk"
+  description = "Ensure Kubernetes clusters use ephemeral type OS disk. This control is non-compliant if Kubernetes clusters do not use ephemeral type OS disk."
+  query       = query.kubernetes_cluster_os_disk_ephemeral
+
+  tags = local.kubernetes_compliance_common_tags
+}
+
+control "kubernetes_cluster_critical_pods_on_system_nodes" {
+  title       = "Kubernetes clusters only critical system pods should run on system nodes"
+  description = "Ensure that only critical system pods runs on system node in Kubernetes clusters."
+  query       = query.kubernetes_cluster_critical_pods_on_system_nodes
 
   tags = local.kubernetes_compliance_common_tags
 }

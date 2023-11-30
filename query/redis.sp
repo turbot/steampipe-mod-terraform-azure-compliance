@@ -84,3 +84,24 @@ query "redis_cache_restrict_public_access" {
       type = 'azurerm_redis_cache';
   EOQ
 }
+
+query "redis_cache_standard_replication_enabled" {
+  sql = <<-EOQ
+    select
+      address as resource,
+      case
+        when (attributes_std ->> 'sku_name') in ('Standard' , 'Premium') then 'ok'
+        else 'alarm'
+      end status,
+      split_part(address, '.', 2) || case
+        when (attributes_std ->> 'sku_name') in ('Standard' , 'Premium') then ' standard replication enabled'
+        else ' standard replication disabled'
+      end || '.' reason
+      ${local.tag_dimensions_sql}
+      ${local.common_dimensions_sql}
+    from
+      terraform_resource
+    where
+      type = 'azurerm_redis_cache';
+  EOQ
+}
