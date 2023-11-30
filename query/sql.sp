@@ -361,3 +361,47 @@ query "sql_database_log_monitoring_enabled" {
       type = 'azurerm_mssql_database_extended_auditing_policy';
   EOQ
 }
+
+query "sql_database_zone_redundant_enabled" {
+  sql = <<-EOQ
+    select
+      address as resource,
+      case
+        when (attributes_std -> 'zone_redundant') is null then 'alarm'
+        when (attributes_std ->> 'zone_redundant')::bool then 'ok'
+        else 'alarm'
+      end status,
+      split_part(address, '.', 2) || case
+        when (attributes_std -> 'zone_redundant') is null then ' ''zone_redundant'' is not set'
+        when (attributes_std ->> 'zone_redundant')::bool then ' zone redundant'
+        else ' not zone redundant'
+      end || '.' reason
+      ${local.tag_dimensions_sql}
+      ${local.common_dimensions_sql}
+    from
+      terraform_resource
+    where
+      type = 'azurerm_mssql_database';
+  EOQ
+}
+
+query "sql_database_ledger_enabled" {
+  sql = <<-EOQ
+    select
+      address as resource,
+      case
+        when (attributes_std ->> 'ledger_enabled')::bool then 'ok'
+        else 'alarm'
+      end status,
+      split_part(address, '.', 2) || case
+        when (attributes_std ->> 'ledger_enabled')::bool then ' ledger enabled'
+        else ' ledger disabled'
+      end || '.' reason
+      ${local.tag_dimensions_sql}
+      ${local.common_dimensions_sql}
+    from
+      terraform_resource
+    where
+      type = 'azurerm_mssql_database';
+  EOQ
+}

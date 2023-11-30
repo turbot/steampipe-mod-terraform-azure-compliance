@@ -12,6 +12,7 @@ benchmark "appservice" {
     control.appservice_authentication_enabled,
     control.appservice_azure_defender_enabled,
     control.appservice_environment_internal_encryption_enabled,
+    control.appservice_environment_zone_redundant_enabled,
     control.appservice_ftp_deployment_disabled,
     control.appservice_function_app_builtin_logging_enabled,
     control.appservice_function_app_client_certificates_on,
@@ -22,8 +23,10 @@ benchmark "appservice" {
     control.appservice_function_app_latest_python_version,
     control.appservice_function_app_latest_tls_version,
     control.appservice_function_app_only_https_accessible,
+    control.appservice_function_app_public_access_disabled,
     control.appservice_function_app_uses_managed_identity,
     control.appservice_plan_minimum_sku,
+    control.appservice_plan_zone_redundant,
     control.appservice_web_app_always_on,
     control.appservice_web_app_client_certificates_on,
     control.appservice_web_app_cors_no_star,
@@ -40,6 +43,7 @@ benchmark "appservice" {
     control.appservice_web_app_latest_php_version,
     control.appservice_web_app_latest_python_version,
     control.appservice_web_app_latest_tls_version,
+    control.appservice_web_app_public_access_disabled,
     control.appservice_web_app_register_with_active_directory_enabled,
     control.appservice_web_app_remote_debugging_disabled,
     control.appservice_web_app_slot_latest_tls_version,
@@ -474,6 +478,38 @@ control "appservice_function_app_builtin_logging_enabled" {
   title       = "Function Apps builtin logging should be enabled"
   description = "Ensure that builtin logging is enabled for Function Apps."
   query       = query.appservice_function_app_builtin_logging_enabled
+
+  tags = local.appservice_compliance_common_tags
+}
+
+control "appservice_plan_zone_redundant" {
+  title       = "App Service plans should be zone redundant"
+  description = "This control ensures that App Service plans are zone redundant."
+  query       = query.appservice_plan_zone_redundant
+
+  tags = local.appservice_compliance_common_tags
+}
+
+control "appservice_web_app_public_access_disabled" {
+  title       = "Web apps should restrict public network access"
+  description = "This control checks whether Web apps are not publicly accessible."
+  query       = query.appservice_web_app_public_access_disabled
+
+  tags = local.appservice_compliance_common_tags
+}
+
+control "appservice_environment_zone_redundant_enabled" {
+  title       = "App Service environment should be zone redundant"
+  description = "This control ensures that App Service environment is zone redundant."
+  query       = query.appservice_environment_zone_redundant_enabled
+
+  tags = local.appservice_compliance_common_tags
+}
+
+control "appservice_function_app_public_access_disabled" {
+  title       = "Function apps should restrict public network access"
+  description = "This control checks whether Function apps are not publicly accessible."
+  query       = query.appservice_function_app_public_access_disabled
 
   tags = local.appservice_compliance_common_tags
 }

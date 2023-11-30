@@ -10,9 +10,11 @@ benchmark "sql" {
 
   children = [
     control.sql_database_allow_internet_access,
+    control.sql_database_ledger_enabled,
     control.sql_database_log_monitoring_enabled,
     control.sql_database_long_term_geo_redundant_backup_enabled,
     control.sql_database_server_azure_defender_enabled,
+    control.sql_database_zone_redundant_enabled,
     control.sql_db_active_directory_admin_configured,
     control.sql_db_public_network_access_disabled,
     control.sql_server_admins_email_security_alert_enabled,
@@ -177,6 +179,22 @@ control "sql_database_log_monitoring_enabled" {
   title       = "SQL databases should have log monitoring enabled"
   description = "Enable audit log monitoring on SQL database. It is recommended to enable Log Monitoring on SQL database."
   query       = query.sql_database_log_monitoring_enabled
+
+  tags = local.sql_compliance_common_tags
+}
+
+control "sql_database_zone_redundant_enabled" {
+  title       = "SQL databases should be zone redundant"
+  description = "This control ensures that SQL database is zone redundant."
+  query       = query.sql_database_zone_redundant_enabled
+
+  tags = local.sql_compliance_common_tags
+}
+
+control "sql_database_ledger_enabled" {
+  title       = "SQL databases ledger should be enabled"
+  description = "This control ensures that ledger is enabled for SQL database."
+  query       = query.sql_database_ledger_enabled
 
   tags = local.sql_compliance_common_tags
 }

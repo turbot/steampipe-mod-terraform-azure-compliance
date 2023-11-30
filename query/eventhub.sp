@@ -57,3 +57,47 @@ query "eventhub_namespace_cmk_encryption_enabled" {
   EOQ
 }
 
+query "eventhub_namespace_uses_latest_tls_version" {
+  sql = <<-EOQ
+    select
+      address as resource,
+      case
+        when (attributes_std ->> 'minimum_tls_version') is null then 'ok'
+        when (attributes_std ->> 'minimum_tls_version')::text = '1.2' then 'ok'
+        else 'alarm'
+      end status,
+      split_part(address, '.', 2) || case
+        when (attributes_std ->> 'minimum_tls_version') is null then ' TLS version not defined by default uses 1.2'
+        when (attributes_std ->> 'minimum_tls_version')::text = '1.2' then ' use TLS version 1.2'
+        else ' does not use TLS version 1.2'
+      end || '.' reason
+      ${local.tag_dimensions_sql}
+      ${local.common_dimensions_sql}
+    from
+      terraform_resource
+    where
+      type = 'azurerm_eventhub_namespace';
+  EOQ
+}
+
+query "eventhub_namespace_zone_redundant" {
+  sql = <<-EOQ
+    select
+      address as resource,
+      case
+        when (attributes_std ->> 'zone_redundant')::bool then 'ok'
+        else 'alarm'
+      end status,
+      split_part(address, '.', 2) || case
+        when (attributes_std ->> 'zone_redundant')::bool then ' zone redundant'
+        else ' not zone redundant'
+      end || '.' reason
+      ${local.tag_dimensions_sql}
+      ${local.common_dimensions_sql}
+    from
+      terraform_resource
+    where
+      type = 'azurerm_eventhub_namespace';
+  EOQ
+}
+

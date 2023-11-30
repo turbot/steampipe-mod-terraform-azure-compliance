@@ -12,7 +12,8 @@ benchmark "redis" {
     control.azure_redis_cache_in_virtual_network,
     control.azure_redis_cache_ssl_enabled,
     control.redis_cache_min_tls_1_2,
-    control.redis_cache_restrict_public_access
+    control.redis_cache_restrict_public_access,
+    control.redis_cache_standard_replication_enabled
   ]
 
   tags = merge(local.redis_compliance_common_tags, {
@@ -59,3 +60,10 @@ control "redis_cache_restrict_public_access" {
   tags = local.redis_compliance_common_tags
 }
 
+control "redis_cache_standard_replication_enabled" {
+  title       = "Redis Caches standard replication should be enabled"
+  description = "This control ensures that standard replication is enabled for Redis Caches."
+  query       = query.redis_cache_standard_replication_enabled
+
+  tags = local.redis_compliance_common_tags
+}
