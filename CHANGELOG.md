@@ -1,3 +1,20 @@
+## v0.11 [2023-11-30]
+
+_What's new?_
+
+- Added the following controls across the benchmarks: ([#47](https://github.com/turbot/steampipe-mod-terraform-azure-compliance/pull/47))
+  - `appservice_environment_zone_redundant_enabled`
+  - `appservice_function_app_public_access_disabled`
+  - `appservice_plan_zone_redundant`
+  - `appservice_web_app_public_access_disabled`
+  - `eventhub_namespace_uses_latest_tls_version`
+  - `eventhub_namespace_zone_redundant`
+  - `kubernetes_cluster_critical_pods_on_system_nodes`
+  - `kubernetes_cluster_os_disk_ephemeral`
+  - `redis_cache_standard_replication_enabled`
+  - `sql_database_ledger_enabled`
+  - `sql_database_zone_redundant_enabled`
+
 ## v0.10 [2023-11-03]
 
 _Breaking changes_
