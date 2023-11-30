@@ -373,8 +373,8 @@ query "sql_database_zone_redundant_enabled" {
       end status,
       split_part(address, '.', 2) || case
         when (attributes_std -> 'zone_redundant') is null then ' ''zone_redundant'' is not set'
-        when (attributes_std ->> 'zone_redundant')::bool then ' zone redundant enabled'
-        else ' zone redundant disabled'
+        when (attributes_std ->> 'zone_redundant')::bool then ' zone redundant'
+        else ' not zone redundant'
       end || '.' reason
       ${local.tag_dimensions_sql}
       ${local.common_dimensions_sql}
