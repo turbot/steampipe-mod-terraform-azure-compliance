@@ -1,3 +1,14 @@
+## v0.11 [2023-11-30]
+
+_What's new?_
+
+- Added 11 new controls across the benchmarks for the following services: ([#47](https://github.com/turbot/steampipe-mod-terraform-azure-compliance/pull/47))
+  - `App Service`
+  - `Event Hub`
+  - `Kubernetes Service`
+  - `Redis`
+  - `SQL`
+
 ## v0.10 [2023-11-03]
 
 _Breaking changes_
