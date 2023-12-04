@@ -20,7 +20,8 @@ benchmark "containerregistry" {
     control.container_registry_restrict_public_access,
     control.container_registry_retention_policy_enabled,
     control.container_registry_trust_policy_enabled,
-    control.container_registry_use_virtual_service_endpoint
+    control.container_registry_use_virtual_service_endpoint,
+    control.container_registry_zone_redundant_enabled
   ]
 
   tags = merge(local.containerregistry_compliance_common_tags, {
@@ -142,4 +143,12 @@ control "container_registry_trust_policy_enabled" {
   tags = merge(local.containerregistry_compliance_common_tags, {
     other_checks = "true"
   })
+}
+
+control "container_registry_zone_redundant_enabled" {
+  title       = "Container registries should be zone redundant"
+  description = "This control ensures that Container registry is zone redundant."
+  query       = query.container_registry_zone_redundant_enabled
+
+  tags = local.containerregistry_compliance_common_tags
 }

@@ -267,3 +267,40 @@ query "container_registry_trust_policy_enabled" {
       type = 'azurerm_container_registry';
   EOQ
 }
+
+query "container_registry_zone_redundant_enabled" {
+  sql = <<-EOQ
+    with geo_replication_zone_redundant as (
+      select
+        distinct name
+      from
+        terraform_resource,
+        jsonb_array_elements(attributes_std -> 'georeplications') as g
+      where
+        type = 'azurerm_container_registry'
+        and
+          (not (g -> 'zone_redundancy_enabled')::bool
+          or g -> 'zone_redundancy_enabled' is null)
+    )
+    select
+      address as resource,
+      case
+        when not (attributes_std -> 'zone_redundancy_enabled')::boolean then 'alarm'
+        when g.name is not null then 'alarm'
+        else 'ok'
+      end status,
+      split_part(address, '.', 2) || case
+        when not (attributes_std -> 'zone_redundancy_enabled')::boolean then ' not zone redundant'
+        when g.name is not null then ' not zone redundant'
+        else ' zone redundant'
+      end || '.' reason
+      ${local.tag_dimensions_sql}
+      ${local.common_dimensions_sql}
+    from
+      terraform_resource as r
+      left join geo_replication_zone_redundant as g on g.name = r.name
+    where
+      type = 'azurerm_container_registry';
+  EOQ
+}
+
