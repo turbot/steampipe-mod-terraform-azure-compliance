@@ -38,8 +38,8 @@ query "container_instance_container_group_secure_environment_variable" {
         else 'ok'
       end status,
       split_part(address, '.', 2) || case
-        when e.name is not null then ' uses environment variables.'
-        else ' does not use environment variables.'
+        when e.name is not null then ' uses environment variables'
+        else ' does not use environment variables'
       end || '.' reason
       ${local.tag_dimensions_sql}
       ${local.common_dimensions_sql}

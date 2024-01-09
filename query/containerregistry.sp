@@ -274,22 +274,23 @@ query "container_registry_zone_redundant_enabled" {
       select
         distinct name
       from
-        terraform_resource,
-        jsonb_array_elements(attributes_std -> 'georeplications') as g
+        terraform_resource
       where
         type = 'azurerm_container_registry'
         and
-          (not (g -> 'zone_redundancy_enabled')::bool
-          or g -> 'zone_redundancy_enabled' is null)
+          (not (attributes_std -> 'georeplications' -> 'zone_redundancy_enabled')::bool
+          or attributes_std -> 'georeplications' -> 'zone_redundancy_enabled' is null)
     )
     select
       address as resource,
       case
+        when (r.attributes_std -> 'georeplications') is null then 'alarm'
         when not (attributes_std -> 'zone_redundancy_enabled')::boolean then 'alarm'
         when g.name is not null then 'alarm'
         else 'ok'
       end status,
       split_part(address, '.', 2) || case
+        when (r.attributes_std -> 'georeplications') is null then ' geo replication not defined'
         when not (attributes_std -> 'zone_redundancy_enabled')::boolean then ' not zone redundant'
         when g.name is not null then ' not zone redundant'
         else ' zone redundant'
@@ -303,4 +304,3 @@ query "container_registry_zone_redundant_enabled" {
       type = 'azurerm_container_registry';
   EOQ
 }
-
