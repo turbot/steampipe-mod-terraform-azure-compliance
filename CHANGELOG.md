@@ -1,3 +1,11 @@
+## v0.12 [2024-01-10]
+
+_What's new?_
+
+- Added the following controls across the benchmarks: ([#51](https://github.com/turbot/steampipe-mod-terraform-azure-compliance/pull/51))
+  - `container_instance_container_group_secure_environment_variable`
+  - `container_registry_zone_redundant_enabled`
+
 ## v0.11 [2023-11-30]
 
 _What's new?_
