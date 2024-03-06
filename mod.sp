@@ -1,7 +1,7 @@
 mod "terraform_azure_compliance" {
   # Hub metadata
   title         = "Terraform Azure Compliance"
-  description   = "Run compliance and security controls to detect Terraform Azure resources deviating from security best practices prior to deployment in your Azure subscriptions."
+  description   = "Run compliance and security controls to detect Terraform Azure resources deviating from security best practices prior to deployment in your Azure subscriptions using Powerpipe and Steampipe."
   color         = "#844FBA"
   documentation = file("./docs/index.md")
   icon          = "/images/mods/turbot/terraform-azure-compliance.svg"
@@ -9,7 +9,7 @@ mod "terraform_azure_compliance" {
 
   opengraph {
     title        = "Powerpipe Mod to Analyze Terraform"
-    description  = "Run compliance and security controls to detect Terraform Azure resources deviating from security best practices prior to deployment in your Azure subscriptions."
+    description  = "Run compliance and security controls to detect Terraform Azure resources deviating from security best practices prior to deployment in your Azure subscriptions using Powerpipe and Steampipe."
     image        = "/images/mods/turbot/terraform-azure-compliance-social-graphic.png"
   }
 
