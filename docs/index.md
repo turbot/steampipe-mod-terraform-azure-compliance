@@ -2,22 +2,14 @@
 
 Run compliance and security controls to detect Terraform Azure resources deviating from security best practices prior to deployment in your Azure subscriptions.
 
-<img src="https://raw.githubusercontent.com/turbot/steampipe-mod-terraform-azure-compliance/add-new-checks/docs/terraform_azure_compliance_dashboard.png" width="50%" type="thumbnail"/>
-<img src="https://raw.githubusercontent.com/turbot/steampipe-mod-terraform-azure-compliance/add-new-checks/docs/terraform_azure_compliance_storage_dashboard.png" width="50%" type="thumbnail"/>
-<img src="https://raw.githubusercontent.com/turbot/steampipe-mod-terraform-azure-compliance/add-new-checks/docs/terraform_azure_compliance_console_output.png" width="50%" type="thumbnail"/>
-
-## References
-
-[Terraform](https://terraform.io/) is an open-source infrastructure as code software tool that provides a consistent CLI workflow to manage hundreds of cloud services.
-
-[Steampipe](https://steampipe.io) is an open source CLI to instantly query cloud APIs using SQL.
-
-[Steampipe Mods](https://steampipe.io/docs/reference/mod-resources#mod) are collections of `named queries`, and codified `controls` that can be used to test current configuration of your cloud resources against a desired configuration.
+<img src="https://raw.githubusercontent.com/turbot/steampipe-mod-terraform-azure-compliance/main/docs/terraform_azure_compliance_dashboard.png" width="50%" type="thumbnail"/>
+<img src="https://raw.githubusercontent.com/turbot/steampipe-mod-terraform-azure-compliance/main/docs/terraform_azure_compliance_storage_dashboard.png" width="50%" type="thumbnail"/>
+<img src="https://raw.githubusercontent.com/turbot/steampipe-mod-terraform-azure-compliance/main/docs/terraform_azure_compliance_console_output.png" width="50%" type="thumbnail"/>
 
 ## Documentation
 
-- **[Benchmarks and controls →](https://hub-powerpipe-io-git-development-turbot.vercel.app/mods/turbot/terraform_azure_compliance/controls)**
-- **[Named queries →](https://hub-powerpipe-io-git-development-turbot.vercel.app/mods/turbot/terraform_azure_compliance/queries)**
+- **[Benchmarks and controls →](https://hub.powerpipe.io/mods/turbot/terraform_azure_compliance/controls)**
+- **[Named queries →](https://hub.powerpipe.io/mods/turbot/terraform_azure_compliance/queries)**
 
 ## Getting Started
 
@@ -35,8 +27,6 @@ This mod also requires [Steampipe](https://steampipe.io) with the [Terraform plu
 brew install turbot/tap/steampipe
 steampipe plugin install terraform
 ```
-
-This mod uses the credentials configured in the [Steampipe Terraform plugin](https://hub.steampipe.io/plugins/turbot/terraform#configuration).
 
 Finally, install the mod:
 
@@ -90,8 +80,8 @@ The benchmark queries use common properties (like `path` and `connection_name`) 
 It's easiest to setup your vars file, starting with the sample:
 
 ```sh
-cp powerpipe.ppvar.example powerpipe.ppvars
-vi powerpipe.ppvars
+cp steampipe.spvars.example steampipe.spvars
+vi steampipe.spvars
 ```
 
 Alternatively you can pass variables on the command line:
